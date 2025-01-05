@@ -1,0 +1,10 @@
+syntax = "v1"
+
+import "api/role.api"
+import "api/position.api"
+import "api/organization.api"
+import "api/permission.api"
+import "api/image.api"
+import "api/user.api"
+import "api/dict.api"
+import "api/dict_item.api"

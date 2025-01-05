@@ -1,0 +1,288 @@
+info(
+    title: "SysUser Service API"
+    desc: "API 服务用于管理系统用户相关操作"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+
+import "./base.api"
+type (
+    SysUser {
+        Id uint64 `json:"id"`                            // 自增主键
+        UserName string `json:"userName"`                // 用户姓名
+        Account string `json:"account"`                  // 用户账号
+        Icon string `json:"icon"`                        // 用户头像 URL
+        Mobile string `json:"mobile"`                    // 用户手机号
+        Email string `json:"email"`                      // 用户邮箱地址
+        WorkNumber string `json:"workNumber"`            // 用户工号
+        HireDate int64 `json:"hireDate"`                 // 入职日期
+        IsResetPassword int64 `json:"isResetPassword"`    // 是否需要重置密码
+        IsDisabled int64 `json:"isDisabled"`              // 是否禁用
+        IsLeave int64 `json:"isLeave"`                    // 是否离职
+        PositionId uint64 `json:"positionId"`            // 职位 Id
+        OrganizationId uint64 `json:"organizationId"`    // 组织 Id
+        LastLoginTime int64 `json:"lastLoginTime"`       // 上次登录时间
+        CreateTime int64 `json:"createTime"`             // 创建时间
+        UpdateTime int64 `json:"updateTime"`             // 最后修改时间
+    }
+        // 用户详情返回
+    SysUserInfoResponse {
+        Id uint64 `json:"id"`                              // 自增主键
+        UserName string `json:"userName"`                  // 用户姓名
+        Account string `json:"account"`                    // 用户账号
+        Icon string `json:"icon"`                          // 用户头像 URL
+        Mobile string `json:"mobile"`                      // 用户手机号
+        Email string `json:"email"`                        // 用户邮箱地址
+        WorkNumber string `json:"workNumber"`              // 用户工号
+        HireDate int64 `json:"hireDate"`                   // 入职日期
+        PositionName string `json:"positionName"`          // 职位名称
+        OrganizationName string `json:"organizationName"`  // 组织名称
+        RoleNames []string `json:"roleNames"`              // 角色名称列表
+        LastLoginTime int64 `json:"lastLoginTime"`         // 上次登录时间
+        CreateTime int64 `json:"createTime"`               // 创建时间
+        UpdateTime int64 `json:"updateTime"`               // 最后修改时间
+    }
+        // 添加用户请求
+    AddSysUserRequest {
+        UserName string `json:"userName" validate:"required,min=2,max=100"`      // 用户姓名
+        Account string `json:"account" validate:"required,min=2,max=100"`        // 用户账号
+        Mobile string `json:"mobile" validate:"required,min=10,max=15"`          // 手机号
+        Email string `json:"email" validate:"required,email"`                    // 邮箱地址
+        WorkNumber string `json:"workNumber" validate:"required"`                // 工号
+        HireDate int64 `json:"hireDate" validate:"required"`                     // 入职日期
+        PositionId uint64 `json:"positionId" validate:"required,gt=0"`           // 职位 Id
+        OrganizationId uint64 `json:"organizationId" validate:"required,gt=0"`   // 组织 Id
+    }
+
+        // 更新用户请求
+    UpdateGloabSysUserRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"`                       // 用户 Id
+        UserName string `json:"userName" validate:"required,min=2,max=100"`  // 用户姓名
+        Mobile string `json:"mobile,optional" validate:"required,min=10,max=15"`      // 手机号
+        Email string `json:"email,optional" validate:"required,email"`                // 邮箱地址
+        WorkNumber string `json:"workNumber,optional" validate:"required"`            // 工号
+        HireDate int64 `json:"hireDate,optional" validate:"required"`                 // 入职日期
+        PositionId uint64 `json:"positionId,optional" validate:"required,gt=0"`
+        OrganizationId uint64 `json:"organizationId,optional" validate:"required,gt=0"`
+    }
+    UpdateSysUserRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"`                       // 用户 Id
+        UserName string `json:"userName" validate:"required,min=2,max=100"`  // 用户姓名
+        Mobile string `json:"mobile,optional" validate:"required,min=10,max=15"`      // 手机号
+        Email string `json:"email,optional" validate:"required,email"`                // 邮箱地址
+    }
+        // 搜索用户请求
+    SearchSysUserRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                           // 当前页码
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`          // 每页条数
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty"`                       // 排序字段
+        IsAsc bool `form:"isAsc,optional" default:"false" validate:"omitempty"`                            // 是否升序
+        UserName string `form:"userName,optional" validate:"omitempty,max=100"`                            // 用户姓名
+        Account string `form:"account,optional" validate:"omitempty,max=100"`                              // 用户账号
+        Mobile string `form:"mobile,optional" validate:"omitempty,max=15"`                                 // 用户手机号
+        Email string `form:"email,optional" validate:"omitempty,email"`                                    // 用户邮箱
+        WorkNumber string `form:"workNumber,optional" validate:"omitempty,max=50"`                         // 工号
+        HireDate int64 `form:"hireDate,optional" validate:"omitempty"`                                     // 入职日期
+        IsDisabled int64 `form:"isDisabled,optional" validate:"omitempty"`                                  // 是否禁用
+        IsLeave int64 `form:"isLeave,optional" validate:"omitempty"`                                        // 是否离职
+        PositionId uint64 `form:"positionId,optional" validate:"omitempty"`                                // 职位 Id
+        OrganizationId uint64 `form:"organizationId,optional" validate:"omitempty"`                        // 组织 Id
+        StartLastLoginTime int64 `form:"startLastLoginTime,optional" validate:"omitempty"`
+        EndLastLoginTime int64   `form:"endLastLoginTime,optional" validate:"omitempty"`
+    }
+
+        // 搜索用户响应
+    SearchSysUserResponse {
+        Items []SysUser `json:"data"` // 用户列表
+        Total uint64 `json:"total"`   // 总条数
+    }
+
+        // 用户绑定角色请求
+    BindRoleRequest {
+        Id uint64 `json:"id" validate:"required,gt=0"`        // 用户 Id
+        RoleIds []uint64 `json:"roleIds" validate:"required"` // 角色 Id 列表
+    }
+
+        // 离职请求
+    LeaveRequest {
+        Id uint64 `path:"id"  validate:"required,gt=0"` // 用户 Id
+    }
+
+        // 禁用或恢复账号请求
+    FrozenAccountsRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"`       // 用户 Id
+        IsDisabled int64 `json:"isDisabled" validate:"omitempty,oneof=0 1"`                            // 是否禁用 只能是 0 和 1
+    }
+        // 重置密码请求
+    ResetPasswordRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"` // 用户 Id
+    }
+
+    // 修改头像
+    ChangeAvatarRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"` // 用户 Id
+    }
+
+    // 修改密码
+     ChangePasswordRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"` // 用户 Id
+        OldPassword string `json:"oldPassword" validate:"required,min=6,max=60"`
+        NewPassword string `json:"newPassword" validate:"required,min=6,max=60"`
+        ConfirmPassword string `json:"confirmPassword" validate:"required,min=6,max=60"`
+    }
+
+    // 查询绑定的用户
+    SearchBindUserRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"`                            // 是否升序
+    }
+    SearchBindUserResponse {
+        RoleIds []uint64 `json:"roleIds"` // 用户列表
+        RoleNames []string `json:"roleNames"`   // 总条数
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: JWTAuthMiddleware
+    group: user
+    prefix: /v1/portal/sys/user
+)
+service portal-api {
+    // 添加用户
+    @handler AddSysUserHandler
+    post / (AddSysUserRequest) returns (string)
+
+    // 更新用户
+    @handler UpdateSysUserHandler
+    put /:id (UpdateSysUserRequest) returns (string)
+
+    // 全局更新用户
+    @handler GlobalUpdateSysUserHandler
+    put /global/:id (UpdateGloabSysUserRequest) returns (string)
+
+    // 删除用户
+    @handler DelSysUserHandler
+    delete /:id (DefaultIdRequest) returns (string)
+
+    // 根据 Id 获取用户
+    @handler GetSysUserByIdHandler
+    get /:id  (DefaultIdRequest) returns (SysUser)
+
+    // 获取用户详情
+    @handler GetSysUserInfoHandler
+    get /info returns (SysUserInfoResponse)
+
+    // 搜索用户
+    @handler SearchSysUserHandler
+    get / (SearchSysUserRequest) returns (SearchSysUserResponse)
+
+    // 重置密码
+    @handler ResetPasswordHandler
+    post /reset-password/:id (ResetPasswordRequest) returns (string)
+
+    // 禁用或恢复账号
+    @handler FrozenAccountsHandler
+    post /frozen/:id (FrozenAccountsRequest) returns (string)
+
+    // 离职
+    @handler LeaveHandler
+    post /leave/:id (LeaveRequest) returns (string)
+
+    // 用户绑定角色
+    @handler BindRoleHandler
+    post /bind-roles (BindRoleRequest) returns (string)
+
+    // 修改头像
+    @handler ChangeAvatarHandler
+    put /change-avatar/:id (ChangeAvatarRequest) returns (string)
+
+    // 修改密码
+    @handler ChangePasswordHandler
+    put /change-password/:id (ChangePasswordRequest) returns (string)
+
+    // 查询用户绑定的角色
+    @handler SearchBindUserHandler
+    get /bind-roles/:id (SearchBindUserRequest) returns (SearchBindUserResponse)
+}
+
+
+
+type (
+    Token {
+        AccessToken string `json:"accessToken"`
+        RefreshToken string `json:"refreshToken"`
+        AccessExpireIn int64 `json:"accessExpireIn"`
+        RefreshExpireIn int64 `json:"refreshExpireIn"`
+    }
+    LoginResponse {
+        AccountId uint64 `json:"accountId"`
+        Account string `json:"account"`
+        Roles []string `json:"roles"`
+        UserName string `json:"userName"`
+        Token Token `json:"token"`
+    }
+
+    LogoutResponse {
+        Success bool `json:"success"`
+        Message string `json:"message"`
+    }
+    LoginRequest {
+        LoginType int64  `json:"loginType" validate:"required,oneof=1 2"` // 必填且只能是 1 或 2
+        Account   string `json:"account" validate:"required,min=4"` //
+        Password  string `json:"password" validate:"required,min=8"` // 必填且最少6个字符
+    }
+
+    // 刷新Token请求
+    RefreshTokenRequest {
+        RefreshToken string `json:"refreshToken" validate:"required"`
+    }
+    RefreshTokenResponse {
+        AccessToken string `json:"accessToken"`
+        AccessExpireIn int64 `json:"accessExpireIn"`
+    }
+)
+
+@server(
+    group: auth
+    prefix: /v1/portal/auth
+)
+service portal-api {
+    @handler LoginHandler
+    post /login (LoginRequest) returns (LoginResponse)
+}
+
+@server(
+//    jwt: Auth
+    middleware: JWTAuthMiddleware
+    group: auth
+    prefix:     /v1/portal/auth
+)
+service portal-api {
+    @handler LogoutHandler
+    post /logout () returns (LogoutResponse)
+    @handler RefreshTokenHandler
+    post /refresh-token (RefreshTokenRequest) returns (RefreshTokenResponse)
+    // 强制退出
+    @handler ForceLogoutHandler
+    post /force-logout () returns (string )
+}
+
+
+type (
+    GetCodesResponse {
+        Codes []string `json:"codes"`
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: JWTAuthMiddleware
+    group: auth
+    prefix: /v1/portal/auth
+)
+service portal-api {
+    // 获取权限码
+    @handler GetCodesHandler
+    get /codes returns (GetCodesResponse)
+}

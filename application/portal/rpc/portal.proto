@@ -1,0 +1,1266 @@
+syntax = "proto3";
+
+option go_package ="github.com/yanshicheng/kube-onec/application/portal/rpc/pb";
+
+package pb;
+
+// ------------------------------------ 
+// Messages and Services
+// ------------------------------------ 
+
+//--------------------------------账号信息表--------------------------------
+message SysUser {
+  uint64 id = 1; //自增主键
+  string userName = 2; //用户姓名
+  string account = 3; //用户账号，唯一标识
+  string icon = 4; //用户头像URL
+  string mobile = 5; //用户手机号
+  string email = 6; //用户邮箱地址
+  string workNumber = 7; //用户工号
+  int64 hireDate = 8; //入职日期
+  int64 IsResetPassword = 9; //是否需要重置密码，0 否，1 是
+  int64 isDisabled = 10; //是否禁用，0 否，1 是
+  int64 isLeave = 11; //是否离职，0 否，1 是
+  uint64 positionId = 12; //职位ID，关联职位表
+  uint64 organizationId = 13; //组织ID，关联组织表
+  int64 lastLoginTime = 14; //上次登录时间
+  int64 createTime = 15; //创建时间
+  int64 updateTime = 16; //最后修改时间
+}
+
+message AddSysUserReq {
+  string userName = 1; //用户姓名
+  string account = 2; //用户账号，唯一标识
+  string mobile = 3; //用户手机号
+  string email = 4; //用户邮箱地址
+  string workNumber = 5; //用户工号
+  int64 hireDate = 6; //入职日期
+  uint64 positionId = 7; //职位ID，关联职位表
+  uint64 organizationId = 8; //组织ID，关联组织表
+}
+
+message AddSysUserResp {
+}
+
+message UpdateSysUserReq {
+  uint64 id = 1; //自增主键
+  string userName = 2; //用户姓名
+  string mobile = 3; //用户手机号
+  string email = 4; //用户邮箱地址
+}
+
+message UpdateSysUserResp {
+}
+
+message DelSysUserReq {
+  uint64 id = 1; //id
+}
+
+message DelSysUserResp {
+}
+
+message GetSysUserByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysUserByIdResp {
+  SysUser data = 1;
+}
+
+message SearchSysUserReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string userName = 5; //用户姓名
+  string account = 6; //用户账号，唯一标识
+  string mobile = 7; //用户手机号
+  string email = 8; //用户邮箱地址
+  string workNumber = 9; //用户工号
+  int64 hireDate = 10; //入职日期
+  int64 isDisabled = 11; //是否禁用，0 否，1 是
+  int64 isLeave = 12; //是否离职，0 否，1 是
+  uint64 positionId = 13; //职位ID，关联职位表
+  uint64 organizationId = 14; //组织ID，关联组织表
+  int64 startLastLoginTime = 15; //上次登录时间
+  int64 EndLastLoginTime = 16; //上次登录时间
+}
+
+message SearchSysUserResp {
+  repeated SysUser data = 1; //sysUser
+  uint64 total = 2; //total
+}
+
+message ResetPasswordReq {
+  uint64 id = 1; //id
+}
+message ResetPasswordResp {
+}
+
+// 禁用或者恢复账号
+message FrozenAccountsReq {
+  uint64 id = 1; //id
+  int64 isDisabled = 2;
+}
+message FrozenAccountsResp {
+}
+
+message ChangePasswordReq {
+  uint64 id = 1; //id
+  string oldPassword = 2; //旧密码
+  string newPassword = 3; //新密码
+  string confirmPassword = 4; // 确认密码
+}
+
+message ChangePasswordResp {
+}
+
+
+
+message UpdateGlobalSysUserReq {
+  uint64 id = 1; //自增主键
+  string userName = 2; //用户姓名
+  string mobile = 3; //用户手机号
+  string email = 4; //用户邮箱地址
+  string workNumber = 5; //用户工号
+  int64 hireDate = 6; //入职日期
+  uint64 positionId = 7; //职位ID，关联职位表
+  uint64 organizationId = 8; //组织ID，关联组织表
+}
+
+message UpdateGlobalSysUserResp {
+}
+
+// 离职message
+message LeaveReq {
+  uint64 id = 1; //id
+}
+
+message LeaveResp {
+}
+
+// 用户绑定角色
+message BindRoleReq {
+  uint64 id = 1; //id
+  repeated uint64 roleIds = 2; //角色ID数组
+}
+message BindRoleResp {
+}
+
+// 通过用户ID查询角色
+message GetRoleByUserIdReq {
+  uint64 id = 1; //id
+}
+message GetRoleByUserIdResp {
+  repeated uint64 roleIds = 1; //roleIds
+  repeated string roleNames = 2;
+}
+
+// 用户详情
+message GetUserInfoReq {
+  string account = 1; //id
+}
+
+message GetUserInfoResp {
+  uint64 id = 1; //自增主键
+  string userName = 2; //用户姓名
+  string account = 3; //用户账号，唯一标识
+  string icon = 4; //用户头像URL
+  string mobile = 5; //用户手机号
+  string email = 6; //用户邮箱地址
+  string workNumber = 7; //用户工号
+  int64 hireDate = 8; //入职日期
+  string positionName = 9;
+  string organizationName = 10;
+  repeated string roleNames = 11;
+  int64 lastLoginTime = 12; //上次登录时间
+  int64 createTime = 13; //创建时间
+  int64 updateTime = 14; //最后修改时间
+}
+
+
+// 修改头像
+message UpdateIconReq {
+  uint64 id = 1; //id
+  string icon = 2; //icon
+}
+message UpdateIconResp {
+}
+
+// 查询用户有哪些角色
+
+service SysUserService {
+  //-----------------------账号信息表-----------------------
+  rpc AddSysUser(AddSysUserReq) returns (AddSysUserResp);
+  rpc UpdateSysUser(UpdateSysUserReq) returns (UpdateSysUserResp);
+  rpc DelSysUser(DelSysUserReq) returns (DelSysUserResp);
+  rpc GetSysUserById(GetSysUserByIdReq) returns (GetSysUserByIdResp);
+  rpc SearchSysUser(SearchSysUserReq) returns (SearchSysUserResp);
+
+  rpc UpdateGlobalSysUser(UpdateGlobalSysUserReq) returns (UpdateGlobalSysUserResp);
+  rpc ResetPassword(ResetPasswordReq) returns (ResetPasswordResp);
+  rpc FrozenAccounts(FrozenAccountsReq) returns (FrozenAccountsResp);
+  rpc ChangePassword(ChangePasswordReq) returns (ChangePasswordResp);
+  rpc Leave(LeaveReq) returns (LeaveResp);
+  rpc BindRole(BindRoleReq) returns (BindRoleResp);
+  rpc GetRoleByUserId(GetRoleByUserIdReq) returns (GetRoleByUserIdResp);
+  rpc GetUserInfo(GetUserInfoReq) returns (GetUserInfoResp);
+  rpc UpdateIcon(UpdateIconReq) returns (UpdateIconResp);
+}
+//--------------------------------菜单表--------------------------------
+message SysMenu {
+  uint64 id = 1; //主键ID
+  string component = 2; //组件名称
+  string name = 3; //菜单名称
+  string path = 4; //路由路径
+  string redirect = 5; //重定向路径
+  uint64 parentId = 6; //父级ID
+  int64 type = 7; //类型（1. 目录，2. 菜单，3. 按钮）
+  int64 isEnable = 8; //是否启用（0. 禁用，1. 启用）
+  string code = 9; //权限码
+  string activeIcon = 10; //激活图标
+  string activePath = 11; //当前激活的菜单路径
+  int64 affixTab = 12; //是否固定标签页
+  int64 affixTabOrder = 13; //固定标签页的顺序
+  string badge = 14; //徽标
+  SysMenuBadgeType badgeType = 15; //徽标类型
+  string badgeVariants = 16; //徽标颜色
+  int64 hideChildrenInMenu = 17; //当前路由的子级在菜单中不展现
+  int64 hideInBreadcrumb = 18; //当前路由在面包屑中不展现
+  int64 hideInMenu = 19; //当前路由在菜单中不展现
+  int64 hideInTab = 20; //当前路由在标签页不展现
+  string icon = 21; //图标
+  string iframeSrc = 22; //iframe地址
+  int64 ignoreAccess = 23; //忽略权限，直接可以访问
+  int64 keepAlive = 24; //开启KeepAlive缓存
+  string link = 25; //外链-跳转路径
+  int64 loaded = 26; //路由是否已经加载过
+  int64 maxNumOfOpenTab = 27; //标签页最大打开数量
+  int64 menuVisibleWithForbidden = 28; //菜单可以看到，但是访问会被重定向到403
+  int64 openInNewWindow = 29; //在新窗口打开
+  int64 orderNum = 30; //用于路由->菜单排序
+  string query = 31; //菜单所携带的参数
+  string title = 32; //标题名称
+}
+
+message AddSysMenuReq {
+  string component = 1; //组件名称
+  string name = 2; //菜单名称
+  string path = 3; //路由路径
+  string redirect = 4; //重定向路径
+  uint64 parentId = 5; //父级ID
+  int64 type = 6; //类型（1. 目录，2. 菜单，3. 按钮）
+  int64 isEnable = 7; //是否启用（0. 禁用，1. 启用）
+  string code = 8; //权限码
+  string activeIcon = 9; //激活图标
+  string activePath = 10; //当前激活的菜单路径
+  int64 affixTab = 11; //是否固定标签页
+  int64 affixTabOrder = 12; //固定标签页的顺序
+  string badge = 13; //徽标
+  SysMenuBadgeType badgeType = 14; //徽标类型
+  string badgeVariants = 15; //徽标颜色
+  int64 hideChildrenInMenu = 16; //当前路由的子级在菜单中不展现
+  int64 hideInBreadcrumb = 17; //当前路由在面包屑中不展现
+  int64 hideInMenu = 18; //当前路由在菜单中不展现
+  int64 hideInTab = 19; //当前路由在标签页不展现
+  string icon = 20; //图标
+  string iframeSrc = 21; //iframe地址
+  int64 ignoreAccess = 22; //忽略权限，直接可以访问
+  int64 keepAlive = 23; //开启KeepAlive缓存
+  string link = 24; //外链-跳转路径
+  int64 loaded = 25; //路由是否已经加载过
+  int64 maxNumOfOpenTab = 26; //标签页最大打开数量
+  int64 menuVisibleWithForbidden = 27; //菜单可以看到，但是访问会被重定向到403
+  int64 openInNewWindow = 28; //在新窗口打开
+  int64 orderNum = 29; //用于路由->菜单排序
+  string query = 30; //菜单所携带的参数
+  string title = 31; //标题名称
+}
+
+message AddSysMenuResp {
+}
+
+message UpdateSysMenuReq {
+  uint64 id = 1; //主键ID
+  string component = 2; //组件名称
+  string name = 3; //菜单名称
+  string path = 4; //路由路径
+  string redirect = 5; //重定向路径
+  uint64 parentId = 6; //父级ID
+  int64 type = 7; //类型（1. 目录，2. 菜单，3. 按钮）
+  int64 isEnable = 8; //是否启用（0. 禁用，1. 启用）
+  string code = 9; //权限码
+  string activeIcon = 10; //激活图标
+  string activePath = 11; //当前激活的菜单路径
+  int64 affixTab = 12; //是否固定标签页
+  int64 affixTabOrder = 13; //固定标签页的顺序
+  string badge = 14; //徽标
+  SysMenuBadgeType badgeType = 15; //徽标类型
+  string badgeVariants = 16; //徽标颜色
+  int64 hideChildrenInMenu = 17; //当前路由的子级在菜单中不展现
+  int64 hideInBreadcrumb = 18; //当前路由在面包屑中不展现
+  int64 hideInMenu = 19; //当前路由在菜单中不展现
+  int64 hideInTab = 20; //当前路由在标签页不展现
+  string icon = 21; //图标
+  string iframeSrc = 22; //iframe地址
+  int64 ignoreAccess = 23; //忽略权限，直接可以访问
+  int64 keepAlive = 24; //开启KeepAlive缓存
+  string link = 25; //外链-跳转路径
+  int64 loaded = 26; //路由是否已经加载过
+  int64 maxNumOfOpenTab = 27; //标签页最大打开数量
+  int64 menuVisibleWithForbidden = 28; //菜单可以看到，但是访问会被重定向到403
+  int64 openInNewWindow = 29; //在新窗口打开
+  int64 orderNum = 30; //用于路由->菜单排序
+  string query = 31; //菜单所携带的参数
+  string title = 32; //标题名称
+}
+
+message UpdateSysMenuResp {
+}
+
+message DelSysMenuReq {
+  uint64 id = 1; //id
+}
+
+message DelSysMenuResp {
+}
+
+message GetSysMenuByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysMenuByIdResp {
+  SysMenu data = 1; //sysMenu
+}
+
+message SearchSysMenuReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string component = 5; //组件名称
+  string name = 6; //菜单名称
+  string path = 7; //路由路径
+  string redirect = 8; //重定向路径
+  uint64 parentId = 9; //父级ID
+  int64 type = 10; //类型（1. 目录，2. 菜单，3. 按钮）
+  int64 isEnable = 11; //是否启用（0. 禁用，1. 启用）
+  string code = 12; //权限码
+  string activeIcon = 13; //激活图标
+  string activePath = 14; //当前激活的菜单路径
+  int64 affixTab = 15; //是否固定标签页
+  int64 affixTabOrder = 16; //固定标签页的顺序
+  string badge = 17; //徽标
+  SysMenuBadgeType badgeType = 18; //徽标类型
+  string badgeVariants = 19; //徽标颜色
+  int64 hideChildrenInMenu = 20; //当前路由的子级在菜单中不展现
+  int64 hideInBreadcrumb = 21; //当前路由在面包屑中不展现
+  int64 hideInMenu = 22; //当前路由在菜单中不展现
+  int64 hideInTab = 23; //当前路由在标签页不展现
+  string icon = 24; //图标
+  string iframeSrc = 25; //iframe地址
+  int64 ignoreAccess = 26; //忽略权限，直接可以访问
+  int64 keepAlive = 27; //开启KeepAlive缓存
+  string link = 28; //外链-跳转路径
+  int64 loaded = 29; //路由是否已经加载过
+  int64 maxNumOfOpenTab = 30; //标签页最大打开数量
+  int64 menuVisibleWithForbidden = 31; //菜单可以看到，但是访问会被重定向到403
+  int64 openInNewWindow = 32; //在新窗口打开
+  int64 orderNum = 33; //用于路由->菜单排序
+  string query = 34; //菜单所携带的参数
+  string title = 35; //标题名称
+}
+
+message SearchSysMenuResp {
+  repeated SysMenu data = 1; //sysMenu
+  uint64 total = 2; //total
+}
+
+// 获取菜单树请求
+message GetMenuTreeReq {
+  uint64 userId = 1; // 角色ID
+}
+
+// 获取菜单树响应
+message GetMenuTreeResp {
+  repeated MenuNode menus = 1; // 菜单树
+}
+
+// 菜单节点定义
+message MenuNode {
+  uint64 id = 1; // 主键ID
+  uint64 parentId = 2; // 父级ID
+  string path = 3; // 路由路径
+  string redirect = 4; // 重定向路径
+  string component = 5; // 组件名称
+  string name = 6; // 菜单名称
+  RouteMeta meta = 7; // Meta 信息
+  repeated MenuNode children = 8; // 子菜单
+}
+
+// Meta 定义 (对应前端的 RouteMeta)
+message RouteMeta {
+  string activeIcon = 1; // 激活图标
+  string activePath = 2; // 当前激活的菜单路径
+  int64 affixTab = 3; // 是否固定标签页
+  int64 affixTabOrder = 4; // 固定标签页的顺序
+  repeated string authority = 5; // 需要特定角色标识才可以访问
+  string badge = 6; // 徽标
+  string badgeType = 7; // 徽标类型
+  string badgeVariants = 8; // 徽标颜色
+  int64 hideChildrenInMenu = 9; // 当前路由的子级在菜单中不展现
+  int64 hideInBreadcrumb = 10; // 当前路由在面包屑中不展现
+  int64 hideInMenu = 11; // 当前路由在菜单中不展现
+  int64 hideInTab = 12; // 当前路由在标签页不展现
+  string icon = 13; // 图标
+  string iframeSrc = 14; // iframe 地址
+  int64 ignoreAccess = 15; // 忽略权限，直接可以访问
+  int64 keepAlive = 16; // 开启KeepAlive缓存
+  string link = 17; // 外链-跳转路径
+  int64 loaded = 18; // 路由是否已经加载过
+  int64 maxNumOfOpenTab = 19; // 标签页最大打开数量
+  int64 menuVisibleWithForbidden = 20; // 菜单可以看到，但是访问会被重定向到403
+  int64 openInNewWindow = 21; // 在新窗口打开
+  int64 order = 22; // 菜单排序
+  map<string, string> query = 23; // 菜单所携带的参数
+  string title = 24; // 标题名称
+}
+service SysMenuService {
+  //-----------------------菜单表-----------------------
+  rpc AddSysMenu(AddSysMenuReq) returns (AddSysMenuResp);
+  rpc UpdateSysMenu(UpdateSysMenuReq) returns (UpdateSysMenuResp);
+  rpc DelSysMenu(DelSysMenuReq) returns (DelSysMenuResp);
+  rpc GetSysMenuById(GetSysMenuByIdReq) returns (GetSysMenuByIdResp);
+  rpc SearchSysMenu(SearchSysMenuReq) returns (SearchSysMenuResp);
+  // 新增接口：获取菜单树
+  rpc GetMenuTree(GetMenuTreeReq) returns (GetMenuTreeResp);
+}
+
+//--------------------------------组织表--------------------------------
+message SysOrganization {
+  uint64 id = 1; //自增主键
+  string name = 2; //团队名称
+  uint64 parentId = 3; //父级组织的 ID，根级为 NULL
+  int64 level = 4; //组织层级，从 0 开始
+  string description = 5; //组织描述
+  int64 createTime = 6; //创建时间
+  int64 updateTime = 7; //最后修改时间
+}
+
+message AddSysOrganizationReq {
+  string name = 1; //团队名称
+  uint64 parentId = 2; //父级组织的 ID，根级为 NULL
+  string description = 3;
+}
+
+message AddSysOrganizationResp {
+}
+
+message UpdateSysOrganizationReq {
+  uint64 id = 1; //自增主键
+  string name = 2; //团队名称
+  string description = 3; //组织描述
+}
+
+message UpdateSysOrganizationResp {
+}
+
+message DelSysOrganizationReq {
+  uint64 id = 1; //id
+}
+
+message DelSysOrganizationResp {
+}
+
+message GetSysOrganizationByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysOrganizationByIdResp {
+  SysOrganization data = 1; //sysOrganization
+}
+
+message SearchSysOrganizationReq {
+  string orderStr = 1; //orderStr
+  bool isAsc = 2; //isAsc
+  string name = 3; //团队名称
+  uint64 parentId = 4; //父级组织的 ID，根级为 NULL
+  string description = 5; //组织描述
+}
+
+message SearchSysOrganizationResp {
+  repeated SysOrganizationSearch data = 1; //sysOrganization
+}
+
+message SysOrganizationSearch {
+  uint64 id = 1;
+  string name = 2;
+  uint64 parent_id = 3;
+  int64 level = 4;
+  string description = 5;
+  int64 create_time = 6;
+  int64 update_time = 7;
+  repeated SysOrganizationSearch children = 8; // children
+}
+
+message GetOrganizationTreeReq {}
+
+
+service SysOrganizationService {
+	//-----------------------组织表----------------------- 
+	 rpc AddSysOrganization(AddSysOrganizationReq) returns (AddSysOrganizationResp);
+	 rpc UpdateSysOrganization(UpdateSysOrganizationReq) returns (UpdateSysOrganizationResp);
+	 rpc DelSysOrganization(DelSysOrganizationReq) returns (DelSysOrganizationResp);
+	 rpc GetSysOrganizationById(GetSysOrganizationByIdReq) returns (GetSysOrganizationByIdResp);
+	 rpc SearchSysOrganization(SearchSysOrganizationReq) returns (SearchSysOrganizationResp);
+}
+
+//--------------------------------权限表--------------------------------
+message SysPermission {
+  uint64 id = 1; //自增主键
+  uint64 parentId = 2; //父权限ID
+  string name = 3; //权限名称
+  string uri = 4; //权限对应的资源URI或路径
+  string action = 5; //对资源执行的操作
+  uint64 level = 6;
+  int64 createTime = 7; //创建时间
+  int64 updateTime = 8; //最后修改时间
+}
+
+message AddSysPermissionReq {
+  uint64 parentId = 1; //父权限ID
+  string name = 2; //权限名称
+  string uri = 3; //权限对应的资源URI或路径
+  string action = 4; //对资源执行的操作
+}
+
+message AddSysPermissionResp {
+}
+
+message UpdateSysPermissionReq {
+  uint64 id = 1; //自增主键
+  string name = 2; //权限名称
+  string uri = 3; //权限对应的资源URI或路径
+  string action = 4; //对资源执行的操作
+}
+
+message UpdateSysPermissionResp {
+}
+
+message DelSysPermissionReq {
+  uint64 id = 1; //id
+}
+
+message DelSysPermissionResp {
+}
+
+message GetSysPermissionByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysPermissionByIdResp {
+  SysPermission data = 1; //sysPermission
+}
+
+message SearchSysPermissionReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  uint64 parentId = 5; //父权限ID
+  string name = 6; //权限名称
+  string uri = 7; //权限对应的资源URI或路径
+  string action = 8; //对资源执行的操作
+}
+
+message SearchSysPermissionResp {
+  repeated SysPermission data = 1; //sysPermission
+  uint64 total = 2; //total
+}
+
+
+
+// 获取三级树状权限树
+message GetSysPermissionTreeReq {
+}
+message GetSysPermissionTreeResp {
+  repeated SysPermissionTree data = 1; // 权限树数据
+}
+
+// 权限树节点
+message SysPermissionTree {
+  uint64 id = 1; // 权限ID
+  string name = 2; // 权限名称
+  repeated SysPermissionTree children = 3; // 子权限
+}
+
+service SysPermissionService {
+	//-----------------------权限表----------------------- 
+	 rpc AddSysPermission(AddSysPermissionReq) returns (AddSysPermissionResp);
+	 rpc UpdateSysPermission(UpdateSysPermissionReq) returns (UpdateSysPermissionResp);
+	 rpc DelSysPermission(DelSysPermissionReq) returns (DelSysPermissionResp);
+	 rpc GetSysPermissionById(GetSysPermissionByIdReq) returns (GetSysPermissionByIdResp);
+	 rpc SearchSysPermission(SearchSysPermissionReq) returns (SearchSysPermissionResp);
+   rpc GetSysPermissionTree(GetSysPermissionTreeReq) returns (GetSysPermissionTreeResp);
+}
+
+//--------------------------------职位表--------------------------------
+message SysPosition {
+  uint64 id = 1; //自增主键
+  string name = 2; //职位名称
+  int64 createTime = 4; //创建时间
+  int64 updateTime = 5; //最后修改时间
+}
+
+message AddSysPositionReq {
+  string name = 1; //职位名称
+}
+
+message AddSysPositionResp {
+}
+
+message UpdateSysPositionReq {
+  uint64 id = 1; //自增主键
+  string name = 2; //职位名称
+}
+
+message UpdateSysPositionResp {
+}
+
+message DelSysPositionReq {
+  uint64 id = 1; //id
+}
+
+message DelSysPositionResp {
+}
+
+message GetSysPositionByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysPositionByIdResp {
+  SysPosition data = 1; //sysPosition
+}
+
+message SearchSysPositionReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string name = 5; //职位名称
+}
+
+message SearchSysPositionResp {
+  repeated SysPosition data = 1; //sysPosition
+  uint64 total = 2; //total
+}
+
+// 通过职务id查询用户列表
+message SearchSysPositionByUserReq {
+  uint64 id = 1;
+}
+
+message SearchSysPositionByUserResp {
+  repeated SysUser data = 1; //sysUser
+}
+
+service SysPositionService {
+	//-----------------------职位表----------------------- 
+	 rpc AddSysPosition(AddSysPositionReq) returns (AddSysPositionResp);
+	 rpc UpdateSysPosition(UpdateSysPositionReq) returns (UpdateSysPositionResp);
+	 rpc DelSysPosition(DelSysPositionReq) returns (DelSysPositionResp);
+	 rpc GetSysPositionById(GetSysPositionByIdReq) returns (GetSysPositionByIdResp);
+	 rpc SearchSysPosition(SearchSysPositionReq) returns (SearchSysPositionResp);
+   rpc SearchSysPositionByUser(SearchSysPositionByUserReq) returns (SearchSysPositionByUserResp);
+}
+
+//--------------------------------角色表--------------------------------
+message SysRole {
+  uint64 id = 1; //自增主键
+  string roleName = 2; //角色名称
+  string roleCode = 3;
+  int64 createTime = 4; //创建时间
+  int64 updateTime = 5; //最后修改时间
+  string description = 6; //描述
+  string createBy = 7; //创建人
+  string updateBy = 8; //更新人
+}
+
+message AddSysRoleReq {
+  string roleName = 1; //角色名称
+  string roleCode = 2;
+  string description = 3; //描述
+  string createBy = 4; //创建人
+  string updateBy = 5; //更新人
+}
+
+message AddSysRoleResp {
+}
+
+message UpdateSysRoleReq {
+  uint64 id = 1; //自增主键
+  string roleName = 2; //角色名称
+  string description = 3; //描述
+  string updateBy = 4; //更新人
+}
+
+message UpdateSysRoleResp {
+}
+
+message DelSysRoleReq {
+  uint64 id = 1; //id
+}
+
+message DelSysRoleResp {
+}
+
+message GetSysRoleByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysRoleByIdResp {
+  SysRole data = 1; //sysRole
+}
+
+message SearchSysRoleReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string roleName = 5; //角色名称
+  string roleCode = 6;
+  string description = 7; //描述
+  string createBy = 8; //创建人
+  string updateBy = 9; //更新人
+}
+
+message SearchSysRoleResp {
+  repeated SysRole data = 1; //sysRole
+  uint64 total = 2; //total
+}
+
+
+// 角色绑定权限
+message BindRolePermissionReq {
+  uint64 roleId = 1; //角色ID
+  repeated uint64 permissionIds = 2; //权限ID列表
+}
+
+message BindRolePermissionResp {
+}
+
+// 查询角色权限
+message SearchRolePermissionReq {
+  uint64 roleId = 1; //角色ID
+}
+message SearchRolePermissionResp {
+  repeated uint64 data = 1; //permissionIds // TODO
+}
+
+// 角色绑定菜单
+message BindRoleMenuReq {
+  uint64 roleId = 1;
+  repeated uint64 menuIds = 2;
+}
+message BindRoleMenuResp {
+}
+
+message SearchRoleMenuReq {
+  uint64 roleId = 1;
+}
+
+message SearchRoleMenuResp {
+  repeated uint64 data = 1; //menuIds // TODO
+}
+
+// 查询权限IDS
+message SearchRolePermissionIdsReq {
+  uint64 roleId = 1;
+}
+message SearchRolePermissionIdsResp {
+  repeated uint64 data = 1; //permissionIds // TODO
+}
+
+
+service SysRoleService {
+	//-----------------------角色表----------------------- 
+	 rpc AddSysRole(AddSysRoleReq) returns (AddSysRoleResp);
+	 rpc UpdateSysRole(UpdateSysRoleReq) returns (UpdateSysRoleResp);
+	 rpc DelSysRole(DelSysRoleReq) returns (DelSysRoleResp);
+	 rpc GetSysRoleById(GetSysRoleByIdReq) returns (GetSysRoleByIdResp);
+	 rpc SearchSysRole(SearchSysRoleReq) returns (SearchSysRoleResp);
+
+   rpc BindRolePermission(BindRolePermissionReq) returns (BindRolePermissionResp);
+   rpc SearchRolePermission(SearchRolePermissionReq) returns (SearchRolePermissionResp);
+   rpc BindRoleMenu(BindRoleMenuReq) returns (BindRoleMenuResp);
+   rpc SearchRoleMenu(SearchRoleMenuReq) returns (SearchRoleMenuResp);
+   rpc SearchRolePermissionIds(SearchRolePermissionIdsReq) returns (SearchRolePermissionIdsResp);
+}
+
+
+
+// token 验证相关
+// 获取token
+
+// 获取令牌的请求消息
+message GetTokenRequest {
+  string account = 1;     // 账号
+  string password = 2;    // 密码
+}
+
+// Token 响应消息，包含访问令牌和刷新令牌
+message TokenResponse {
+  string access_token = 1;         // 访问令牌
+  int64 access_expires_in = 2;     // 访问令牌过期时间（秒）
+  string refresh_token = 3;        // 刷新令牌
+  int64 refresh_expires_in = 4;    // 刷新令牌过期时间（秒）
+}
+
+// 获取令牌的响应消息
+message GetTokenResponse {
+  uint64 account_id = 1;        // 账号ID
+  string account = 2;           // 账号
+  string user_name = 3;         // 用户名
+  string uuid = 4;
+  repeated string roles = 5;    // 角色列表
+  TokenResponse token = 6;      // 令牌信息
+}
+
+// 验证令牌的请求消息
+message VerifyTokenRequest {
+  string token = 1; // 令牌
+}
+
+// 验证令牌的响应消息
+message VerifyTokenResponse {
+  bool is_valid = 1;            // 令牌是否有效
+  int64 error_type = 2;        // 错误类型
+  string error_message = 3;     // 错误信息
+  int64 expire_time = 4;        // 过期时间（Unix 时间戳）
+  uint64 account_id = 5;        // 账号ID
+  string account = 6;           // 账号
+  string uuid = 7;              // 用户UUID
+  string user_name = 8;         // 用户名
+  repeated string roles = 9;    // 角色列表
+}
+
+// 注销的请求消息
+message LogoutRequest {
+  string account = 1; // 用户UUID
+  string uuid = 2;
+}
+
+// 注销的响应消息
+message LogoutResponse {
+}
+
+// 刷新令牌的请求消息
+message RefreshTokenRequest {
+  string refresh_token = 1; // 刷新令牌
+}
+
+// 刷新令牌的响应消息
+message RefreshTokenResponse {
+  string access_token = 1;         // 访问令牌
+  int64 access_expires_in = 2;     // 访问令牌过期时间（秒）
+}
+
+// 系统认证服务定义
+service SysAuthService {
+  // 获取令牌
+  rpc GetToken(GetTokenRequest) returns (GetTokenResponse);
+
+  // 验证令牌
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+
+  // 注销
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+
+  // 刷新令牌
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+}
+
+// TODO
+//--------------------------------角色与菜单关联表--------------------------------
+//message SysRoleMenu {
+//  uint64 id = 1; //自增主键
+//  uint64 roleId = 2; //角色ID，关联 sys_role 表
+//  uint64 menuId = 3; //菜单ID，关联 sys_menu 表
+//  int64 createTime = 4; //创建时间
+//  int64 updateTime = 5; //最后修改时间
+//}
+//
+//message AddSysRoleMenuReq {
+//  uint64 roleId = 1; //角色ID，关联 sys_role 表
+//  uint64 menuId = 2; //菜单ID，关联 sys_menu 表
+//}
+//
+//message AddSysRoleMenuResp {
+//}
+//
+//message UpdateSysRoleMenuReq {
+//  uint64 id = 1; //自增主键
+//  uint64 roleId = 2; //角色ID，关联 sys_role 表
+//  uint64 menuId = 3; //菜单ID，关联 sys_menu 表
+//}
+//
+//message UpdateSysRoleMenuResp {
+//}
+//
+//message DelSysRoleMenuReq {
+//  uint64 id = 1; //id
+//}
+//
+//message DelSysRoleMenuResp {
+//}
+//
+//message GetSysRoleMenuByIdReq {
+//  uint64 id = 1; //id
+//}
+//
+//message GetSysRoleMenuByIdResp {
+//  GetSysRoleMenuByIdResp data = 1; //sysRoleMenu
+//}
+//
+//message SearchSysRoleMenuReq {
+//  uint64 page = 1; //page
+//  uint64 pageSize = 2; //pageSize
+//  string orderStr = 3; //orderStr
+//  bool isAsc = 4; //isAsc
+//  uint64 roleId = 5; //角色ID，关联 sys_role 表
+//  uint64 menuId = 6; //菜单ID，关联 sys_menu 表
+//}
+//
+//message SearchSysRoleMenuResp {
+//  repeated SysRoleMenu data = 1; //sysRoleMenu
+//  uint64 total = 2; //total
+//}
+//
+//service SysRoleMenuService {
+//	//-----------------------角色与菜单关联表-----------------------
+//	 rpc AddSysRoleMenu(AddSysRoleMenuReq) returns (AddSysRoleMenuResp);
+//	 rpc UpdateSysRoleMenu(UpdateSysRoleMenuReq) returns (UpdateSysRoleMenuResp);
+//	 rpc DelSysRoleMenu(DelSysRoleMenuReq) returns (DelSysRoleMenuResp);
+//	 rpc GetSysRoleMenuById(GetSysRoleMenuByIdReq) returns (GetSysRoleMenuByIdResp);
+//	 rpc SearchSysRoleMenu(SearchSysRoleMenuReq) returns (SearchSysRoleMenuResp);
+//}
+
+//// TODO
+////--------------------------------角色与权限的关联表--------------------------------
+//message SysRolePermission {
+//  uint64 id = 1; //自增主键
+//  uint64 roleId = 2; //角色ID，关联 sys_role 表
+//  uint64 permissionId = 3; //权限ID，关联 sys_permission 表
+//  int64 createTime = 4; //创建时间
+//  int64 updateTime = 5; //最后修改时间
+//}
+//
+//message AddSysRolePermissionReq {
+//  uint64 roleId = 1; //角色ID，关联 sys_role 表
+//  uint64 permissionId = 2; //权限ID，关联 sys_permission 表
+//}
+//
+//message AddSysRolePermissionResp {
+//}
+//
+//message UpdateSysRolePermissionReq {
+//  uint64 id = 1; //自增主键
+//  uint64 roleId = 2; //角色ID，关联 sys_role 表
+//  uint64 permissionId = 3; //权限ID，关联 sys_permission 表
+//}
+//
+//message UpdateSysRolePermissionResp {
+//}
+//
+//message DelSysRolePermissionReq {
+//  uint64 id = 1; //id
+//}
+//
+//message DelSysRolePermissionResp {
+//}
+//
+//message GetSysRolePermissionByIdReq {
+//  uint64 id = 1; //id
+//}
+//
+//message GetSysRolePermissionByIdResp {
+//  GetSysRolePermissionByIdResp data = 1; //sysRolePermission
+//}
+//
+//message SearchSysRolePermissionReq {
+//  uint64 page = 1; //page
+//  uint64 pageSize = 2; //pageSize
+//  string orderStr = 3; //orderStr
+//  bool isAsc = 4; //isAsc
+//  uint64 roleId = 5; //角色ID，关联 sys_role 表
+//  uint64 permissionId = 6; //权限ID，关联 sys_permission 表
+//}
+//
+//message SearchSysRolePermissionResp {
+//  repeated SysRolePermission data = 1; //sysRolePermission
+//  uint64 total = 2; //total
+//}
+//
+//service SysRolePermissionService {
+//	//-----------------------角色与权限的关联表-----------------------
+//	 rpc AddSysRolePermission(AddSysRolePermissionReq) returns (AddSysRolePermissionResp);
+//	 rpc UpdateSysRolePermission(UpdateSysRolePermissionReq) returns (UpdateSysRolePermissionResp);
+//	 rpc DelSysRolePermission(DelSysRolePermissionReq) returns (DelSysRolePermissionResp);
+//	 rpc GetSysRolePermissionById(GetSysRolePermissionByIdReq) returns (GetSysRolePermissionByIdResp);
+//	 rpc SearchSysRolePermission(SearchSysRolePermissionReq) returns (SearchSysRolePermissionResp);
+//}
+
+
+// TODO
+//--------------------------------用户与角色关联表--------------------------------
+//message SysUserRole {
+//  uint64 id = 1; //自增主键
+//  uint64 userId = 2; //用户ID，关联 sys_user 表
+//  uint64 roleId = 3; //角色ID，关联 sys_role 表
+//  int64 createTime = 4; //创建时间
+//  int64 updateTime = 5; //最后修改时间
+//}
+//
+//message AddSysUserRoleReq {
+//  uint64 userId = 1; //用户ID，关联 sys_user 表
+//  uint64 roleId = 2; //角色ID，关联 sys_role 表
+//}
+//
+//message AddSysUserRoleResp {
+//}
+//
+//message UpdateSysUserRoleReq {
+//  uint64 id = 1; //自增主键
+//  uint64 userId = 2; //用户ID，关联 sys_user 表
+//  uint64 roleId = 3; //角色ID，关联 sys_role 表
+//}
+//
+//message UpdateSysUserRoleResp {
+//}
+//
+//message DelSysUserRoleReq {
+//  uint64 id = 1; //id
+//}
+//
+//message DelSysUserRoleResp {
+//}
+//
+//message GetSysUserRoleByIdReq {
+//  uint64 id = 1; //id
+//}
+//
+//message GetSysUserRoleByIdResp {
+//  GetSysUserRoleByIdResp data = 1; //sysUserRole
+//}
+//
+//message SearchSysUserRoleReq {
+//  uint64 page = 1; //page
+//  uint64 pageSize = 2; //pageSize
+//  string orderStr = 3; //orderStr
+//  bool isAsc = 4; //isAsc
+//  uint64 userId = 5; //用户ID，关联 sys_user 表
+//  uint64 roleId = 6; //角色ID，关联 sys_role 表
+//}
+//
+//message SearchSysUserRoleResp {
+//  repeated SysUserRole data = 1; //sysUserRole
+//  uint64 total = 2; //total
+//}
+//
+//service SysUserRoleService {
+//	//-----------------------用户与角色关联表-----------------------
+//	 rpc AddSysUserRole(AddSysUserRoleReq) returns (AddSysUserRoleResp);
+//	 rpc UpdateSysUserRole(UpdateSysUserRoleReq) returns (UpdateSysUserRoleResp);
+//	 rpc DelSysUserRole(DelSysUserRoleReq) returns (DelSysUserRoleResp);
+//	 rpc GetSysUserRoleById(GetSysUserRoleByIdReq) returns (GetSysUserRoleByIdResp);
+//	 rpc SearchSysUserRole(SearchSysUserRoleReq) returns (SearchSysUserRoleResp);
+//}
+
+// ------------------------------------ 
+// Enums
+// ------------------------------------ 
+
+// 徽标类型 dot|normal 
+enum SysMenuBadgeType {
+  M = 0;
+}
+
+
+
+//--------------------------------字典表--------------------------------
+message SysDict {
+  uint64 id = 1; //自增主键
+  string dictName = 2; //字典名称
+  string dictCode = 3; //字典编码
+  string description = 4; //描述
+  string createBy = 5; //创建人
+  string updateBy = 6; //更新人
+  int64 createTime = 7; //创建时间
+  int64 updateTime = 8; //最后修改时间
+}
+
+message AddSysDictReq {
+  string dictName = 1; //字典名称
+  string dictCode = 2; //字典编码
+  string description = 3; //描述
+  string createBy = 4; //创建人
+  string updateBy = 5; //更新人
+}
+
+message AddSysDictResp {
+}
+
+message UpdateSysDictReq {
+  uint64 id = 1; //自增主键
+  string dictName = 2; //字典名称
+  string description = 3; //描述
+  string updateBy = 4; //更新人
+}
+
+message UpdateSysDictResp {
+}
+
+message DelSysDictReq {
+  uint64 id = 1; //id
+  string updateBy = 2;
+}
+
+message DelSysDictResp {
+}
+
+message GetSysDictByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysDictByIdResp {
+  SysDict data = 1; //sysDict
+}
+
+message SearchSysDictReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string dictName = 5; //字典名称
+  string dictCode = 6; //字典编码
+  string description = 7; //描述
+  string createBy = 9; //创建人
+  string updateBy = 10; //更新人
+}
+
+message SearchSysDictResp {
+  repeated SysDict data = 1; //sysDict
+  uint64 total = 2; //total
+}
+
+service SysDictService {
+  //-----------------------字典表-----------------------
+  rpc AddSysDict(AddSysDictReq) returns (AddSysDictResp);
+  rpc UpdateSysDict(UpdateSysDictReq) returns (UpdateSysDictResp);
+  rpc DelSysDict(DelSysDictReq) returns (DelSysDictResp);
+  rpc GetSysDictById(GetSysDictByIdReq) returns (GetSysDictByIdResp);
+  rpc SearchSysDict(SearchSysDictReq) returns (SearchSysDictResp);
+}
+
+//--------------------------------字典数据表--------------------------------
+message SysDictItem {
+  uint64 id = 1; //自增主键
+  string dictCode = 2; //字典ID，关联 sys_dict 表
+  string itemText = 3; //字典项文本
+  string itemCode = 4; //字典项值
+  string description = 5; //描述
+  int64 sortOrder = 6; //排序
+  string createBy = 7; //创建人
+  string updateBy = 8; //更新人
+  int64 createTime = 9; //创建时间
+  int64 updateTime = 10; //最后修改时间
+}
+
+message AddSysDictItemReq {
+  string dictCode = 1; //字典ID，关联 sys_dict 表
+  string itemText = 2; //字典项文本
+  string itemCode = 3; //字典项值
+  string description = 4; //描述
+  int64 sortOrder = 5; //排序
+  string createBy = 6; //创建人
+  string updateBy = 7; //更新人
+}
+
+message AddSysDictItemResp {
+}
+
+message UpdateSysDictItemReq {
+  uint64 id = 1; //自增主键
+  string itemText = 2; //字典项文本
+  string description = 3; //描述
+  int64 sortOrder = 4; //排序
+  string updateBy = 5; //更新人
+}
+
+message UpdateSysDictItemResp {
+}
+
+message DelSysDictItemReq {
+  uint64 id = 1; //id
+  string updateBy = 2;
+}
+
+message DelSysDictItemResp {
+}
+
+message GetSysDictItemByIdReq {
+  uint64 id = 1; //id
+}
+
+message GetSysDictItemByIdResp {
+  SysDictItem data = 1; //sysDictItem
+}
+
+message SearchSysDictItemReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string dictCode = 5; //字典ID，关联 sys_dict 表
+  string itemText = 6; //字典项文本
+  string itemCode = 7; //字典项值
+  string description = 8; //描述
+  string createBy = 9; //创建人
+  string updateBy = 10; //更新人
+}
+
+message SearchSysDictItemResp {
+  repeated SysDictItem data = 1; //sysDictItem
+  uint64 total = 2; //total
+}
+
+service SysDictItemService {
+  //-----------------------字典数据表-----------------------
+  rpc AddSysDictItem(AddSysDictItemReq) returns (AddSysDictItemResp);
+  rpc UpdateSysDictItem(UpdateSysDictItemReq) returns (UpdateSysDictItemResp);
+  rpc DelSysDictItem(DelSysDictItemReq) returns (DelSysDictItemResp);
+  rpc GetSysDictItemById(GetSysDictItemByIdReq) returns (GetSysDictItemByIdResp);
+  rpc SearchSysDictItem(SearchSysDictItemReq) returns (SearchSysDictItemResp);
+}
+
+// 上传图片请求消息
+message UploadImageRequest {
+  bytes imageData = 1;  // 图片的二进制数据
+  string fileName = 2;  // 图片文件的名称
+  string project = 3;   // 项目名称
+}
+
+// 上传图片响应消息
+message UploadImageResponse {
+  string imageUri = 1;   // 图片名称
+  string imageUrl = 2;
+}
+
+// ImageService 提供图片上传和获取 URL 的功能
+service ImageService {
+  // 上传图片
+  rpc UploadImage(UploadImageRequest) returns (UploadImageResponse);
+}
+
+
+

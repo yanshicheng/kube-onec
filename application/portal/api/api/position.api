@@ -1,0 +1,94 @@
+syntax = "v1"
+
+info(
+    title: "SysPosition Service API"
+    desc: "API 服务用于管理系统职位相关操作"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+import "./base.api"
+
+type (
+    // SysPosition 表示职位信息
+    SysPosition {
+        Id uint64 `json:"id"`                // 自增主键
+        Name string `json:"name"`            // 职位名称
+        CreateTime int64 `json:"createTime"` // 创建时间
+        UpdateTime int64 `json:"updateTime"` // 最后修改时间
+    }
+
+        // 添加职位请求
+    AddSysPositionRequest {
+        Name string `json:"name" validate:"required,min=2,max=100"` // 职位名称，必填，长度 2-100 字符
+    }
+
+        // 更新职位请求
+    UpdateSysPositionRequest {
+        Id uint64 `path:"id" validate:"required,gt=0"`              // 自增主键，必填，必须大于 0
+        Name string `json:"name" validate:"required,min=2,max=100"` // 职位名称，必填，长度 2-100 字符
+    }
+
+
+        // 搜索职位请求
+    SearchSysPositionRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                             // 当前页码，必填，最小值为 1， 默认 1
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`            // 每页条数，必填，范围 1-200， 默认 10
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty"`                         // 排序字段， 默认是 id
+        IsAsc bool `form:"isAsc,optional" default:"false" validate:"omitempty"`                              // 是否升序 默认是 false
+        Name string `form:"name,optional" default:"" validate:"omitempty,max=100"`                           // 职位名称，可选，最长 100 字符
+    }
+
+        // 搜索职位响应
+    SearchSysPositionResponse {
+        Items []SysPosition `json:"data"`  // 职位数据列表
+        Total uint64 `json:"total"`        // 总条数
+    }
+
+
+
+
+
+        // SysUser 表示用户信息（假设已有定义）
+    PositionSysUser {
+        Id uint64 `json:"id"`                 // 用户 Id
+        Username string `json:"username"`     // 用户名
+        Email string `json:"email"`           // 用户邮箱
+        PositionId uint64 `json:"positionId"` // 职位 Id
+                                              // 根据实际需求添加更多字段
+    }
+)
+
+@server(
+//    jwt: Auth
+    middleware: JWTAuthMiddleware
+    group: position
+    prefix:     /v1/portal/sys/position
+)
+service portal-api {
+    // ---------------------- 职位表 ----------------------
+
+    // 添加职位
+    @handler AddSysPositionHandler
+    post / (AddSysPositionRequest) returns (string)
+
+    // 更新职位
+    @handler UpdateSysPositionHandler
+    put /:id (UpdateSysPositionRequest) returns (string)
+
+    // 删除职位
+    @handler DelSysPositionHandler
+    delete /:id (DefaultIdRequest) returns (string)
+
+    // 根据 Id 获取职位
+    @handler GetSysPositionByIdHandler
+    get /:id (DefaultIdRequest) returns (SysPosition)
+
+    // 搜索职位
+    @handler SearchSysPositionHandler
+    get / (SearchSysPositionRequest) returns (SearchSysPositionResponse)
+
+    // 通过职位 Id 查询用户列表
+    @handler SearchSysPositionByUserHandler
+    get /:id/users (DefaultIdRequest) returns ([]PositionSysUser)
+}

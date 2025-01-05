@@ -1,0 +1,67 @@
+package jwt
+
+import (
+	"github.com/dgrijalva/jwt-go"
+	"time" // 引入time包用于处理时间
+)
+
+// TokenOptions 结构体用于存储生成令牌所需的配置信息
+type (
+	TokenOptions struct {
+		AccessSecret string                 // 访问令牌的密钥，用于签名和验证JWT
+		AccessExpire int64                  // 访问令牌的过期时间（以秒为单位）
+		Fields       map[string]interface{} // 自定义的JWT字段，用于存储额外信息
+	}
+
+	// Token 结构体用于存储生成的访问令牌及其过期时间
+	Token struct {
+		AccessToken  string `json:"access_token"`  // 生成的访问令牌字符串
+		AccessExpire int64  `json:"access_expire"` // 令牌的过期时间戳（Unix时间戳）
+	}
+)
+
+// BuildTokens 函数用于生成访问令牌，并返回Token结构体
+func BuildTokens(opt TokenOptions) (Token, error) {
+	var token Token // 初始化Token结构体
+
+	// 计算令牌的签发时间，提前1分钟确保令牌的有效性时间
+	now := time.Now().Add(-time.Minute).Unix()
+
+	// 调用genToken函数生成访问令牌
+	accessToken, err := genToken(now, opt.AccessSecret, opt.Fields, opt.AccessExpire)
+	if err != nil {
+		return token, err // 如果生成失败，返回错误
+	}
+
+	// 设置生成的访问令牌和过期时间
+	token.AccessToken = accessToken
+	token.AccessExpire = now + opt.AccessExpire
+
+	return token, nil // 返回生成的Token结构体
+}
+
+// genToken 函数用于生成JWT令牌
+// 参数:
+//
+//	iat        - 签发时间戳（Unix时间戳）
+//	secretKey  - 签名密钥
+//	payloads   - 自定义的JWT字段
+//	seconds    - 令牌的有效时间（以秒为单位）
+func genToken(iat int64, secretKey string, payloads map[string]interface{}, seconds int64) (string, error) {
+	// 初始化JWT的声明 (Claims)
+	claims := make(jwt.MapClaims)
+	claims["exp"] = iat + seconds // 设置令牌的过期时间戳
+	claims["iat"] = iat           // 设置令牌的签发时间戳
+
+	// 添加自定义的字段到JWT声明中
+	for k, v := range payloads {
+		claims[k] = v
+	}
+
+	// 创建一个新的JWT对象，使用HS256签名算法
+	token := jwt.New(jwt.SigningMethodHS256)
+	token.Claims = claims // 将声明设置到令牌中
+
+	// 使用密钥对令牌进行签名并返回签名后的字符串
+	return token.SignedString([]byte(secretKey))
+}

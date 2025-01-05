@@ -1,0 +1,120 @@
+syntax = "v1"
+
+info(
+    title: "SysOrganization Service API"
+    desc: "API 服务用于管理系统机构相关操作"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+
+import "./base.api"
+
+type (
+    // SysOrganization 表示机构信息
+    SysOrganization {
+        Id uint64 `json:"id"`                   // 自增主键
+        Name string `json:"name"`               // 团队名称
+        ParentId uint64 `json:"parentId"`       // 父级机构的 Id，根级为 0
+        Level int64 `json:"level"`              // 机构层级，从 0 开始
+        Description string `json:"description"` // 机构描述
+        CreateTime int64 `json:"createTime"`    // 创建时间
+        UpdateTime int64 `json:"updateTime"`    // 最后修改时间
+    }
+
+        // 添加机构请求
+    AddSysOrganizationRequest {
+        Name string `json:"name" validate:"required,min=2,max=100"`                  // 团队名称，必填，长度 2-100 字符
+        ParentId uint64 `json:"parentId" validate:"gte=0"`                           // 父级机构的 Id，可选，根级为 0
+        Description string `json:"description,optional" validate:"omitempty,max=255"`         // 机构描述，可选，最长 255 字符
+    }
+
+        // 添加机构响应
+    AddSysOrganizationResponse {
+        // 根据需求，可以添加新创建机构的 Id 或其他信息
+    }
+
+        // 更新机构请求
+    UpdateSysOrganizationRequest {
+        Id uint64 `path:"id"  validate:"required,gt=0"`                               // 自增主键，必填，必须大于 0
+        Name string `json:"name" validate:"required,min=2,max=100"`                  // 团队名称，必填，长度 2-100 字符
+        Description string `json:"description,optional" validate:"omitempty,max=255"`         // 机构描述，可选，最长 255 字符
+    }
+
+
+
+        //    Page     uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                    // 当前页码，必填，最小值为 1， 默认 1
+        //PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`        // 每页条数，必填，范围 1-200， 默认 10
+        //OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty"`                      // 排序字段， 默认是 id
+        //IsAsc    bool   `form:"isAsc,optional" default:"false" validate:"omitempty"`
+        // 搜索机构请求
+    SearchSysOrganizationRequest {
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty"`                      // 排序字段， 默认是 id
+        IsAsc bool `form:"isAsc,optional" default:"false" validate:"omitempty"`                           // 是否升序，可选
+        Name string `form:"name,optional" default:"" validate:"omitempty,max=100"`                                   // 团队名称，可选，最长 100 字符
+        ParentId uint64 `form:"parentId,optional" default:"0" validate:"omitempty,gte=0"`                             // 父级机构的 Id，可选
+        Description string `form:"description,optional" default:"" validate:"omitempty,max=255"`                     // 机构描述，可选，最长 255 字符
+    }
+
+        // 搜索机构响应
+    SearchSysOrganizationResponse {
+        Items []OrganizationNode `json:"data"`   // 机构数据列表
+    }
+
+        // 机构树节点
+    OrganizationNode {
+        Id uint64 `json:"id"`                            // 自增主键
+        Name string `json:"name"`                        // 团队名称
+        ParentId uint64 `json:"parentId"`                // 父级机构的 Id，根级为 0
+        Level int64 `json:"level"`                       // 机构层级，从 0 开始
+        Description string `json:"description"`          // 机构描述
+        CreateTime int64 `json:"createTime"`             // 创建时间
+        UpdateTime int64 `json:"updateTime"`             // 最后修改时间
+        Children []OrganizationNode `json:"children"`    // 子机构
+    }
+
+        // 获取机构树请求
+    GetOrganizationTreeRequest {
+        // 无字段
+    }
+
+        // 获取机构树响应
+    GetOrganizationTreeResponse {
+        Data []OrganizationNode `json:"data"` // 机构树
+    }
+)
+
+@server(
+//    jwt:    Auth
+    middleware: JWTAuthMiddleware
+    group: organization
+    prefix:     /v1/portal/sys/organization
+)
+service portal-api {
+    // ---------------------- 机构表 ----------------------
+
+    // 添加机构
+    @handler AddSysOrganizationHandler
+    post / (AddSysOrganizationRequest) returns (string)
+
+    // 更新机构
+    @handler UpdateSysOrganizationHandler
+    put /:id (UpdateSysOrganizationRequest) returns (string)
+
+    // 删除机构
+    @handler DelSysOrganizationHandler
+    delete /:id (DefaultIdRequest) returns (string)
+
+    // 根据 Id 获取机构
+    @handler GetSysOrganizationByIdHandler
+    get /:id (DefaultIdRequest) returns (SysOrganization)
+
+
+    // 搜索机构
+    @handler SearchSysOrganizationHandler
+    get / (SearchSysOrganizationRequest) returns (SearchSysOrganizationResponse)
+
+    // 获取机构树
+    @handler GetOrganizationTreeHandler
+    get /tree (GetOrganizationTreeRequest) returns (GetOrganizationTreeResponse)
+}

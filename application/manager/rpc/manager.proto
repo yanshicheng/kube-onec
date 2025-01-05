@@ -1,0 +1,350 @@
+syntax = "proto3";
+
+option go_package ="github.com/yanshicheng/kube-onec/application/manager/rpc/pb";
+
+package pb;
+
+// ------------------------------------ 
+// Messages and Services
+// ------------------------------------ 
+
+//--------------------------------集群表，用于管理多个 Kubernetes 集群--------------------------------
+message OnecCluster {
+  string id = 1; //集群唯一标识符
+  string name = 2; //集群名称
+  int64 skipInsecure = 3; //是否跳过不安全连接（0：否，1：是）
+  string host = 4; //集群主机地址
+  string envTag = 5; //访问集群的令牌
+  string status = 6;
+  OnecClusterConnType connType = 7; //连接类型
+  string version = 8; //集群版本
+  string commit = 9; //集群提交版本
+  string platform = 10; //集群平台
+  int64 versionBuildTime = 11; //版本构建时间
+  int64 clusterCreateTime = 12; //集群创建时间
+  string description = 13; //集群描述信息
+  string createBy = 14; //记录创建人
+  string updateBy = 15; //记录更新人
+  int64 createTime = 16; //记录创建时间
+  int64 updateTime = 17; //记录更新时间
+}
+
+message AddOnecClusterReq {
+  string name = 1; //集群名称
+  int64 skipInsecure = 2; //是否跳过不安全连接（0：否，1：是）
+  string host = 3; //集群主机地址
+  string token = 4; //访问集群的令牌
+  OnecClusterConnType connType = 5; //连接类型
+  int64 envTag = 6;
+  string description = 11; //集群描述信息
+  string createBy = 12; //记录创建人
+  string updateBy = 13; //记录更新人
+}
+
+message AddOnecClusterResp {
+}
+
+message UpdateOnecClusterReq {
+  string id = 1; //集群唯一标识符
+  string name = 2; //集群名称
+  int64 skipInsecure = 3; //是否跳过不安全连接（0：否，1：是）
+  string host = 4; //集群主机地址
+  string token = 5; //访问集群的令牌
+  OnecClusterConnType connType = 6; //连接类型
+  int64 envTag = 7;
+  string description = 12; //集群描述信息
+  string updateBy = 13; //记录更新人
+}
+
+message UpdateOnecClusterResp {
+}
+
+message DelOnecClusterReq {
+  string id = 1; //id
+}
+
+message DelOnecClusterResp {
+}
+
+message GetOnecClusterByIdReq {
+  string id = 1; //id
+}
+message OtherInfo {
+  int64 nodeTotal = 1;
+  int64 cpuTotal = 2;
+  int64 memoryTotal = 3;
+  int64 podTotal = 4;
+  // 分配的CPU 总数
+  int64 cpuAllocated = 5;
+  int64 memoryAllocated = 6;
+  int64 podAllocated = 7;
+  // 剩余的CPU 总数
+  int64 cpuRemaining = 8;
+  int64 memoryRemaining = 9;
+  int64 podRemaining = 10;
+}
+message GetOnecClusterByIdResp {
+  OnecCluster data = 1; //onecCluster
+  OtherInfo otherInfo = 2;
+}
+
+message SearchOnecClusterReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string name = 5; //集群名称
+  string host = 7; //集群主机地址
+  int64 envTag = 8; //访问集群的令牌
+  OnecClusterConnType connType = 9; //连接类型
+  string version = 10; //集群版本
+  string platform = 11; //集群平台
+  string createBy = 12; //记录创建人
+  string updateBy = 13; //记录更新人
+}
+
+message SearchOnecClusterResp {
+  repeated OnecCluster data = 1; //onecCluster
+  uint64 total = 2; //total
+}
+
+// 同步集群信息
+message SyncOnecClusterReq {
+  string id = 1; //集群唯一标识符
+  string updateBy = 2;
+}
+message SyncOnecClusterResp {
+}
+
+// 集群添加节点
+message AddOnecNodeReq {
+  string clusterId = 1; //所属集群ID
+  string nodeName = 2; //节点名称，在同一集群中唯一
+  string ipaddr = 3; //节点UID，唯一标识
+  string user = 4; //节点状态
+  string password = 5; //节点角色列表
+}
+message AddOnecNodeResp {
+}
+service OnecClusterService {
+	//-----------------------集群表，用于管理多个 Kubernetes 集群----------------------- 
+	 rpc AddOnecCluster(AddOnecClusterReq) returns (AddOnecClusterResp);
+	 rpc UpdateOnecCluster(UpdateOnecClusterReq) returns (UpdateOnecClusterResp);
+	 rpc DelOnecCluster(DelOnecClusterReq) returns (DelOnecClusterResp);
+	 rpc GetOnecClusterById(GetOnecClusterByIdReq) returns (GetOnecClusterByIdResp);
+	 rpc SearchOnecCluster(SearchOnecClusterReq) returns (SearchOnecClusterResp);
+
+   // 同步集群信息
+   rpc SyncOnecCluster(SyncOnecClusterReq) returns (SyncOnecClusterResp);
+   rpc AddOnecNode(AddOnecNodeReq) returns (AddOnecNodeResp);
+}
+
+//--------------------------------节点表，用于管理各集群中的节点信息--------------------------------
+message OnecNode {
+  string id = 1; //节点唯一标识符
+  string clusterId = 2; //所属集群ID
+  string nodeName = 3; //节点名称，在同一集群中唯一
+  string nodeUid = 4; //节点UID，唯一标识
+  string status = 5; //节点状态
+  string roles = 6; //节点角色列表
+  int64 joinTime = 7; //节点加入集群时间
+  string labels = 8; //节点标签，键值对形式
+  string annotations = 9; //节点注解，键值对形式
+  string podCidr = 10; //Pod CIDR
+  int64 unschedulable = 11; //节点是否不可调度（0：可调度，1：不可调度）
+  string taints = 12; //节点污点列表
+  string nodeIp = 13; //节点地址
+  string os = 14; //操作系统
+  int64 cpu = 15;
+  int64 memory = 16;
+  string maxPods = 17;
+  string kernelVersion = 18; //内核版本
+  string containerRuntime = 19; //容器运行时
+  string kubeletVersion = 20; //Kubelet版本
+  int64 kubeletPort = 21; //Kubelet端口号
+  string operatingSystem = 22; //操作系统类型
+  string architecture = 23; //架构类型
+  string createBy = 24; //记录创建人
+  string updateBy = 25; //记录更新人
+  int64 createTime = 26; //记录创建时间
+  int64 updateTime = 27; //记录更新时间
+}
+
+
+message DelOnecNodeReq {
+  string id = 1; //id
+}
+
+message DelOnecNodeResp {
+}
+
+message GetOnecNodeByIdReq {
+  string id = 1; //id
+}
+
+message GetOnecNodeByIdResp {
+  OnecNode data = 1; //onecNode
+}
+
+message SearchOnecNodeReq {
+  uint64 page = 1; //page
+  uint64 pageSize = 2; //pageSize
+  string orderStr = 3; //orderStr
+  bool isAsc = 4; //isAsc
+  string clusterId = 5; //所属集群ID
+  string nodeName = 6; //节点名称，在同一集群中唯一
+  string nodeUid = 7; //节点UID，唯一标识
+  string status = 8; //节点状态
+  string roles = 9; //节点角色列表
+  int64 joinTime = 10; //节点加入集群时间
+  string labels = 11; //节点标签，键值对形式
+  string annotations = 12; //节点注解，键值对形式
+  string podCidr = 13; //Pod CIDR
+  int64 unschedulable = 14; //节点是否不可调度（0：可调度，1：不可调度）
+  string taints = 15; //节点污点列表
+  string nodeIp = 16; //节点地址
+  string os = 17; //操作系统
+  string kernelVersion = 18; //内核版本
+  string containerRuntime = 19; //容器运行时
+  string kubeletVersion = 20; //Kubelet版本
+  int64 kubeletPort = 21; //Kubelet端口号
+  string operatingSystem = 22; //操作系统类型
+  string architecture = 23; //架构类型
+  string createBy = 24; //记录创建人
+  string updateBy = 25; //记录更新人
+}
+
+message SearchOnecNodeResp {
+  repeated OnecNode data = 1; //onecNode
+  uint64 total = 2; //total
+}
+
+
+// 同步节点信息
+message SyncOnecNodeReq {
+  string clusterId = 1; //所属集群ID
+  string nodeName = 2; //节点名称，在同一集群中唯一
+  string UpdateBy = 3;
+}
+message SyncOnecNodeResp {
+}
+
+
+// 增加标签
+message AddOnecNodeLabelReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //标签键
+  string value = 4; //标签值
+}
+
+message AddOnecNodeLabelResp {
+}
+
+// 删除标签
+message DelOnecNodeLabelReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //标签键
+}
+message DelOnecNodeLabelResp {
+}
+
+// 添加注解
+message AddOnecNodeAnnotationReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //注解键
+  string value = 4; //注解值
+}
+
+message AddOnecNodeAnnotationResp {
+}
+
+// 删除注解
+message DelOnecNodeAnnotationReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //注解键
+}
+message DelOnecNodeAnnotationResp {
+}
+
+// 禁止调度
+message ForbidOnecNodeReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string nodeName = 3; //节点名称，在同一集群中唯一
+}
+message ForbidOnecNodeResp {
+}
+
+// 添加污点
+message AddOnecNodeTaintReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //污点键
+  string value = 4; //污点值
+  string effect = 5; //污点效果
+}
+
+message AddOnecNodeTaintResp {
+}
+
+// 删除污点
+message DelOnecNodeTaintReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string key = 3; //污点键
+}
+
+message DelOnecNodeTaintResp {
+}
+
+// 取消禁止调度
+message CancelForbidOnecNodeReq {
+  string id = 1; //id
+  string clusterId = 2; //所属集群ID
+  string nodeName = 3; //节点名称，在同一集群中唯一
+}
+message CancelForbidOnecNodeResp {
+}
+service OnecNodeService {
+	//-----------------------节点表，用于管理各集群中的节点信息----------------------- 
+	 rpc DelOnecNode(DelOnecNodeReq) returns (DelOnecNodeResp);
+	 rpc GetOnecNodeById(GetOnecNodeByIdReq) returns (GetOnecNodeByIdResp);
+	 rpc SearchOnecNode(SearchOnecNodeReq) returns (SearchOnecNodeResp);
+
+   // 节点添加标签
+   rpc AddOnecNodeLabel(AddOnecNodeLabelReq) returns (AddOnecNodeLabelResp);
+   // 节点删除标签
+   rpc DelOnecNodeLabel(DelOnecNodeLabelReq) returns (DelOnecNodeLabelResp);
+   // 节点添加注解
+   rpc AddOnecNodeAnnotation(AddOnecNodeAnnotationReq) returns (AddOnecNodeAnnotationResp);
+   // 节点删除注解
+   rpc DelOnecNodeAnnotation(DelOnecNodeAnnotationReq) returns (DelOnecNodeAnnotationResp);
+   // 禁止调度
+   rpc ForbidOnecNode(ForbidOnecNodeReq) returns (ForbidOnecNodeResp);
+   // 取消禁止调度
+   rpc CancelForbidOnecNode(CancelForbidOnecNodeReq) returns (CancelForbidOnecNodeResp);
+   // 添加污点
+   rpc AddOnecNodeTaint(AddOnecNodeTaintReq) returns (AddOnecNodeTaintResp);
+   // 删除污点
+   rpc DelOnecNodeTaint(DelOnecNodeTaintReq) returns (DelOnecNodeTaintResp);
+   // 同步节点信息
+   rpc SyncOnecNode(SyncOnecNodeReq) returns (SyncOnecNodeResp);
+}
+
+// ------------------------------------ 
+// Enums
+// ------------------------------------ 
+
+// 连接类型 
+enum OnecClusterConnType {
+  KUBECONFIG = 0;
+  TOKEN = 1;
+  AGENT = 2;
+  OTHER = 3;
+}
+
+

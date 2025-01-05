@@ -1,0 +1,79 @@
+syntax = "v1"
+
+info(
+    title: "SysDict Service API"
+    desc: "API 服务用于管理字典表的相关操作"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+
+import "./base.api"
+type (
+    SysDict {
+        Id uint64 `json:"id"`                  // 自增主键
+        DictName string `json:"dictName"`      // 字典名称
+        DictCode string `json:"dictCode"`      // 字典编码
+        Description string `json:"description"`// 描述
+        CreateBy string `json:"createBy"`      // 创建人
+        UpdateBy string `json:"updateBy"`      // 更新人
+        CreateTime int64 `json:"createTime"`   // 创建时间
+        UpdateTime int64 `json:"updateTime"`   // 最后修改时间
+    }
+
+    AddSysDictRequest {
+        DictName string `json:"dictName" validate:"required,max=50"`      // 字典名称，必填，最长 50 字符
+        DictCode string `json:"dictCode" validate:"required,max=50"`      // 字典编码，必填，最长 50 字符
+        Description string `json:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
+    }
+
+    UpdateSysDictRequest {
+        Id uint64 `json:"id" validate:"required,gt=0"`                   // 字典 ID，必填
+        DictName string `json:"dictName, optional" validate:"required,max=50"`     // 字典名称，必填，最长 50 字符
+        Description string `json:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
+    }
+
+
+
+    SearchSysDictRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`       // 当前页码，默认 1
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数，默认 10
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"` // 排序字段，默认 id
+        IsAsc bool `form:"isAsc,optional" default:"false"`      // 是否升序，默认 false
+        DictName string `form:"dictName,optional" validate:"omitempty,max=50"` // 字典名称，可选
+        DictCode string `form:"dictCode,optional" validate:"omitempty,max=50"` // 字典编码，可选
+        Description string `form:"description,optional" validate:"omitempty,max=255"` // 描述，可选
+        CreateBy string `form:"createBy,optional" validate:"omitempty,max=50"` // 创建人，可选
+        UpdateBy string `form:"updateBy,optional" validate:"omitempty,max=50"` // 更新人，可选
+    }
+    SearchSysDictResponse {
+        Items []SysDict `json:"data"` // 字典数据列表
+        Total uint64 `json:"total"`  // 总条数
+    }
+)
+
+@server(
+    group: dict
+    middleware: JWTAuthMiddleware
+    prefix: /v1/portal/sys/dict
+)
+service portal-api {
+    // 添加字典
+    @handler AddSysDictHandler
+    post / (AddSysDictRequest) returns (string )
+
+    // 更新字典
+    @handler UpdateSysDictHandler
+    put /:id (UpdateSysDictRequest) returns (string)
+
+    // 根据 ID 获取字典
+    @handler GetSysDictByIdHandler
+    get /:id (DefaultIdRequest) returns (SysDict)
+
+    // 搜索字典
+    @handler SearchSysDictHandler
+    get / (SearchSysDictRequest) returns (SearchSysDictResponse)
+
+    @handler DeleteSysDictHandler
+    delete /:id (DefaultIdRequest) returns (string)
+}

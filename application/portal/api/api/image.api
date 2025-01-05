@@ -1,0 +1,34 @@
+syntax = "v1"
+
+info(
+    title: "Storage Service API"
+    desc: "API 服务用于管理存储相关操作"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+
+
+type (
+    UploadImageRequest {
+        Project string `form:"Project" validate:"required,min=2,max=50"`
+    }
+    UploadImageResponse {
+        ImageUri string `json:"imageUri"`
+        ImageUrl string `json:"imageUrl"`
+    }
+)
+
+@server (
+    middleware: JWTAuthMiddleware
+    jwt:    Auth
+    group:  upload
+    prefix: /v1/portal/store
+)
+service portal-api {
+    // 创建账号信息
+    @handler UploadImageHandler
+    post /upload (UploadImageRequest) returns (UploadImageResponse)
+}
+
+
