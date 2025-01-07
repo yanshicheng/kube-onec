@@ -24,7 +24,13 @@ func NewGetOnecNodeByIdLogic(ctx context.Context, svcCtx *svc.ServiceContext) *G
 }
 
 func (l *GetOnecNodeByIdLogic) GetOnecNodeById(in *pb.GetOnecNodeByIdReq) (*pb.GetOnecNodeByIdResp, error) {
-	// todo: add your logic here and delete this line
-
-	return &pb.GetOnecNodeByIdResp{}, nil
+	res, err := l.svcCtx.NodeModel.FindOne(l.ctx, in.Id)
+	if err != nil {
+		l.Logger.Errorf("获取节点信息失败: %v", err)
+		return nil, err
+	}
+	data := ConvertDbModelToPbModel(res)
+	return &pb.GetOnecNodeByIdResp{
+		Data: data,
+	}, nil
 }

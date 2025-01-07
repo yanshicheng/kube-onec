@@ -26,7 +26,7 @@ go run application/portal/api/portal.go -f application/portal/api/etc/portal.yam
 
 
 # manager
-goctl model mysql datasource -url="root:123456@tcp(172.16.1.61:3307)/kube_onec" -table="onec_cluster,onec_cluster_conn_info,onec_node,onec_project,onec_project_admin,onec_project_quota,onec_project_application" -dir="./application/manager/rpc/internal/model" -cache=true --style=goZero
+goctl model mysql datasource -url="root:123456@tcp(172.16.1.61:3307)/kube_onec" -table="onec_cluster,onec_cluster_conn_info,onec_node,onec_project,onec_project_admin,onec_project_quota,onec_project_application,onec_resource_taints,onec_resource_annotations,onec_resource_labels" -dir="./application/manager/rpc/internal/model" -cache=true --style=goZero
 bash script/mysql.sh -t onec_cluster,onec_cluster_conn_info,onec_node,onec_project,onec_project_admin,onec_project_quota,onec_project_application -o "./application/manager/rpc/manager1.proto" -g "github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
 
 goctl rpc protoc \

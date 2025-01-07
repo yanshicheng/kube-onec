@@ -30,10 +30,12 @@ func (l *GetOnecNodeByIdLogic) GetOnecNodeById(req *types.DefaultIdRequest) (res
 	})
 	if err != nil {
 		l.Logger.Errorf("获取节点信息失败: %v", err)
-		return
+		return nil, err
 	}
 	// 映射 RPC 返回的数据到 API 响应结构体
-	resp = &types.OnecNode{
+	l.Logger.Infof("获取节点信息成功: %v", res.Data.NodeName)
+
+	return &types.OnecNode{
 		Id:               res.Data.Id,
 		ClusterUuid:      res.Data.ClusterUuid,
 		NodeName:         res.Data.NodeName,
@@ -59,7 +61,5 @@ func (l *GetOnecNodeByIdLogic) GetOnecNodeById(req *types.DefaultIdRequest) (res
 		UpdatedBy:        res.Data.UpdatedBy,
 		CreatedAt:        res.Data.CreatedAt,
 		UpdatedAt:        res.Data.UpdatedAt,
-	}
-	l.Logger.Infof("获取节点信息成功: %v", resp)
-	return resp, nil
+	}, nil
 }

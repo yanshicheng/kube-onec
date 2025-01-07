@@ -7,15 +7,28 @@ import (
 
 // NodesInterface 定义节点模块的接口
 type NodesInterface interface {
-	GetAllNodesInfo() ([]*NodeInfo, error)
-	GetNodeInfo(nodeName string) (*NodeInfo, error)
-	AddTaint(nodeName string, taint corev1.Taint) error
-	AddLabel(nodeName, key, value string) error
-	RemoveLabel(nodeName, key string) error
-	RemoveTaint(nodeName string, taint corev1.Taint) error
-	MarkUnschedulable(nodeName string) error
-	ForceEvictAllPods(nodeName string) error
-	EvictPod(namespace, podName string) error
+	GetAllNodesInfo() ([]*NodeInfo, error)          // 获取所有节点信息
+	GetNodeInfo(nodeName string) (*NodeInfo, error) // 获取指定节点信息
+
+	// 污点相关
+	AddTaint(nodeName string, taint corev1.Taint) error    // 添加污点
+	RemoveTaint(nodeName string, taint corev1.Taint) error // 移除污点
+
+	AddLabel(nodeName, key, value string) error // 添加标签
+	RemoveLabel(nodeName, key string) error     // 移除标签
+
+	// 调度相关
+	ForbidScheduled(nodeName string) error // 标记节点不可调度
+	EnableScheduled(nodeName string) error // 启用调度
+
+	// 驱逐当前节点所有pod
+	ForceEvictAllPods(nodeName string) error // 强制驱逐所有Pod
+
+	// 注解相关
+	AddAnnotation(nodeName string, key, value string) error
+	RemoveAnnotation(nodeName string, key string) error
+
+	GetNodeWithRetry(nodeName string, maxRetries int) (*corev1.Node, error)
 }
 
 type NodeInfo struct {
@@ -24,25 +37,24 @@ type NodeInfo struct {
 	Status   string `json:"status"`
 	Roles    string `json:"roles"`
 	// 加入集群时间
-	JoinTime time.Time `json:"joinTime"`
-	// labels
-	Labels map[string]string `json:"labels"`
-	// annotations
-	Annotations      map[string]string `json:"annotations"`
-	PodCIDR          string            `json:"podCIDR"`
-	Unschedulable    bool              `json:"unschedulable"` // 节点是否不可调度
-	Taints           []Taint           `json:"taints"`
-	NodeIp           string            `json:"nodeIp"`
-	Os               string            `json:"os"`
-	Cpu              int64             `json:"cpu"`
-	Memory           float64           `json:"memory"`
-	MaxPods          int64             `json:"macPods"`
-	KernelVersion    string            `json:"kernelVersion"`
-	ContainerRuntime string            `json:"containerRuntime"`
-	KubeletVersion   string            `json:"kubeletVersion"`
-	KubeletPort      int64             `json:"kubeletPort"`
-	OperatingSystem  string            `json:"operatingSystem"`
-	Architecture     string            `json:"architecture"`
+	JoinTime         time.Time `json:"joinTime"`
+	PodCIDR          string    `json:"podCIDR"`
+	Unschedulable    bool      `json:"unschedulable"` // 节点是否不可调度
+	NodeIp           string    `json:"nodeIp"`
+	Os               string    `json:"os"`
+	Cpu              int64     `json:"cpu"`
+	Memory           float64   `json:"memory"`
+	MaxPods          int64     `json:"macPods"`
+	KernelVersion    string    `json:"kernelVersion"`
+	ContainerRuntime string    `json:"containerRuntime"`
+	KubeletVersion   string    `json:"kubeletVersion"`
+	KubeletPort      int64     `json:"kubeletPort"`
+	OperatingSystem  string    `json:"operatingSystem"`
+	Architecture     string    `json:"architecture"`
+
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+	Taints      []Taint           `json:"taints"`
 }
 
 type Taint struct {

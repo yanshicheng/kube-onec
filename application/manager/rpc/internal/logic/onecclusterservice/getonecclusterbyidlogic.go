@@ -31,7 +31,7 @@ func (l *GetOnecClusterByIdLogic) GetOnecClusterById(in *pb.GetOnecClusterByIdRe
 		return nil, errorx.DatabaseFindErr
 	}
 	clusterInfo := ConvertModelToPBCluster(cluster)
-
+	clusterInfo.Token = cluster.Token
 	return &pb.GetOnecClusterByIdResp{
 		Data: clusterInfo,
 	}, nil
@@ -59,6 +59,16 @@ func ConvertModelToPBCluster(cluster *model.OnecCluster) *pb.OnecCluster {
 		UpdatedBy:        cluster.UpdatedBy,
 		CreatedAt:        cluster.CreatedAt.Unix(),
 		UpdatedAt:        cluster.UpdatedAt.Unix(),
+		Uuid:             cluster.Uuid,
+		NodeLbIp:         cluster.NodeLbIp,
+		Location:         cluster.Location,
+		NodeCount:        cluster.NodeCount,
+		CpuTotal:         cluster.CpuTotal,
+		CpuUsed:          cluster.CpuUsed,
+		MemoryTotal:      cluster.MemoryTotal,
+		MemoryUsed:       cluster.MemoryUsed,
+		PodTotal:         cluster.PodTotal,
+		PodUsed:          cluster.PodUsed,
 	}
 
 	// 返回转换后的 pb.OnecCluster 对象

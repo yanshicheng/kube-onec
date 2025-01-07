@@ -13,12 +13,15 @@ import (
 )
 
 type ServiceContext struct {
-	Config         config.Config
-	Cache          *redis.Redis
-	SysDictItemRpc sysdictitemservice.SysDictItemService
-	OnecClient     *manager.OnecK8sClientManager
-	ClusterModel   model.OnecClusterModel
-	NodeModel      model.OnecNodeModel
+	Config                   config.Config
+	Cache                    *redis.Redis
+	SysDictItemRpc           sysdictitemservice.SysDictItemService
+	OnecClient               *manager.OnecK8sClientManager
+	ClusterModel             model.OnecClusterModel
+	NodeModel                model.OnecNodeModel
+	LabelsResourceModel      model.OnecResourceLabelsModel
+	TaintsResourceModel      model.OnecResourceTaintsModel
+	AnnotationsResourceModel model.OnecResourceAnnotationsModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -35,12 +38,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	// 自定义拦截器
 	protalRpc := zrpc.MustNewClient(c.PortalRPC, zrpc.WithUnaryClientInterceptor(interceptors.ClientErrorInterceptor()))
 	return &ServiceContext{
-		Config:         c,
-		Cache:          redis.MustNewRedis(c.Cache),
-		OnecClient:     manager.NewOnecK8sClientManager(),
-		ClusterModel:   model.NewOnecClusterModel(sqlConn, c.DBCache),
-		NodeModel:      model.NewOnecNodeModel(sqlConn, c.DBCache),
-		SysDictItemRpc: sysdictitemservice.NewSysDictItemService(protalRpc),
+		Config:                   c,
+		Cache:                    redis.MustNewRedis(c.Cache),
+		OnecClient:               manager.NewOnecK8sClientManager(),
+		ClusterModel:             model.NewOnecClusterModel(sqlConn, c.DBCache),
+		NodeModel:                model.NewOnecNodeModel(sqlConn, c.DBCache),
+		SysDictItemRpc:           sysdictitemservice.NewSysDictItemService(protalRpc),
+		LabelsResourceModel:      model.NewOnecResourceLabelsModel(sqlConn, c.DBCache),
+		TaintsResourceModel:      model.NewOnecResourceTaintsModel(sqlConn, c.DBCache),
+		AnnotationsResourceModel: model.NewOnecResourceAnnotationsModel(sqlConn, c.DBCache),
 		// BookModel: models.NewBooksModel(sqlx.NewMysql(c.Mysql.DataSource), c.DBCache),
 	}
 }

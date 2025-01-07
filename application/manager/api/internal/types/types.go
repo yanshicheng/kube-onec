@@ -17,15 +17,15 @@ type AddOnecClusterConnInfoRequest struct {
 }
 
 type AddOnecClusterRequest struct {
-	Name         string `json:"name,optional" validate:"required,min=2,max=50"`                           // 集群名称，必填，长度 2-50 字符
-	SkipInsecure int64  `json:"skipInsecure,optional" validate:"required,oneof=0 1"`                      // 是否跳过不安全连接，必填，值为 0 或 1
-	Host         string `json:"host,optional" validate:"required,min=2,max=256"`                          // 集群主机地址，必填，长度 2-256 字符
-	Token        string `json:"token,optional" validate:"required"`                                       // 集群访问令牌，必填
-	ConnCode     string `json:"connType,optional" validate:"required,oneof=KUBECONFIG TOKEN AGENT OTHER"` // 连接类型，必填
-	EnvCode      string `json:"envCode,optional" validate:"omitempty,max=50"`                             // 集群环境标签，可选，最长 50 字符
-	Location     string `json:"location,optional" validate:"omitempty,max=255"`                           // 集群所在地址，可选，最长 255 字符
-	NodeLbIp     string `json:"nodeLbIp,optional" validate:"omitempty,max=100"`                           // Node 负载均衡 IP，可选，最长 100 字符
-	Description  string `json:"description,optional" validate:"omitempty,max=255"`                        // 描述信息，可选，最长 255 字符
+	Name         string `json:"name,optional" validate:"required,min=2,max=50"`      // 集群名称，必填，长度 2-50 字符
+	SkipInsecure int64  `json:"skipInsecure,optional" validate:"required,oneof=0 1"` // 是否跳过不安全连接，必填，值为 0 或 1
+	Host         string `json:"host,optional" validate:"required,min=2,max=256"`     // 集群主机地址，必填，长度 2-256 字符
+	Token        string `json:"token,optional" validate:"required"`                  // 集群访问令牌，必填
+	ConnCode     string `json:"connCode,optional" validate:"required`                // 连接类型，必填
+	EnvCode      string `json:"envCode,optional" validate:"omitempty,max=50"`        // 集群环境标签，可选，最长 50 字符
+	Location     string `json:"location,optional" validate:"omitempty,max=255"`      // 集群所在地址，可选，最长 255 字符
+	NodeLbIp     string `json:"nodeLbIp,optional" validate:"omitempty,max=100"`      // Node 负载均衡 IP，可选，最长 100 字符
+	Description  string `json:"description,optional" validate:"omitempty,max=255"`   // 描述信息，可选，最长 255 字符
 }
 
 type AddOnecNodeAnnotationRequest struct {
@@ -217,11 +217,6 @@ type SearchOnecNodeRequest struct {
 type SearchOnecNodeResponse struct {
 	Items []OnecNode `json:"items"` // 节点数据列表
 	Total uint64     `json:"total"` // 总条数
-}
-
-type SyncOnecClusterRequest struct {
-	Id        uint64 `path:"id" validate:"required,gt=0"`           // 集群 ID，必填，必须大于 0
-	UpdatedBy string `json:"updatedBy" validate:"required,max=100"` // 更新人，必填，最长 100 字符
 }
 
 type SyncOnecNodeRequest struct {

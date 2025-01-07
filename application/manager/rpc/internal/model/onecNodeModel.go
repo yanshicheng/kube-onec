@@ -50,7 +50,7 @@ func (m *defaultOnecNodeModel) FindOneClusterTotalInfo(ctx context.Context, clus
 		FROM 
 			%s
 		WHERE 
-			cluster_uuid = ? AND delete_time IS NULL
+			cluster_uuid = ? AND is_deleted = 0
 	`, m.table)
 
 	// 执行查询，直接从数据库获取数据，不使用缓存

@@ -3,12 +3,13 @@ package sysroleservicelogic
 import (
 	"context"
 	"errors"
+	"strings"
+
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
-	"strings"
 )
 
 type SearchSysRoleLogic struct {
@@ -68,7 +69,7 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 		return nil, errorx.DatabaseQueryErr
 	}
 
-	// 将 create_time 和 update_time 转换为时间戳
+	// 将 created_at 和 update_time 转换为时间戳
 	var data []*pb.SysRole
 	for _, role := range roles {
 		data = append(data, &pb.SysRole{
