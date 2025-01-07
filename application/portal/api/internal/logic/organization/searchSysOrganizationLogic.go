@@ -58,8 +58,8 @@ func mapSysOrganizationToOrganizationNode(org *sysorganizationservice.SysOrganiz
 		ParentId:    org.ParentId,
 		Level:       org.Level,
 		Description: org.Description,
-		CreateTime:  org.CreateTime,
-		UpdateTime:  org.UpdateTime,
+		CreatedAt:   org.CreatedAt,
+		UpdatedAt:   org.UpdatedAt,
 		Children:    mapChildrenToOrganizationNode(org.Children),
 	}
 }

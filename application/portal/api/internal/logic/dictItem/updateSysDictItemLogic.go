@@ -35,7 +35,7 @@ func (l *UpdateSysDictItemLogic) UpdateSysDictItem(req *types.UpdateSysDictItemR
 		Description: req.Description,
 		ItemText:    req.ItemText,
 		SortOrder:   req.SortOrder,
-		UpdateBy:    account,
+		UpdatedBy:    account,
 	})
 
 	if err != nil {

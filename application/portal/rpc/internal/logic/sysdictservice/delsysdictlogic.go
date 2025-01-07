@@ -40,9 +40,9 @@ func (l *DelSysDictLogic) DelSysDict(in *pb.DelSysDictReq) (*pb.DelSysDictResp, 
 		return nil, code.DictHasItemsErr
 	}
 
-	// 定义修改 delete_time 实践，和 修改 updateBy 人 sql
+	// 定义修改 delete_time 实践，和 修改 updatedBy 人 sql
 	sqlStr := "UPDATE {table} set `delete_time` = NOW(), `update_by` = ? where `id` = ?"
-	_, err = l.svcCtx.SysDict.ExecSql(l.ctx, in.Id, sqlStr, in.UpdateBy, in.Id)
+	_, err = l.svcCtx.SysDict.ExecSql(l.ctx, in.Id, sqlStr, in.UpdatedBy, in.Id)
 	if err != nil {
 		l.Logger.Errorf("删除字典失败: %v", err)
 		return nil, errorx.DatabaseDeleteErr

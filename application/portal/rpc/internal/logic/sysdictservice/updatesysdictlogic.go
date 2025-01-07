@@ -36,8 +36,8 @@ func (l *UpdateSysDictLogic) UpdateSysDict(in *pb.UpdateSysDictReq) (*pb.UpdateS
 		l.Logger.Errorf("数据字典查询失败: %v", err)
 		return nil, errorx.DatabaseQueryErr
 	}
-	if in.UpdateBy != "" {
-		res.UpdateBy = in.UpdateBy
+	if in.UpdatedBy != "" {
+		res.UpdatedBy = in.UpdatedBy
 	}
 	if in.DictName != "" {
 		res.DictName = in.DictName

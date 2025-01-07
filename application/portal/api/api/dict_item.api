@@ -18,10 +18,10 @@ type (
         ItemCode string `json:"itemCode"`    // 字典项值
         Description string `json:"description"`// 描述
         SortOrder int64 `json:"sortOrder"`     // 排序
-        CreateBy string `json:"createBy"`      // 创建人
-        UpdateBy string `json:"updateBy"`      // 更新人
-        CreateTime int64 `json:"createTime"`   // 创建时间
-        UpdateTime int64 `json:"updateTime"`   // 最后修改时间
+        CreatedBy string `json:"createdBy"`      // 创建人
+        UpdatedBy string `json:"updatedBy"`      // 更新人
+        CreatedAt int64 `json:"createdAt"`   // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`   // 最后修改时间
     }
 
     AddSysDictItemRequest {
@@ -37,7 +37,7 @@ type (
         ItemText string `json:"itemText" validate:"required,max=255"` // 字典项文本，必填，最长 255 字符
         Description string `json:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
         SortOrder int64 `json:"sortOrder,optional" validate:"omitempty"` // 排序，可选
-        UpdateBy string `json:"updateBy" validate:"required,max=50"` // 更新人，必填，最长 50 字符
+        UpdatedBy string `json:"updatedBy" validate:"required,max=50"` // 更新人，必填，最长 50 字符
     }
 
     SearchSysDictItemRequest {
@@ -49,11 +49,11 @@ type (
         ItemText string `form:"itemText,optional" validate:"omitempty,max=255"` // 字典项文本，可选，最长 255 字符
         ItemCode string `form:"itemCode,optional" validate:"omitempty,max=255"` // 字典项值，可选，最长 255 字符
         Description string `form:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
-        CreateBy string `form:"createBy,optional" validate:"omitempty,max=50"` // 创建人，可选，最长 50 字符
-        UpdateBy string `form:"updateBy,optional" validate:"omitempty,max=50"` // 更新人，可选，最长 50 字符
+        CreatedBy string `form:"createdBy,optional" validate:"omitempty,max=50"` // 创建人，可选，最长 50 字符
+        UpdatedBy string `form:"updatedBy,optional" validate:"omitempty,max=50"` // 更新人，可选，最长 50 字符
     }
     SearchSysDictItemResponse {
-        Items []SysDictItem `json:"data"` // 字典项数据列表
+        Items []SysDictItem `json:"items"` // 字典项数据列表
         Total uint64 `json:"total"`      // 总条数
     }
 )

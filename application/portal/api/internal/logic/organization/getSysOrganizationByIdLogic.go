@@ -38,9 +38,9 @@ func (l *GetSysOrganizationByIdLogic) GetSysOrganizationById(req *types.DefaultI
 		ParentId:    res.Data.ParentId,
 		Description: res.Data.Description,
 		Level:       res.Data.Level,
-		UpdateTime:  res.Data.UpdateTime,
-		CreateTime:  res.Data.CreateTime,
+		UpdatedAt:   res.Data.UpdatedAt,
+		CreatedAt:   res.Data.CreatedAt,
 	}
-	
+
 	return
 }

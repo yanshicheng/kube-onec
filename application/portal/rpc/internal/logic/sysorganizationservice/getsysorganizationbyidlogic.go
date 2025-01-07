@@ -42,8 +42,8 @@ func (l *GetSysOrganizationByIdLogic) GetSysOrganizationById(in *pb.GetSysOrgani
 	data.ParentId = resp.ParentId
 	data.Level = resp.Level
 	data.Description = resp.Description
-	data.UpdateTime = resp.UpdateTime.Unix()
-	data.CreateTime = resp.CreateTime.Unix()
+	data.UpdatedAt = resp.UpdatedAt.Unix()
+	data.CreatedAt = resp.CreatedAt.Unix()
 	return &pb.GetSysOrganizationByIdResp{
 		Data: data,
 	}, nil

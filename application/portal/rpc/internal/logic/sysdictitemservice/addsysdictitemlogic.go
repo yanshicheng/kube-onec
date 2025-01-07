@@ -37,13 +37,13 @@ func (l *AddSysDictItemLogic) AddSysDictItem(in *pb.AddSysDictItemReq) (*pb.AddS
 	}
 
 	_, err = l.svcCtx.SysDictItem.Insert(l.ctx, &model.SysDictItem{
-		CreateBy:    in.CreateBy,
+		CreatedBy:    in.CreatedBy,
 		DictCode:    in.DictCode,
 		ItemText:    in.ItemText,
 		ItemCode:    in.ItemCode,
 		Description: in.Description,
 		SortOrder:   in.SortOrder,
-		UpdateBy:    in.UpdateBy,
+		UpdatedBy:    in.UpdatedBy,
 	})
 	if err != nil {
 		l.Logger.Errorf("添加字典数据失败: %v", err)

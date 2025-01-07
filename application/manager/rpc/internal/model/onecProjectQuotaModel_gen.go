@@ -24,8 +24,8 @@ var (
 	onecProjectQuotaRowsExpectAutoSet   = strings.Join(stringx.Remove(onecProjectQuotaFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	onecProjectQuotaRowsWithPlaceHolder = strings.Join(stringx.Remove(onecProjectQuotaFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheKubeOnecOnecProjectQuotaIdPrefix                 = "cache:kubeOnec:onecProjectQuota:id:"
-	cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix = "cache:kubeOnec:onecProjectQuota:clusterId:projectId:"
+	cacheKubeOnecOnecProjectQuotaIdPrefix                   = "cache:kubeOnec:onecProjectQuota:id:"
+	cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix = "cache:kubeOnec:onecProjectQuota:clusterUuid:projectId:"
 )
 
 type (
@@ -35,7 +35,7 @@ type (
 		FindOne(ctx context.Context, id uint64) (*OnecProjectQuota, error)
 		Search(ctx context.Context, orderStr string, isAsc bool, page, pageSize uint64, queryStr string, args ...any) ([]*OnecProjectQuota, uint64, error)
 		SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*OnecProjectQuota, error)
-		FindOneByClusterIdProjectId(ctx context.Context, clusterId uint64, projectId uint64) (*OnecProjectQuota, error)
+		FindOneByClusterUuidProjectId(ctx context.Context, clusterUuid string, projectId uint64) (*OnecProjectQuota, error)
 		Update(ctx context.Context, data *OnecProjectQuota) error
 		Delete(ctx context.Context, id uint64) error
 		DeleteSoft(ctx context.Context, id uint64) error
@@ -50,30 +50,28 @@ type (
 	}
 
 	OnecProjectQuota struct {
-		Id                uint64       `db:"id"`                 // 主键，自增 ID
-		ClusterId         uint64       `db:"cluster_id"`         // 关联的集群 ID
-		ProjectId         uint64       `db:"project_id"`         // 关联的项目 ID
-		CpuAllocatable    uint64       `db:"cpu_allocatable"`    // CPU 可分配总量（单位：核）
-		CpuQuota          uint64       `db:"cpu_quota"`          // CPU 分配配额（单位：核）
-		CpuOvercommit     float64      `db:"cpu_overcommit"`     // CPU 超配比（如 1.5 表示允许超配 50%）
-		CpuLimit          uint64       `db:"cpu_limit"`          // CPU 上限值（单位：核）
-		CpuUsed           uint64       `db:"cpu_used"`           // 已使用的 CPU 资源（单位：核）
-		MemoryAllocatable uint64       `db:"memory_allocatable"` // 内存可分配总量（单位：GiB）
-		MemoryQuota       uint64       `db:"memory_quota"`       // 内存分配配额（单位：GiB）
-		MemoryOvercommit  float64      `db:"memory_overcommit"`  // 内存超配比（如 1.2 表示允许超配 20%）
-		MemoryLimit       uint64       `db:"memory_limit"`       // 内存上限值（单位：GiB）
-		MemoryUsed        uint64       `db:"memory_used"`        // 已使用的内存资源（单位：GiB）
-		StorageLimit      uint64       `db:"storage_limit"`      // 项目可使用的存储总量（单位：GiB）
-		ConfigmapLimit    uint64       `db:"configmap_limit"`    // 项目允许创建的 ConfigMap 数量上限
-		PvcLimit          uint64       `db:"pvc_limit"`          // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-		PodLimit          uint64       `db:"pod_limit"`          // 项目允许创建的 Pod 数量上限
-		NodeportLimit     uint64       `db:"nodeport_limit"`     // 项目允许使用的 NodePort 数量上限
-		Status            string       `db:"status"`             // 项目状态（如 `Active`、`Disabled`、`Archived`）
-		CreateBy          string       `db:"create_by"`          // 记录创建人
-		UpdateBy          string       `db:"update_by"`          // 记录更新人
-		CreateTime        time.Time    `db:"create_time"`        // 项目创建时间
-		UpdateTime        time.Time    `db:"update_time"`        // 项目信息最后更新时间
-		DeleteTime        sql.NullTime `db:"delete_time"`        // 记录删除时间（软删除）
+		Id               uint64    `db:"id"`                // 主键，自增 ID
+		ClusterUuid      string    `db:"cluster_uuid"`      // 关联的集群 ID
+		ProjectId        uint64    `db:"project_id"`        // 关联的项目 ID
+		CpuQuota         int64     `db:"cpu_quota"`         // CPU 分配配额（单位：核）
+		CpuOvercommit    float64   `db:"cpu_overcommit"`    // CPU 超配比（如 1.5 表示允许超配 50%）
+		CpuLimit         float64   `db:"cpu_limit"`         // CPU 上限值（单位：核）
+		CpuUsed          float64   `db:"cpu_used"`          // 已使用的 CPU 资源（单位：核）
+		MemoryQuota      float64   `db:"memory_quota"`      // 内存分配配额（单位：GiB）
+		MemoryOvercommit float64   `db:"memory_overcommit"` // 内存超配比（如 1.2 表示允许超配 20%）
+		MemoryLimit      float64   `db:"memory_limit"`      // 内存上限值（单位：GiB）
+		MemoryUsed       float64   `db:"memory_used"`       // 已使用的内存资源（单位：GiB）
+		StorageLimit     uint64    `db:"storage_limit"`     // 项目可使用的存储总量（单位：GiB）
+		ConfigmapLimit   uint64    `db:"configmap_limit"`   // 项目允许创建的 ConfigMap 数量上限
+		PvcLimit         uint64    `db:"pvc_limit"`         // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+		PodLimit         uint64    `db:"pod_limit"`         // 项目允许创建的 Pod 数量上限
+		NodeportLimit    uint64    `db:"nodeport_limit"`    // 项目允许使用的 NodePort 数量上限
+		Status           string    `db:"status"`            // 项目状态（如 `Active`、`Disabled`、`Archived`）
+		CreatedBy        string    `db:"created_by"`        // 记录创建人
+		UpdatedBy        string    `db:"updated_by"`        // 记录更新人
+		CreatedAt        time.Time `db:"created_at"`        // 记录创建时间
+		UpdatedAt        time.Time `db:"updated_at"`        // 记录更新时间
+		IsDeleted        int64     `db:"is_deleted"`        // 是否删除
 	}
 )
 
@@ -90,12 +88,12 @@ func (m *defaultOnecProjectQuotaModel) Delete(ctx context.Context, id uint64) er
 		return err
 	}
 
-	kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
+	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return err
 }
 
@@ -105,15 +103,15 @@ func (m *defaultOnecProjectQuotaModel) DeleteSoft(ctx context.Context, id uint64
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
-	kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
+	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return err
 }
 
@@ -135,12 +133,12 @@ func (m *defaultOnecProjectQuotaModel) TransOnSql(ctx context.Context, session s
 
 		// 缓存相关处理
 
-		kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+		kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 		kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, id) // 处理缓存逻辑，例如删除或更新缓存
 		// 执行带缓存处理的 SQL 操作
 		return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 			return session.ExecCtx(ctx, query, args...)
-		}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey) // 传递缓存相关的键值
+		}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey) // 传递缓存相关的键值
 
 	}
 
@@ -162,12 +160,12 @@ func (m *defaultOnecProjectQuotaModel) ExecSql(ctx context.Context, id uint64, s
 			return nil, err
 		}
 
-		kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+		kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 		kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, id) // 处理缓存逻辑，例如删除或更新缓存
 		// 执行带缓存处理的 SQL 操作
 		return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 			return conn.ExecCtx(ctx, query, args...)
-		}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey) // 传递缓存相关的键值
+		}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey) // 传递缓存相关的键值
 
 	}
 
@@ -180,7 +178,7 @@ func (m *defaultOnecProjectQuotaModel) FindOne(ctx context.Context, id uint64) (
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, id)
 	var resp OnecProjectQuota
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecOnecProjectQuotaIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecProjectQuotaRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecProjectQuotaRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -203,11 +201,11 @@ func (m *defaultOnecProjectQuotaModel) Search(ctx context.Context, orderStr stri
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -252,9 +250,9 @@ func (m *defaultOnecProjectQuotaModel) Search(ctx context.Context, orderStr stri
 
 func (m *defaultOnecProjectQuotaModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*OnecProjectQuota, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -284,12 +282,12 @@ func (m *defaultOnecProjectQuotaModel) SearchNoPage(ctx context.Context, orderSt
 		return nil, err
 	}
 }
-func (m *defaultOnecProjectQuotaModel) FindOneByClusterIdProjectId(ctx context.Context, clusterId uint64, projectId uint64) (*OnecProjectQuota, error) {
-	kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, clusterId, projectId)
+func (m *defaultOnecProjectQuotaModel) FindOneByClusterUuidProjectId(ctx context.Context, clusterUuid string, projectId uint64) (*OnecProjectQuota, error) {
+	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, clusterUuid, projectId)
 	var resp OnecProjectQuota
-	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `cluster_id` = ? and `project_id` = ? AND `delete_time` IS NULL limit 1", onecProjectQuotaRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, clusterId, projectId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `cluster_uuid` = ? and `project_id` = ? AND `is_deleted` = 0  limit 1", onecProjectQuotaRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, clusterUuid, projectId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -305,12 +303,12 @@ func (m *defaultOnecProjectQuotaModel) FindOneByClusterIdProjectId(ctx context.C
 }
 
 func (m *defaultOnecProjectQuotaModel) Insert(ctx context.Context, data *OnecProjectQuota) (sql.Result, error) {
-	kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectQuotaRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ClusterId, data.ProjectId, data.CpuAllocatable, data.CpuQuota, data.CpuOvercommit, data.CpuLimit, data.CpuUsed, data.MemoryAllocatable, data.MemoryQuota, data.MemoryOvercommit, data.MemoryLimit, data.MemoryUsed, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.NodeportLimit, data.Status, data.CreateBy, data.UpdateBy, data.DeleteTime)
-	}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectQuotaRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.ProjectId, data.CpuQuota, data.CpuOvercommit, data.CpuLimit, data.CpuUsed, data.MemoryQuota, data.MemoryOvercommit, data.MemoryLimit, data.MemoryUsed, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.NodeportLimit, data.Status, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return ret, err
 }
 
@@ -320,12 +318,12 @@ func (m *defaultOnecProjectQuotaModel) Update(ctx context.Context, newData *Onec
 		return err
 	}
 
-	kubeOnecOnecProjectQuotaClusterIdProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterIdProjectIdPrefix, data.ClusterId, data.ProjectId)
+	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectQuotaRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ClusterId, newData.ProjectId, newData.CpuAllocatable, newData.CpuQuota, newData.CpuOvercommit, newData.CpuLimit, newData.CpuUsed, newData.MemoryAllocatable, newData.MemoryQuota, newData.MemoryOvercommit, newData.MemoryLimit, newData.MemoryUsed, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.NodeportLimit, newData.Status, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
-	}, kubeOnecOnecProjectQuotaClusterIdProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
+		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.ProjectId, newData.CpuQuota, newData.CpuOvercommit, newData.CpuLimit, newData.CpuUsed, newData.MemoryQuota, newData.MemoryOvercommit, newData.MemoryLimit, newData.MemoryUsed, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.NodeportLimit, newData.Status, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return err
 }
 
@@ -334,7 +332,7 @@ func (m *defaultOnecProjectQuotaModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultOnecProjectQuotaModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecProjectQuotaRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecProjectQuotaRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

@@ -99,8 +99,8 @@ func (l *GetUserInfoLogic) GetUserInfo(in *pb.GetUserInfoReq) (*pb.GetUserInfoRe
 		OrganizationName: organizationFullName,
 		RoleNames:        rolesNames,
 		LastLoginTime:    user.LastLoginTime.Unix(),
-		CreateTime:       user.CreateTime.Unix(),
-		UpdateTime:       user.UpdateTime.Unix(),
+		CreatedAt:        user.CreatedAt.Unix(),
+		UpdatedAt:        user.UpdatedAt.Unix(),
 	}, nil
 }
 

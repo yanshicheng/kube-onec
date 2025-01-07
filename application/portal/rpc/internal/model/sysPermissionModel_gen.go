@@ -48,15 +48,15 @@ type (
 	}
 
 	SysPermission struct {
-		Id         uint64       `db:"id"`          // 自增主键
-		ParentId   uint64       `db:"parent_id"`   // 父权限ID
-		Name       string       `db:"name"`        // 权限名称
-		Uri        string       `db:"uri"`         // 权限对应的资源URI或路径
-		Action     string       `db:"action"`      // 对资源执行的操作
-		Level      uint64       `db:"level"`       // 权限层级
-		CreateTime time.Time    `db:"create_time"` // 创建时间
-		UpdateTime time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id        uint64    `db:"id"`         // 自增主键
+		ParentId  uint64    `db:"parent_id"`  // 父权限ID
+		Name      string    `db:"name"`       // 权限名称
+		Uri       string    `db:"uri"`        // 权限对应的资源URI或路径
+		Action    string    `db:"action"`     // 对资源执行的操作
+		Level     uint64    `db:"level"`      // 权限层级
+		CreatedAt time.Time `db:"created_at"` // 记录创建时间
+		UpdatedAt time.Time `db:"updated_at"` // 记录更新时间
+		IsDeleted int64     `db:"is_deleted"` // 是否删除
 	}
 )
 
@@ -79,7 +79,7 @@ func (m *defaultSysPermissionModel) Delete(ctx context.Context, id uint64) error
 func (m *defaultSysPermissionModel) DeleteSoft(ctx context.Context, id uint64) error {
 	kubeOnecSysPermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPermissionIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysPermissionIdKey)
 	return err
@@ -138,7 +138,7 @@ func (m *defaultSysPermissionModel) FindOne(ctx context.Context, id uint64) (*Sy
 	kubeOnecSysPermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPermissionIdPrefix, id)
 	var resp SysPermission
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysPermissionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysPermissionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysPermissionRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -161,11 +161,11 @@ func (m *defaultSysPermissionModel) Search(ctx context.Context, orderStr string,
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -210,9 +210,9 @@ func (m *defaultSysPermissionModel) Search(ctx context.Context, orderStr string,
 
 func (m *defaultSysPermissionModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysPermission, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -247,7 +247,7 @@ func (m *defaultSysPermissionModel) Insert(ctx context.Context, data *SysPermiss
 	kubeOnecSysPermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPermissionIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysPermissionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.Uri, data.Action, data.Level, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.Uri, data.Action, data.Level, data.IsDeleted)
 	}, kubeOnecSysPermissionIdKey)
 	return ret, err
 }
@@ -256,7 +256,7 @@ func (m *defaultSysPermissionModel) Update(ctx context.Context, data *SysPermiss
 	kubeOnecSysPermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPermissionIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysPermissionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.Uri, data.Action, data.Level, data.DeleteTime, data.Id)
+		return conn.ExecCtx(ctx, query, data.ParentId, data.Name, data.Uri, data.Action, data.Level, data.IsDeleted, data.Id)
 	}, kubeOnecSysPermissionIdKey)
 	return err
 }
@@ -266,7 +266,7 @@ func (m *defaultSysPermissionModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysPermissionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysPermissionRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysPermissionRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

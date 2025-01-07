@@ -41,10 +41,10 @@ func (l *GetSysDictItemByIdLogic) GetSysDictItemById(req *types.DefaultIdRequest
 		ItemText:    res.Data.ItemText,
 		ItemCode:    res.Data.ItemCode,
 		SortOrder:   res.Data.SortOrder,
-		CreateBy:    res.Data.CreateBy,
-		UpdateBy:    res.Data.UpdateBy,
-		UpdateTime:  res.Data.UpdateTime,
-		CreateTime:  res.Data.CreateTime,
+		CreatedBy:   res.Data.CreatedBy,
+		UpdatedBy:   res.Data.UpdatedBy,
+		UpdatedAt:   res.Data.UpdatedAt,
+		CreatedAt:   res.Data.CreatedAt,
 	}
 	return data, nil
 }

@@ -24,9 +24,9 @@ func NewDelSysDictItemLogic(ctx context.Context, svcCtx *svc.ServiceContext) *De
 }
 
 func (l *DelSysDictItemLogic) DelSysDictItem(in *pb.DelSysDictItemReq) (*pb.DelSysDictItemResp, error) {
-	// 定义修改 delete_time 实践，和 修改 updateBy 人 sql
+	// 定义修改 delete_time 实践，和 修改 updatedBy 人 sql
 	sqlStr := "UPDATE {table} set `delete_time` = NOW(), `update_by` = ? where `id` = ?"
-	_, err := l.svcCtx.SysDictItem.ExecSql(l.ctx, in.Id, sqlStr, in.UpdateBy, in.Id)
+	_, err := l.svcCtx.SysDictItem.ExecSql(l.ctx, in.Id, sqlStr, in.UpdatedBy, in.Id)
 	if err != nil {
 		l.Logger.Errorf("删除字典数据失败: %v", err)
 		return nil, errorx.DatabaseDeleteErr

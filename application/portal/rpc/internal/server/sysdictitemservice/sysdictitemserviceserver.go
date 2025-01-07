@@ -48,3 +48,13 @@ func (s *SysDictItemServiceServer) SearchSysDictItem(ctx context.Context, in *pb
 	l := sysdictitemservicelogic.NewSearchSysDictItemLogic(ctx, s.svcCtx)
 	return l.SearchSysDictItem(in)
 }
+
+func (s *SysDictItemServiceServer) CheckDictItemCode(ctx context.Context, in *pb.CheckDictItemCodeReq) (*pb.CheckDictItemCodeResp, error) {
+	l := sysdictitemservicelogic.NewCheckDictItemCodeLogic(ctx, s.svcCtx)
+	return l.CheckDictItemCode(in)
+}
+
+func (s *SysDictItemServiceServer) GetDictItemText(ctx context.Context, in *pb.GetDictItemNameReq) (*pb.GetDictItemTextResp, error) {
+	l := sysdictitemservicelogic.NewGetDictItemTextLogic(ctx, s.svcCtx)
+	return l.GetDictItemText(in)
+}

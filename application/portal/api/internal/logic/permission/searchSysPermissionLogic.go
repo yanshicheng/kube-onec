@@ -42,14 +42,14 @@ func (l *SearchSysPermissionLogic) SearchSysPermission(req *types.SearchSysPermi
 	data := make([]types.SysPermission, len(res.Data))
 	for i, v := range res.Data {
 		data[i] = types.SysPermission{
-			Id:         v.Id,
-			Action:     v.Action,
-			Name:       v.Name,
-			ParentId:   v.ParentId,
-			Uri:        v.Uri,
-			Level:      v.Level,
-			CreateTime: v.CreateTime,
-			UpdateTime: v.UpdateTime,
+			Id:        v.Id,
+			Action:    v.Action,
+			Name:      v.Name,
+			ParentId:  v.ParentId,
+			Uri:       v.Uri,
+			Level:     v.Level,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		}
 	}
 	resp = &types.SearchSysPermissionResponse{

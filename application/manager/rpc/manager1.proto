@@ -12,52 +12,60 @@ package pb;
 message OnecCluster {
   uint64 id = 1; //自增主键
   string name = 2; //集群名称
+  string uuid = 3; //集群唯一标识
+  int64 skipInsecure = 4; //是否跳过不安全连接（0：否，1：是）
+  string host = 5; //集群主机地址
+  string token = 6; //访问集群的令牌
+  string connType = 7; //连接类型
+  string envCode = 8; //集群环境标签 数据字典表
+  int64 status = 9; //集群状态
+  string version = 10; //集群版本
+  string commit = 11; //集群提交版本
+  string platform = 12; //集群平台
+  int64 versionBuildTime = 13; //版本构建时间
+  int64 clustercreatedAt = 14; //集群创建时间
+  int64 nodeCount = 15; //节点数量
+  int64 cpuTotal = 16; //总 CPU
+  double memoryTotal = 17; //总内存
+  int64 cpuUsed = 18; //已使用的 CPU
+  double memoryUsed = 19; //已使用的内存
+  int64 podTotal = 20; //最大 Pod 数量
+  int64 podUsed = 21; //已使用的 Pod 数量
+  string location = 22; //集群所在地址
+  string nodeLbIp = 23; //Node 负载均衡 IP
+  string description = 24; //集群描述信息
+  string createdBy = 25; //记录创建人
+  string updatedBy = 26; //记录更新人
+  int64 createdAt = 27; //记录创建时间
+  int64 updatedAt = 28; //记录更新时间
+}
+
+message AddOnecClusterReq {
+  string name = 1; //集群名称
+  string uuid = 2; //集群唯一标识
   int64 skipInsecure = 3; //是否跳过不安全连接（0：否，1：是）
   string host = 4; //集群主机地址
   string token = 5; //访问集群的令牌
-  OnecClusterConnType connType = 6; //连接类型
+  string connType = 6; //连接类型
   string envCode = 7; //集群环境标签 数据字典表
   int64 status = 8; //集群状态
   string version = 9; //集群版本
   string commit = 10; //集群提交版本
   string platform = 11; //集群平台
   int64 versionBuildTime = 12; //版本构建时间
-  int64 clusterCreateTime = 13; //集群创建时间
+  int64 clustercreatedAt = 13; //集群创建时间
   int64 nodeCount = 14; //节点数量
-  int64 totalCpu = 15; //总 CPU
-  int64 totalMemory = 16; //总内存
-  int64 totalMaxPods = 17; //最大 Pod 数量
-  string location = 18; //集群所在地址
-  string ingressLbIp = 19; //Ingress 负载均衡 IP
-  string description = 20; //集群描述信息
-  string createBy = 21; //记录创建人
-  string updateBy = 22; //记录更新人
-  int64 createTime = 23; //记录创建时间
-  int64 updateTime = 24; //记录更新时间
-}
-
-message AddOnecClusterReq {
-  string name = 1; //集群名称
-  int64 skipInsecure = 2; //是否跳过不安全连接（0：否，1：是）
-  string host = 3; //集群主机地址
-  string token = 4; //访问集群的令牌
-  OnecClusterConnType connType = 5; //连接类型
-  string envCode = 6; //集群环境标签 数据字典表
-  int64 status = 7; //集群状态
-  string version = 8; //集群版本
-  string commit = 9; //集群提交版本
-  string platform = 10; //集群平台
-  int64 versionBuildTime = 11; //版本构建时间
-  int64 clusterCreateTime = 12; //集群创建时间
-  int64 nodeCount = 13; //节点数量
-  int64 totalCpu = 14; //总 CPU
-  int64 totalMemory = 15; //总内存
-  int64 totalMaxPods = 16; //最大 Pod 数量
-  string location = 17; //集群所在地址
-  string ingressLbIp = 18; //Ingress 负载均衡 IP
-  string description = 19; //集群描述信息
-  string createBy = 20; //记录创建人
-  string updateBy = 21; //记录更新人
+  int64 cpuTotal = 15; //总 CPU
+  double memoryTotal = 16; //总内存
+  int64 cpuUsed = 17; //已使用的 CPU
+  double memoryUsed = 18; //已使用的内存
+  int64 podTotal = 19; //最大 Pod 数量
+  int64 podUsed = 20; //已使用的 Pod 数量
+  string location = 21; //集群所在地址
+  string nodeLbIp = 22; //Node 负载均衡 IP
+  string description = 23; //集群描述信息
+  string createdBy = 24; //记录创建人
+  string updatedBy = 25; //记录更新人
 }
 
 message AddOnecClusterResp {
@@ -66,25 +74,29 @@ message AddOnecClusterResp {
 message UpdateOnecClusterReq {
   uint64 id = 1; //自增主键
   string name = 2; //集群名称
-  int64 skipInsecure = 3; //是否跳过不安全连接（0：否，1：是）
-  string host = 4; //集群主机地址
-  string token = 5; //访问集群的令牌
-  OnecClusterConnType connType = 6; //连接类型
-  string envCode = 7; //集群环境标签 数据字典表
-  int64 status = 8; //集群状态
-  string version = 9; //集群版本
-  string commit = 10; //集群提交版本
-  string platform = 11; //集群平台
-  int64 versionBuildTime = 12; //版本构建时间
-  int64 clusterCreateTime = 13; //集群创建时间
-  int64 nodeCount = 14; //节点数量
-  int64 totalCpu = 15; //总 CPU
-  int64 totalMemory = 16; //总内存
-  int64 totalMaxPods = 17; //最大 Pod 数量
-  string location = 18; //集群所在地址
-  string ingressLbIp = 19; //Ingress 负载均衡 IP
-  string description = 20; //集群描述信息
-  string updateBy = 21; //记录更新人
+  string uuid = 3; //集群唯一标识
+  int64 skipInsecure = 4; //是否跳过不安全连接（0：否，1：是）
+  string host = 5; //集群主机地址
+  string token = 6; //访问集群的令牌
+  string connType = 7; //连接类型
+  string envCode = 8; //集群环境标签 数据字典表
+  int64 status = 9; //集群状态
+  string version = 10; //集群版本
+  string commit = 11; //集群提交版本
+  string platform = 12; //集群平台
+  int64 versionBuildTime = 13; //版本构建时间
+  int64 clustercreatedAt = 14; //集群创建时间
+  int64 nodeCount = 15; //节点数量
+  int64 cpuTotal = 16; //总 CPU
+  double memoryTotal = 17; //总内存
+  int64 cpuUsed = 18; //已使用的 CPU
+  double memoryUsed = 19; //已使用的内存
+  int64 podTotal = 20; //最大 Pod 数量
+  int64 podUsed = 21; //已使用的 Pod 数量
+  string location = 22; //集群所在地址
+  string nodeLbIp = 23; //Node 负载均衡 IP
+  string description = 24; //集群描述信息
+  string updatedBy = 25; //记录更新人
 }
 
 message UpdateOnecClusterResp {
@@ -111,26 +123,30 @@ message SearchOnecClusterReq {
   string orderStr = 3; //orderStr
   bool isAsc = 4; //isAsc
   string name = 5; //集群名称
-  int64 skipInsecure = 6; //是否跳过不安全连接（0：否，1：是）
-  string host = 7; //集群主机地址
-  string token = 8; //访问集群的令牌
-  OnecClusterConnType connType = 9; //连接类型
-  string envCode = 10; //集群环境标签 数据字典表
-  int64 status = 11; //集群状态
-  string version = 12; //集群版本
-  string commit = 13; //集群提交版本
-  string platform = 14; //集群平台
-  int64 versionBuildTime = 15; //版本构建时间
-  int64 clusterCreateTime = 16; //集群创建时间
-  int64 nodeCount = 17; //节点数量
-  int64 totalCpu = 18; //总 CPU
-  int64 totalMemory = 19; //总内存
-  int64 totalMaxPods = 20; //最大 Pod 数量
-  string location = 21; //集群所在地址
-  string ingressLbIp = 22; //Ingress 负载均衡 IP
-  string description = 23; //集群描述信息
-  string createBy = 24; //记录创建人
-  string updateBy = 25; //记录更新人
+  string uuid = 6; //集群唯一标识
+  int64 skipInsecure = 7; //是否跳过不安全连接（0：否，1：是）
+  string host = 8; //集群主机地址
+  string token = 9; //访问集群的令牌
+  string connType = 10; //连接类型
+  string envCode = 11; //集群环境标签 数据字典表
+  int64 status = 12; //集群状态
+  string version = 13; //集群版本
+  string commit = 14; //集群提交版本
+  string platform = 15; //集群平台
+  int64 versionBuildTime = 16; //版本构建时间
+  int64 clustercreatedAt = 17; //集群创建时间
+  int64 nodeCount = 18; //节点数量
+  int64 cpuTotal = 19; //总 CPU
+  double memoryTotal = 20; //总内存
+  int64 cpuUsed = 21; //已使用的 CPU
+  double memoryUsed = 22; //已使用的内存
+  int64 podTotal = 23; //最大 Pod 数量
+  int64 podUsed = 24; //已使用的 Pod 数量
+  string location = 25; //集群所在地址
+  string nodeLbIp = 26; //Node 负载均衡 IP
+  string description = 27; //集群描述信息
+  string createdBy = 28; //记录创建人
+  string updatedBy = 29; //记录更新人
 }
 
 message SearchOnecClusterResp {
@@ -150,31 +166,35 @@ service OnecClusterService {
 //--------------------------------通用的服务连接信息表，动态支持多个服务--------------------------------
 message OnecClusterConnInfo {
   uint64 id = 1; //自增主键
-  uint64 clusterId = 2; //关联集群 ID
-  string serviceCode = 3; //服务名称
+  string clusterUuid = 2; //关联集群 ID（唯一标识集群）
+  string serviceCode = 3; //服务编码（唯一标识服务）
   string serviceUrl = 4; //服务的 URL
-  string username = 5; //用户名（如果使用基本认证）
-  string password = 6; //密码（如果使用基本认证）
-  string token = 7; //令牌（如果使用 Token 认证）
-  int64 skipInsecure = 8; //是否忽略自签名证书验证
-  string caCert = 9; //CA 证书内容（以 PEM 格式存储）
-  string clientCert = 10; //客户端证书内容（以 PEM 格式存储）
-  string clientKey = 11; //客户端私钥内容（以 PEM 格式存储，仅客户端证书需要）
-  int64 createTime = 12; //记录创建时间
-  int64 updateTime = 13; //记录更新时间
+  string username = 5; //用户名（用于基本认证）
+  string password = 6; //密码（用于基本认证）
+  string token = 7; //令牌（用于 Token 认证）
+  int64 skipInsecure = 8; //是否跳过自签名证书验证（0-否，1-是）
+  string caCert = 9; //CA 证书内容（PEM 格式）
+  string clientCert = 10; //客户端证书内容（PEM 格式）
+  string clientKey = 11; //客户端私钥内容（PEM 格式，仅客户端证书需要）
+  string createdBy = 12; //记录创建人
+  string updatedBy = 13; //记录更新人
+  int64 createdAt = 14; //记录创建时间
+  int64 updatedAt = 15; //记录更新时间
 }
 
 message AddOnecClusterConnInfoReq {
-  uint64 clusterId = 1; //关联集群 ID
-  string serviceCode = 2; //服务名称
+  string clusterUuid = 1; //关联集群 ID（唯一标识集群）
+  string serviceCode = 2; //服务编码（唯一标识服务）
   string serviceUrl = 3; //服务的 URL
-  string username = 4; //用户名（如果使用基本认证）
-  string password = 5; //密码（如果使用基本认证）
-  string token = 6; //令牌（如果使用 Token 认证）
-  int64 skipInsecure = 7; //是否忽略自签名证书验证
-  string caCert = 8; //CA 证书内容（以 PEM 格式存储）
-  string clientCert = 9; //客户端证书内容（以 PEM 格式存储）
-  string clientKey = 10; //客户端私钥内容（以 PEM 格式存储，仅客户端证书需要）
+  string username = 4; //用户名（用于基本认证）
+  string password = 5; //密码（用于基本认证）
+  string token = 6; //令牌（用于 Token 认证）
+  int64 skipInsecure = 7; //是否跳过自签名证书验证（0-否，1-是）
+  string caCert = 8; //CA 证书内容（PEM 格式）
+  string clientCert = 9; //客户端证书内容（PEM 格式）
+  string clientKey = 10; //客户端私钥内容（PEM 格式，仅客户端证书需要）
+  string createdBy = 11; //记录创建人
+  string updatedBy = 12; //记录更新人
 }
 
 message AddOnecClusterConnInfoResp {
@@ -182,16 +202,17 @@ message AddOnecClusterConnInfoResp {
 
 message UpdateOnecClusterConnInfoReq {
   uint64 id = 1; //自增主键
-  uint64 clusterId = 2; //关联集群 ID
-  string serviceCode = 3; //服务名称
+  string clusterUuid = 2; //关联集群 ID（唯一标识集群）
+  string serviceCode = 3; //服务编码（唯一标识服务）
   string serviceUrl = 4; //服务的 URL
-  string username = 5; //用户名（如果使用基本认证）
-  string password = 6; //密码（如果使用基本认证）
-  string token = 7; //令牌（如果使用 Token 认证）
-  int64 skipInsecure = 8; //是否忽略自签名证书验证
-  string caCert = 9; //CA 证书内容（以 PEM 格式存储）
-  string clientCert = 10; //客户端证书内容（以 PEM 格式存储）
-  string clientKey = 11; //客户端私钥内容（以 PEM 格式存储，仅客户端证书需要）
+  string username = 5; //用户名（用于基本认证）
+  string password = 6; //密码（用于基本认证）
+  string token = 7; //令牌（用于 Token 认证）
+  int64 skipInsecure = 8; //是否跳过自签名证书验证（0-否，1-是）
+  string caCert = 9; //CA 证书内容（PEM 格式）
+  string clientCert = 10; //客户端证书内容（PEM 格式）
+  string clientKey = 11; //客户端私钥内容（PEM 格式，仅客户端证书需要）
+  string updatedBy = 12; //记录更新人
 }
 
 message UpdateOnecClusterConnInfoResp {
@@ -217,16 +238,18 @@ message SearchOnecClusterConnInfoReq {
   uint64 pageSize = 2; //pageSize
   string orderStr = 3; //orderStr
   bool isAsc = 4; //isAsc
-  uint64 clusterId = 5; //关联集群 ID
-  string serviceCode = 6; //服务名称
+  string clusterUuid = 5; //关联集群 ID（唯一标识集群）
+  string serviceCode = 6; //服务编码（唯一标识服务）
   string serviceUrl = 7; //服务的 URL
-  string username = 8; //用户名（如果使用基本认证）
-  string password = 9; //密码（如果使用基本认证）
-  string token = 10; //令牌（如果使用 Token 认证）
-  int64 skipInsecure = 11; //是否忽略自签名证书验证
-  string caCert = 12; //CA 证书内容（以 PEM 格式存储）
-  string clientCert = 13; //客户端证书内容（以 PEM 格式存储）
-  string clientKey = 14; //客户端私钥内容（以 PEM 格式存储，仅客户端证书需要）
+  string username = 8; //用户名（用于基本认证）
+  string password = 9; //密码（用于基本认证）
+  string token = 10; //令牌（用于 Token 认证）
+  int64 skipInsecure = 11; //是否跳过自签名证书验证（0-否，1-是）
+  string caCert = 12; //CA 证书内容（PEM 格式）
+  string clientCert = 13; //客户端证书内容（PEM 格式）
+  string clientKey = 14; //客户端私钥内容（PEM 格式，仅客户端证书需要）
+  string createdBy = 15; //记录创建人
+  string updatedBy = 16; //记录更新人
 }
 
 message SearchOnecClusterConnInfoResp {
@@ -246,10 +269,10 @@ service OnecClusterConnInfoService {
 //--------------------------------节点表，用于管理各集群中的节点信息--------------------------------
 message OnecNode {
   uint64 id = 1; //自增主键
-  uint64 clusterId = 2; //所属集群ID
+  string clusterUuid = 2; //所属集群ID
   string nodeName = 3; //节点名称，在同一集群中唯一
   int64 cpu = 4; //CPU核数
-  int64 memory = 5; //内存大小，Mi
+  double memory = 5; //内存大小，Mi
   int64 maxPods = 6; //最大Pod数量
   int64 isGpu = 7; //节点是否包含GPU
   string nodeUid = 8; //节点UID，唯一标识
@@ -269,17 +292,17 @@ message OnecNode {
   int64 kubeletPort = 22; //Kubelet端口号
   string operatingSystem = 23; //操作系统类型
   string architecture = 24; //架构类型
-  string createBy = 25; //记录创建人
-  string updateBy = 26; //记录更新人
-  int64 createTime = 27; //记录创建时间
-  int64 updateTime = 28; //记录更新时间
+  string createdBy = 25; //记录创建人
+  string updatedBy = 26; //记录更新人
+  int64 createdAt = 27; //记录创建时间
+  int64 updatedAt = 28; //记录更新时间
 }
 
 message AddOnecNodeReq {
-  uint64 clusterId = 1; //所属集群ID
+  string clusterUuid = 1; //所属集群ID
   string nodeName = 2; //节点名称，在同一集群中唯一
   int64 cpu = 3; //CPU核数
-  int64 memory = 4; //内存大小，Mi
+  double memory = 4; //内存大小，Mi
   int64 maxPods = 5; //最大Pod数量
   int64 isGpu = 6; //节点是否包含GPU
   string nodeUid = 7; //节点UID，唯一标识
@@ -299,8 +322,8 @@ message AddOnecNodeReq {
   int64 kubeletPort = 21; //Kubelet端口号
   string operatingSystem = 22; //操作系统类型
   string architecture = 23; //架构类型
-  string createBy = 24; //记录创建人
-  string updateBy = 25; //记录更新人
+  string createdBy = 24; //记录创建人
+  string updatedBy = 25; //记录更新人
 }
 
 message AddOnecNodeResp {
@@ -308,10 +331,10 @@ message AddOnecNodeResp {
 
 message UpdateOnecNodeReq {
   uint64 id = 1; //自增主键
-  uint64 clusterId = 2; //所属集群ID
+  string clusterUuid = 2; //所属集群ID
   string nodeName = 3; //节点名称，在同一集群中唯一
   int64 cpu = 4; //CPU核数
-  int64 memory = 5; //内存大小，Mi
+  double memory = 5; //内存大小，Mi
   int64 maxPods = 6; //最大Pod数量
   int64 isGpu = 7; //节点是否包含GPU
   string nodeUid = 8; //节点UID，唯一标识
@@ -331,7 +354,7 @@ message UpdateOnecNodeReq {
   int64 kubeletPort = 22; //Kubelet端口号
   string operatingSystem = 23; //操作系统类型
   string architecture = 24; //架构类型
-  string updateBy = 25; //记录更新人
+  string updatedBy = 25; //记录更新人
 }
 
 message UpdateOnecNodeResp {
@@ -357,10 +380,10 @@ message SearchOnecNodeReq {
   uint64 pageSize = 2; //pageSize
   string orderStr = 3; //orderStr
   bool isAsc = 4; //isAsc
-  uint64 clusterId = 5; //所属集群ID
+  string clusterUuid = 5; //所属集群ID
   string nodeName = 6; //节点名称，在同一集群中唯一
   int64 cpu = 7; //CPU核数
-  int64 memory = 8; //内存大小，Mi
+  double memory = 8; //内存大小，Mi
   int64 maxPods = 9; //最大Pod数量
   int64 isGpu = 10; //节点是否包含GPU
   string nodeUid = 11; //节点UID，唯一标识
@@ -380,8 +403,8 @@ message SearchOnecNodeReq {
   int64 kubeletPort = 25; //Kubelet端口号
   string operatingSystem = 26; //操作系统类型
   string architecture = 27; //架构类型
-  string createBy = 28; //记录创建人
-  string updateBy = 29; //记录更新人
+  string createdBy = 28; //记录创建人
+  string updatedBy = 29; //记录更新人
 }
 
 message SearchOnecNodeResp {
@@ -404,18 +427,18 @@ message OnecProject {
   string name = 2; //项目的中文名称
   string identifier = 3; //项目的唯一标识符（英文），便于程序中唯一标识
   string description = 4; //项目描述信息
-  string createBy = 5; //记录创建人
-  string updateBy = 6; //记录更新人
-  int64 createTime = 7; //项目创建时间
-  int64 updateTime = 8; //项目信息最后更新时间
+  string createdBy = 5; //记录创建人
+  string updatedBy = 6; //记录更新人
+  int64 createdAt = 7; //项目创建时间
+  int64 updatedAt = 8; //项目信息最后更新时间
 }
 
 message AddOnecProjectReq {
   string name = 1; //项目的中文名称
   string identifier = 2; //项目的唯一标识符（英文），便于程序中唯一标识
   string description = 3; //项目描述信息
-  string createBy = 4; //记录创建人
-  string updateBy = 5; //记录更新人
+  string createdBy = 4; //记录创建人
+  string updatedBy = 5; //记录更新人
 }
 
 message AddOnecProjectResp {
@@ -426,7 +449,7 @@ message UpdateOnecProjectReq {
   string name = 2; //项目的中文名称
   string identifier = 3; //项目的唯一标识符（英文），便于程序中唯一标识
   string description = 4; //项目描述信息
-  string updateBy = 5; //记录更新人
+  string updatedBy = 5; //记录更新人
 }
 
 message UpdateOnecProjectResp {
@@ -455,8 +478,8 @@ message SearchOnecProjectReq {
   string name = 5; //项目的中文名称
   string identifier = 6; //项目的唯一标识符（英文），便于程序中唯一标识
   string description = 7; //项目描述信息
-  string createBy = 8; //记录创建人
-  string updateBy = 9; //记录更新人
+  string createdBy = 8; //记录创建人
+  string updatedBy = 9; //记录更新人
 }
 
 message SearchOnecProjectResp {
@@ -478,17 +501,17 @@ message OnecProjectAdmin {
   uint64 id = 1; //主键，自增 ID
   uint64 projectId = 2; //关联的项目 ID
   uint64 userId = 3; //关联的用户 ID
-  string createBy = 4; //记录创建人
-  string updateBy = 5; //记录更新人
-  int64 createTime = 6; //记录创建时间
-  int64 updateTime = 7; //记录更新时间
+  string createdBy = 4; //记录创建人
+  string updatedBy = 5; //记录更新人
+  int64 createdAt = 6; //记录创建时间
+  int64 updatedAt = 7; //记录更新时间
 }
 
 message AddOnecProjectAdminReq {
   uint64 projectId = 1; //关联的项目 ID
   uint64 userId = 2; //关联的用户 ID
-  string createBy = 3; //记录创建人
-  string updateBy = 4; //记录更新人
+  string createdBy = 3; //记录创建人
+  string updatedBy = 4; //记录更新人
 }
 
 message AddOnecProjectAdminResp {
@@ -498,7 +521,7 @@ message UpdateOnecProjectAdminReq {
   uint64 id = 1; //主键，自增 ID
   uint64 projectId = 2; //关联的项目 ID
   uint64 userId = 3; //关联的用户 ID
-  string updateBy = 4; //记录更新人
+  string updatedBy = 4; //记录更新人
 }
 
 message UpdateOnecProjectAdminResp {
@@ -526,8 +549,8 @@ message SearchOnecProjectAdminReq {
   bool isAsc = 4; //isAsc
   uint64 projectId = 5; //关联的项目 ID
   uint64 userId = 6; //关联的用户 ID
-  string createBy = 7; //记录创建人
-  string updateBy = 8; //记录更新人
+  string createdBy = 7; //记录创建人
+  string updatedBy = 8; //记录更新人
 }
 
 message SearchOnecProjectAdminResp {
@@ -544,48 +567,48 @@ service OnecProjectAdminService {
 	 rpc SearchOnecProjectAdmin(SearchOnecProjectAdminReq) returns (SearchOnecProjectAdminResp);
 }
 
-//--------------------------------应用表，--------------------------------
+//--------------------------------应用表--------------------------------
 message OnecProjectApplication {
   uint64 id = 1; //主键，自增 ID
   uint64 projectId = 2; //关联到项目表的 ID，表示应用所属的项目
-  uint64 clusterId = 3; //关联到集群表的 ID，表示应用所属的集群
+  string clusterUuid = 3; //关联到集群表的 ID，表示应用所属的集群
   string name = 4; //应用的中文名称
   string identifier = 5; //应用的唯一标识符（英文，等同于 Kubernetes 的命名空间名称）
   string uuid = 6; //应用的唯一 UUID，用于标识和追踪命名空间
   string description = 7; //应用描述信息
-  int64 cpuLimit = 8; //应用可使用的 CPU 总量（单位：核）
-  int64 memoryLimit = 9; //应用可使用的内存总量（单位：GiB）
+  double cpuLimit = 8; //应用可使用的 CPU 总量（单位：核）
+  double memoryLimit = 9; //应用可使用的内存总量（单位：GiB）
   int64 storageLimit = 10; //应用可使用的存储总量（单位：GiB）
   int64 configmapLimit = 11; //应用允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 12; //应用允许创建的 PVC 数量上限
   int64 podLimit = 13; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 14; //应用允许使用的 NodePort 数量上限
   string status = 15; //应用状态（如 `Success`、`Error`）
-  int64 appCreateTime = 16; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string createBy = 17; //记录创建人
-  string updateBy = 18; //记录更新人
-  int64 createTime = 19; //记录创建时间
-  int64 updateTime = 20; //记录更新时间
+  int64 appcreatedAt = 16; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string createdBy = 17; //记录创建人
+  string updatedBy = 18; //记录更新人
+  int64 createdAt = 19; //记录创建时间
+  int64 updatedAt = 20; //记录更新时间
 }
 
 message AddOnecProjectApplicationReq {
   uint64 projectId = 1; //关联到项目表的 ID，表示应用所属的项目
-  uint64 clusterId = 2; //关联到集群表的 ID，表示应用所属的集群
+  string clusterUuid = 2; //关联到集群表的 ID，表示应用所属的集群
   string name = 3; //应用的中文名称
   string identifier = 4; //应用的唯一标识符（英文，等同于 Kubernetes 的命名空间名称）
   string uuid = 5; //应用的唯一 UUID，用于标识和追踪命名空间
   string description = 6; //应用描述信息
-  int64 cpuLimit = 7; //应用可使用的 CPU 总量（单位：核）
-  int64 memoryLimit = 8; //应用可使用的内存总量（单位：GiB）
+  double cpuLimit = 7; //应用可使用的 CPU 总量（单位：核）
+  double memoryLimit = 8; //应用可使用的内存总量（单位：GiB）
   int64 storageLimit = 9; //应用可使用的存储总量（单位：GiB）
   int64 configmapLimit = 10; //应用允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 11; //应用允许创建的 PVC 数量上限
   int64 podLimit = 12; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 13; //应用允许使用的 NodePort 数量上限
   string status = 14; //应用状态（如 `Success`、`Error`）
-  int64 appCreateTime = 15; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string createBy = 16; //记录创建人
-  string updateBy = 17; //记录更新人
+  int64 appcreatedAt = 15; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string createdBy = 16; //记录创建人
+  string updatedBy = 17; //记录更新人
 }
 
 message AddOnecProjectApplicationResp {
@@ -594,21 +617,21 @@ message AddOnecProjectApplicationResp {
 message UpdateOnecProjectApplicationReq {
   uint64 id = 1; //主键，自增 ID
   uint64 projectId = 2; //关联到项目表的 ID，表示应用所属的项目
-  uint64 clusterId = 3; //关联到集群表的 ID，表示应用所属的集群
+  string clusterUuid = 3; //关联到集群表的 ID，表示应用所属的集群
   string name = 4; //应用的中文名称
   string identifier = 5; //应用的唯一标识符（英文，等同于 Kubernetes 的命名空间名称）
   string uuid = 6; //应用的唯一 UUID，用于标识和追踪命名空间
   string description = 7; //应用描述信息
-  int64 cpuLimit = 8; //应用可使用的 CPU 总量（单位：核）
-  int64 memoryLimit = 9; //应用可使用的内存总量（单位：GiB）
+  double cpuLimit = 8; //应用可使用的 CPU 总量（单位：核）
+  double memoryLimit = 9; //应用可使用的内存总量（单位：GiB）
   int64 storageLimit = 10; //应用可使用的存储总量（单位：GiB）
   int64 configmapLimit = 11; //应用允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 12; //应用允许创建的 PVC 数量上限
   int64 podLimit = 13; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 14; //应用允许使用的 NodePort 数量上限
   string status = 15; //应用状态（如 `Success`、`Error`）
-  int64 appCreateTime = 16; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string updateBy = 17; //记录更新人
+  int64 appcreatedAt = 16; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string updatedBy = 17; //记录更新人
 }
 
 message UpdateOnecProjectApplicationResp {
@@ -635,22 +658,22 @@ message SearchOnecProjectApplicationReq {
   string orderStr = 3; //orderStr
   bool isAsc = 4; //isAsc
   uint64 projectId = 5; //关联到项目表的 ID，表示应用所属的项目
-  uint64 clusterId = 6; //关联到集群表的 ID，表示应用所属的集群
+  string clusterUuid = 6; //关联到集群表的 ID，表示应用所属的集群
   string name = 7; //应用的中文名称
   string identifier = 8; //应用的唯一标识符（英文，等同于 Kubernetes 的命名空间名称）
   string uuid = 9; //应用的唯一 UUID，用于标识和追踪命名空间
   string description = 10; //应用描述信息
-  int64 cpuLimit = 11; //应用可使用的 CPU 总量（单位：核）
-  int64 memoryLimit = 12; //应用可使用的内存总量（单位：GiB）
+  double cpuLimit = 11; //应用可使用的 CPU 总量（单位：核）
+  double memoryLimit = 12; //应用可使用的内存总量（单位：GiB）
   int64 storageLimit = 13; //应用可使用的存储总量（单位：GiB）
   int64 configmapLimit = 14; //应用允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 15; //应用允许创建的 PVC 数量上限
   int64 podLimit = 16; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 17; //应用允许使用的 NodePort 数量上限
   string status = 18; //应用状态（如 `Success`、`Error`）
-  int64 appCreateTime = 19; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string createBy = 20; //记录创建人
-  string updateBy = 21; //记录更新人
+  int64 appcreatedAt = 19; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string createdBy = 20; //记录创建人
+  string updatedBy = 21; //记录更新人
 }
 
 message SearchOnecProjectApplicationResp {
@@ -659,7 +682,7 @@ message SearchOnecProjectApplicationResp {
 }
 
 service OnecProjectApplicationService {
-	//-----------------------应用表，----------------------- 
+	//-----------------------应用表----------------------- 
 	 rpc AddOnecProjectApplication(AddOnecProjectApplicationReq) returns (AddOnecProjectApplicationResp);
 	 rpc UpdateOnecProjectApplication(UpdateOnecProjectApplicationReq) returns (UpdateOnecProjectApplicationResp);
 	 rpc DelOnecProjectApplication(DelOnecProjectApplicationReq) returns (DelOnecProjectApplicationResp);
@@ -670,51 +693,47 @@ service OnecProjectApplicationService {
 //--------------------------------项目与集群的对应关系表，记录资源配额和使用情况--------------------------------
 message OnecProjectQuota {
   uint64 id = 1; //主键，自增 ID
-  uint64 clusterId = 2; //关联的集群 ID
+  string clusterUuid = 2; //关联的集群 ID
   uint64 projectId = 3; //关联的项目 ID
-  int64 cpuAllocatable = 4; //CPU 可分配总量（单位：核）
-  int64 cpuQuota = 5; //CPU 分配配额（单位：核）
-  double cpuOvercommit = 6; //CPU 超配比（如 1.5 表示允许超配 50%）
-  int64 cpuLimit = 7; //CPU 上限值（单位：核）
-  int64 cpuUsed = 8; //已使用的 CPU 资源（单位：核）
-  int64 memoryAllocatable = 9; //内存可分配总量（单位：GiB）
-  int64 memoryQuota = 10; //内存分配配额（单位：GiB）
-  double memoryOvercommit = 11; //内存超配比（如 1.2 表示允许超配 20%）
-  int64 memoryLimit = 12; //内存上限值（单位：GiB）
-  int64 memoryUsed = 13; //已使用的内存资源（单位：GiB）
-  int64 storageLimit = 14; //项目可使用的存储总量（单位：GiB）
-  int64 configmapLimit = 15; //项目允许创建的 ConfigMap 数量上限
-  int64 pvcLimit = 16; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 podLimit = 17; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 18; //项目允许使用的 NodePort 数量上限
-  string status = 19; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createBy = 20; //记录创建人
-  string updateBy = 21; //记录更新人
-  int64 createTime = 22; //项目创建时间
-  int64 updateTime = 23; //项目信息最后更新时间
+  int64 cpuQuota = 4; //CPU 分配配额（单位：核）
+  double cpuOvercommit = 5; //CPU 超配比（如 1.5 表示允许超配 50%）
+  double cpuLimit = 6; //CPU 上限值（单位：核）
+  double cpuUsed = 7; //已使用的 CPU 资源（单位：核）
+  double memoryQuota = 8; //内存分配配额（单位：GiB）
+  double memoryOvercommit = 9; //内存超配比（如 1.2 表示允许超配 20%）
+  double memoryLimit = 10; //内存上限值（单位：GiB）
+  double memoryUsed = 11; //已使用的内存资源（单位：GiB）
+  int64 storageLimit = 12; //项目可使用的存储总量（单位：GiB）
+  int64 configmapLimit = 13; //项目允许创建的 ConfigMap 数量上限
+  int64 pvcLimit = 14; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 podLimit = 15; //项目允许创建的 Pod 数量上限
+  int64 nodeportLimit = 16; //项目允许使用的 NodePort 数量上限
+  string status = 17; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 18; //记录创建人
+  string updatedBy = 19; //记录更新人
+  int64 createdAt = 20; //项目创建时间
+  int64 updatedAt = 21; //项目信息最后更新时间
 }
 
 message AddOnecProjectQuotaReq {
-  uint64 clusterId = 1; //关联的集群 ID
+  string clusterUuid = 1; //关联的集群 ID
   uint64 projectId = 2; //关联的项目 ID
-  int64 cpuAllocatable = 3; //CPU 可分配总量（单位：核）
-  int64 cpuQuota = 4; //CPU 分配配额（单位：核）
-  double cpuOvercommit = 5; //CPU 超配比（如 1.5 表示允许超配 50%）
-  int64 cpuLimit = 6; //CPU 上限值（单位：核）
-  int64 cpuUsed = 7; //已使用的 CPU 资源（单位：核）
-  int64 memoryAllocatable = 8; //内存可分配总量（单位：GiB）
-  int64 memoryQuota = 9; //内存分配配额（单位：GiB）
-  double memoryOvercommit = 10; //内存超配比（如 1.2 表示允许超配 20%）
-  int64 memoryLimit = 11; //内存上限值（单位：GiB）
-  int64 memoryUsed = 12; //已使用的内存资源（单位：GiB）
-  int64 storageLimit = 13; //项目可使用的存储总量（单位：GiB）
-  int64 configmapLimit = 14; //项目允许创建的 ConfigMap 数量上限
-  int64 pvcLimit = 15; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 podLimit = 16; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 17; //项目允许使用的 NodePort 数量上限
-  string status = 18; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createBy = 19; //记录创建人
-  string updateBy = 20; //记录更新人
+  int64 cpuQuota = 3; //CPU 分配配额（单位：核）
+  double cpuOvercommit = 4; //CPU 超配比（如 1.5 表示允许超配 50%）
+  double cpuLimit = 5; //CPU 上限值（单位：核）
+  double cpuUsed = 6; //已使用的 CPU 资源（单位：核）
+  double memoryQuota = 7; //内存分配配额（单位：GiB）
+  double memoryOvercommit = 8; //内存超配比（如 1.2 表示允许超配 20%）
+  double memoryLimit = 9; //内存上限值（单位：GiB）
+  double memoryUsed = 10; //已使用的内存资源（单位：GiB）
+  int64 storageLimit = 11; //项目可使用的存储总量（单位：GiB）
+  int64 configmapLimit = 12; //项目允许创建的 ConfigMap 数量上限
+  int64 pvcLimit = 13; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 podLimit = 14; //项目允许创建的 Pod 数量上限
+  int64 nodeportLimit = 15; //项目允许使用的 NodePort 数量上限
+  string status = 16; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 17; //记录创建人
+  string updatedBy = 18; //记录更新人
 }
 
 message AddOnecProjectQuotaResp {
@@ -722,25 +741,23 @@ message AddOnecProjectQuotaResp {
 
 message UpdateOnecProjectQuotaReq {
   uint64 id = 1; //主键，自增 ID
-  uint64 clusterId = 2; //关联的集群 ID
+  string clusterUuid = 2; //关联的集群 ID
   uint64 projectId = 3; //关联的项目 ID
-  int64 cpuAllocatable = 4; //CPU 可分配总量（单位：核）
-  int64 cpuQuota = 5; //CPU 分配配额（单位：核）
-  double cpuOvercommit = 6; //CPU 超配比（如 1.5 表示允许超配 50%）
-  int64 cpuLimit = 7; //CPU 上限值（单位：核）
-  int64 cpuUsed = 8; //已使用的 CPU 资源（单位：核）
-  int64 memoryAllocatable = 9; //内存可分配总量（单位：GiB）
-  int64 memoryQuota = 10; //内存分配配额（单位：GiB）
-  double memoryOvercommit = 11; //内存超配比（如 1.2 表示允许超配 20%）
-  int64 memoryLimit = 12; //内存上限值（单位：GiB）
-  int64 memoryUsed = 13; //已使用的内存资源（单位：GiB）
-  int64 storageLimit = 14; //项目可使用的存储总量（单位：GiB）
-  int64 configmapLimit = 15; //项目允许创建的 ConfigMap 数量上限
-  int64 pvcLimit = 16; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 podLimit = 17; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 18; //项目允许使用的 NodePort 数量上限
-  string status = 19; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string updateBy = 20; //记录更新人
+  int64 cpuQuota = 4; //CPU 分配配额（单位：核）
+  double cpuOvercommit = 5; //CPU 超配比（如 1.5 表示允许超配 50%）
+  double cpuLimit = 6; //CPU 上限值（单位：核）
+  double cpuUsed = 7; //已使用的 CPU 资源（单位：核）
+  double memoryQuota = 8; //内存分配配额（单位：GiB）
+  double memoryOvercommit = 9; //内存超配比（如 1.2 表示允许超配 20%）
+  double memoryLimit = 10; //内存上限值（单位：GiB）
+  double memoryUsed = 11; //已使用的内存资源（单位：GiB）
+  int64 storageLimit = 12; //项目可使用的存储总量（单位：GiB）
+  int64 configmapLimit = 13; //项目允许创建的 ConfigMap 数量上限
+  int64 pvcLimit = 14; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 podLimit = 15; //项目允许创建的 Pod 数量上限
+  int64 nodeportLimit = 16; //项目允许使用的 NodePort 数量上限
+  string status = 17; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string updatedBy = 18; //记录更新人
 }
 
 message UpdateOnecProjectQuotaResp {
@@ -766,26 +783,24 @@ message SearchOnecProjectQuotaReq {
   uint64 pageSize = 2; //pageSize
   string orderStr = 3; //orderStr
   bool isAsc = 4; //isAsc
-  uint64 clusterId = 5; //关联的集群 ID
+  string clusterUuid = 5; //关联的集群 ID
   uint64 projectId = 6; //关联的项目 ID
-  int64 cpuAllocatable = 7; //CPU 可分配总量（单位：核）
-  int64 cpuQuota = 8; //CPU 分配配额（单位：核）
-  double cpuOvercommit = 9; //CPU 超配比（如 1.5 表示允许超配 50%）
-  int64 cpuLimit = 10; //CPU 上限值（单位：核）
-  int64 cpuUsed = 11; //已使用的 CPU 资源（单位：核）
-  int64 memoryAllocatable = 12; //内存可分配总量（单位：GiB）
-  int64 memoryQuota = 13; //内存分配配额（单位：GiB）
-  double memoryOvercommit = 14; //内存超配比（如 1.2 表示允许超配 20%）
-  int64 memoryLimit = 15; //内存上限值（单位：GiB）
-  int64 memoryUsed = 16; //已使用的内存资源（单位：GiB）
-  int64 storageLimit = 17; //项目可使用的存储总量（单位：GiB）
-  int64 configmapLimit = 18; //项目允许创建的 ConfigMap 数量上限
-  int64 pvcLimit = 19; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 podLimit = 20; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 21; //项目允许使用的 NodePort 数量上限
-  string status = 22; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createBy = 23; //记录创建人
-  string updateBy = 24; //记录更新人
+  int64 cpuQuota = 7; //CPU 分配配额（单位：核）
+  double cpuOvercommit = 8; //CPU 超配比（如 1.5 表示允许超配 50%）
+  double cpuLimit = 9; //CPU 上限值（单位：核）
+  double cpuUsed = 10; //已使用的 CPU 资源（单位：核）
+  double memoryQuota = 11; //内存分配配额（单位：GiB）
+  double memoryOvercommit = 12; //内存超配比（如 1.2 表示允许超配 20%）
+  double memoryLimit = 13; //内存上限值（单位：GiB）
+  double memoryUsed = 14; //已使用的内存资源（单位：GiB）
+  int64 storageLimit = 15; //项目可使用的存储总量（单位：GiB）
+  int64 configmapLimit = 16; //项目允许创建的 ConfigMap 数量上限
+  int64 pvcLimit = 17; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 podLimit = 18; //项目允许创建的 Pod 数量上限
+  int64 nodeportLimit = 19; //项目允许使用的 NodePort 数量上限
+  string status = 20; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 21; //记录创建人
+  string updatedBy = 22; //记录更新人
 }
 
 message SearchOnecProjectQuotaResp {
@@ -800,18 +815,6 @@ service OnecProjectQuotaService {
 	 rpc DelOnecProjectQuota(DelOnecProjectQuotaReq) returns (DelOnecProjectQuotaResp);
 	 rpc GetOnecProjectQuotaById(GetOnecProjectQuotaByIdReq) returns (GetOnecProjectQuotaByIdResp);
 	 rpc SearchOnecProjectQuota(SearchOnecProjectQuotaReq) returns (SearchOnecProjectQuotaResp);
-}
-
-// ------------------------------------ 
-// Enums
-// ------------------------------------ 
-
-// 连接类型 
-enum OnecClusterConnType {
-  KUBECONFIG = 0;
-  TOKEN = 1;
-  AGENT = 2;
-  OTHER = 3;
 }
 
 

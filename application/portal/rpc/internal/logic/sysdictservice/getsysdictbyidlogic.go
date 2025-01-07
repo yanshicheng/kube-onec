@@ -43,10 +43,10 @@ func (l *GetSysDictByIdLogic) GetSysDictById(in *pb.GetSysDictByIdReq) (*pb.GetS
 			DictName:    res.DictName,
 			DictCode:    res.DictCode,
 			Description: res.Description,
-			UpdateBy:    res.UpdateBy,
-			UpdateTime:  res.UpdateTime.Unix(),
-			CreateBy:    res.CreateBy,
-			CreateTime:  res.CreateTime.Unix(),
+			UpdatedBy:   res.UpdatedBy,
+			UpdatedAt:   res.UpdatedAt.Unix(),
+			CreatedBy:   res.CreatedBy,
+			CreatedAt:   res.CreatedAt.Unix(),
 		},
 	}, nil
 }

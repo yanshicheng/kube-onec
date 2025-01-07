@@ -41,8 +41,8 @@ func (l *GetSysPositionByIdLogic) GetSysPositionById(in *pb.GetSysPositionByIdRe
 	data := &pb.SysPosition{}
 	data.Id = resp.Id
 	data.Name = resp.Name
-	data.UpdateTime = resp.UpdateTime.Unix()
-	data.CreateTime = resp.CreateTime.Unix()
+	data.UpdatedAt = resp.UpdatedAt.Unix()
+	data.CreatedAt = resp.CreatedAt.Unix()
 
 	// 返回结果
 	l.Logger.Infof("成功获取职位信息: 职位ID=%d", in.Id)

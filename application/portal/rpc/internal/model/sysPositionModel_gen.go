@@ -50,11 +50,11 @@ type (
 	}
 
 	SysPosition struct {
-		Id         uint64       `db:"id"`          // 自增主键
-		Name       string       `db:"name"`        // 职位名称
-		CreateTime time.Time    `db:"create_time"` // 创建时间
-		UpdateTime time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id        uint64    `db:"id"`         // 自增主键
+		Name      string    `db:"name"`       // 职位名称
+		CreatedAt time.Time `db:"created_at"` // 记录创建时间
+		UpdatedAt time.Time `db:"updated_at"` // 记录更新时间
+		IsDeleted int64     `db:"is_deleted"` // 是否删除
 	}
 )
 
@@ -86,13 +86,13 @@ func (m *defaultSysPositionModel) DeleteSoft(ctx context.Context, id uint64) err
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysPositionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionIdPrefix, id)
 	kubeOnecSysPositionNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionNamePrefix, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysPositionIdKey, kubeOnecSysPositionNameKey)
 	return err
@@ -161,7 +161,7 @@ func (m *defaultSysPositionModel) FindOne(ctx context.Context, id uint64) (*SysP
 	kubeOnecSysPositionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionIdPrefix, id)
 	var resp SysPosition
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysPositionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysPositionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysPositionRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -184,11 +184,11 @@ func (m *defaultSysPositionModel) Search(ctx context.Context, orderStr string, i
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -233,9 +233,9 @@ func (m *defaultSysPositionModel) Search(ctx context.Context, orderStr string, i
 
 func (m *defaultSysPositionModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysPosition, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -269,7 +269,7 @@ func (m *defaultSysPositionModel) FindOneByName(ctx context.Context, name string
 	kubeOnecSysPositionNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionNamePrefix, name)
 	var resp SysPosition
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysPositionNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `name` = ? AND `delete_time` IS NULL limit 1", sysPositionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `name` = ? AND `is_deleted` = 0  limit 1", sysPositionRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, name); err != nil {
 			return nil, err
 		}
@@ -290,7 +290,7 @@ func (m *defaultSysPositionModel) Insert(ctx context.Context, data *SysPosition)
 	kubeOnecSysPositionNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionNamePrefix, data.Name)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, sysPositionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.Name, data.IsDeleted)
 	}, kubeOnecSysPositionIdKey, kubeOnecSysPositionNameKey)
 	return ret, err
 }
@@ -305,7 +305,7 @@ func (m *defaultSysPositionModel) Update(ctx context.Context, newData *SysPositi
 	kubeOnecSysPositionNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysPositionNamePrefix, data.Name)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysPositionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Name, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Name, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysPositionIdKey, kubeOnecSysPositionNameKey)
 	return err
 }
@@ -315,7 +315,7 @@ func (m *defaultSysPositionModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysPositionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysPositionRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysPositionRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

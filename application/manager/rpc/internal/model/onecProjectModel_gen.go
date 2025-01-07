@@ -50,15 +50,15 @@ type (
 	}
 
 	OnecProject struct {
-		Id          uint64         `db:"id"`          // 主键，自增 ID
-		Name        string         `db:"name"`        // 项目的中文名称
-		Identifier  string         `db:"identifier"`  // 项目的唯一标识符（英文），便于程序中唯一标识
-		Description sql.NullString `db:"description"` // 项目描述信息
-		CreateBy    string         `db:"create_by"`   // 记录创建人
-		UpdateBy    string         `db:"update_by"`   // 记录更新人
-		CreateTime  time.Time      `db:"create_time"` // 项目创建时间
-		UpdateTime  time.Time      `db:"update_time"` // 项目信息最后更新时间
-		DeleteTime  sql.NullTime   `db:"delete_time"` // 记录删除时间（软删除）
+		Id          uint64    `db:"id"`          // 主键，自增 ID
+		Name        string    `db:"name"`        // 项目的中文名称
+		Identifier  string    `db:"identifier"`  // 项目的唯一标识符（英文），便于程序中唯一标识
+		Description string    `db:"description"` // 项目描述信息
+		CreatedBy   string    `db:"created_by"`  // 记录创建人
+		UpdatedBy   string    `db:"updated_by"`  // 记录更新人
+		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -90,13 +90,13 @@ func (m *defaultOnecProjectModel) DeleteSoft(ctx context.Context, id uint64) err
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecOnecProjectIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdPrefix, id)
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, data.Identifier)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecOnecProjectIdKey, kubeOnecOnecProjectIdentifierKey)
 	return err
@@ -165,7 +165,7 @@ func (m *defaultOnecProjectModel) FindOne(ctx context.Context, id uint64) (*Onec
 	kubeOnecOnecProjectIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdPrefix, id)
 	var resp OnecProject
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecOnecProjectIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecProjectRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecProjectRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -188,11 +188,11 @@ func (m *defaultOnecProjectModel) Search(ctx context.Context, orderStr string, i
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -237,9 +237,9 @@ func (m *defaultOnecProjectModel) Search(ctx context.Context, orderStr string, i
 
 func (m *defaultOnecProjectModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*OnecProject, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -273,7 +273,7 @@ func (m *defaultOnecProjectModel) FindOneByIdentifier(ctx context.Context, ident
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, identifier)
 	var resp OnecProject
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecProjectIdentifierKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `identifier` = ? AND `delete_time` IS NULL limit 1", onecProjectRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `identifier` = ? AND `is_deleted` = 0  limit 1", onecProjectRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, identifier); err != nil {
 			return nil, err
 		}
@@ -294,7 +294,7 @@ func (m *defaultOnecProjectModel) Insert(ctx context.Context, data *OnecProject)
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, data.Identifier)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, onecProjectRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.Identifier, data.Description, data.CreateBy, data.UpdateBy, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.Name, data.Identifier, data.Description, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
 	}, kubeOnecOnecProjectIdKey, kubeOnecOnecProjectIdentifierKey)
 	return ret, err
 }
@@ -309,7 +309,7 @@ func (m *defaultOnecProjectModel) Update(ctx context.Context, newData *OnecProje
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, data.Identifier)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Name, newData.Identifier, newData.Description, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Name, newData.Identifier, newData.Description, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
 	}, kubeOnecOnecProjectIdKey, kubeOnecOnecProjectIdentifierKey)
 	return err
 }
@@ -319,7 +319,7 @@ func (m *defaultOnecProjectModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultOnecProjectModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecProjectRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecProjectRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

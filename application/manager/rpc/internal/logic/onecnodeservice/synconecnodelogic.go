@@ -29,15 +29,15 @@ func NewSyncOnecNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 // 同步节点信息
 func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNodeResp, error) {
 	// 先获取 client
-	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterId, nil)
+	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterUuid, nil)
 	if err != nil {
 		l.Logger.Infof("获取集群客户端失败: %v", err)
-		cluster, err := l.svcCtx.ClusterModel.FindOne(l.ctx, in.ClusterId)
+		cluster, err := l.svcCtx.ClusterModel.FindOneByUuid(l.ctx, in.ClusterUuid)
 		if err != nil {
 			l.Logger.Errorf("获取集群信息失败: %v", err)
 			return nil, code.GetClusterInfoErr
 		}
-		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterId, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
+		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterUuid, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
 		if err != nil {
 			l.Logger.Infof("获取集群客户端失败: %v", err)
 			return nil, code.GetClusterClientErr
@@ -45,27 +45,29 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	}
 
 	if err := client.Ping(); err != nil {
-		l.Logger.Infof("集群: %v, 连接失败: %v", in.ClusterId, err)
+		l.Logger.Infof("集群: %v, 连接失败: %v", in.ClusterUuid, err)
 		return nil, code.ClusterConnectErr
 	}
-	l.Logger.Infof("集群Id: %v, nodes: %v 正在更新", in.ClusterId, in.NodeName)
-	// 获取单个数据
-	nodeInfo, err := client.GetNodes().GetNodeInfo(in.NodeName)
-	if err != nil {
-		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterId, in.NodeName)
-		return nil, code.GetNodeInfoErr
-	}
 	// 查询 node 数据
-	node, err := l.svcCtx.NodeModel.FindOneByClusterIdNodeName(l.ctx, in.ClusterId, in.NodeName)
+	node, err := l.svcCtx.NodeModel.FindOne(l.ctx, in.Id)
 	if err != nil {
-		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterId, in.NodeName)
+		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, in.Id)
 		return nil, code.GetNodeInfoErr
 	}
+	l.Logger.Infof("集群Id: %v, nodes: %v 正在更新", in.ClusterUuid, node.NodeName)
+
+	// 获取单个数据
+	nodeInfo, err := client.GetNodes().GetNodeInfo(node.NodeName)
+	if err != nil {
+		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, node.NodeName)
+		return nil, code.GetNodeInfoErr
+	}
+
 	node, ok := onecclusterservicelogic.CompareNodes(node, nodeInfo)
 	if ok {
-		node.UpdateBy = in.UpdateBy
+		node.UpdatedBy = in.UpdatedBy
 		if err := l.svcCtx.NodeModel.Update(l.ctx, node); err != nil {
-			l.Logger.Errorf("集群: %v , 更新节点: %v, 信息失败: %v", in.ClusterId, in.NodeName, err)
+			l.Logger.Errorf("集群: %v , 更新节点: %v, 信息失败: %v", in.ClusterUuid, node.NodeName, err)
 			return nil, code.SyncClusterInfoErr
 		}
 	}

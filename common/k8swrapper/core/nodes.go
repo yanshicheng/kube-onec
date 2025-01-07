@@ -35,7 +35,7 @@ type NodeInfo struct {
 	NodeIp           string            `json:"nodeIp"`
 	Os               string            `json:"os"`
 	Cpu              int64             `json:"cpu"`
-	Memory           int64             `json:"memory"`
+	Memory           float64           `json:"memory"`
 	MaxPods          int64             `json:"macPods"`
 	KernelVersion    string            `json:"kernelVersion"`
 	ContainerRuntime string            `json:"containerRuntime"`

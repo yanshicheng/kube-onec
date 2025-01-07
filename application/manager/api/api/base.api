@@ -1,0 +1,15 @@
+syntax = "v1"
+
+info(
+    title: "base type"
+    desc: "通用结构类型"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+type (
+    // 默认ID请求参数
+    DefaultIdRequest {
+        Id uint64 `path:"id"  validate:"required,gt=0"` // 用户 ID
+    }
+)

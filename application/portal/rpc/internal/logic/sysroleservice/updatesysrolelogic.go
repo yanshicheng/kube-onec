@@ -44,7 +44,7 @@ func (l *UpdateSysRoleLogic) UpdateSysRole(in *pb.UpdateSysRoleReq) (*pb.UpdateS
 	if in.Description != "" {
 		role.Description = in.Description
 	}
-	role.UpdateBy = in.UpdateBy
+	role.UpdatedBy = in.UpdatedBy
 	// 更新角色信息
 	if err := l.svcCtx.SysRole.Update(l.ctx, role); err != nil {
 		l.Logger.Errorf("更新角色信息失败，角色ID=%d，错误信息：%v", in.Id, err)

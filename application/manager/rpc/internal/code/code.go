@@ -16,5 +16,7 @@ var (
 	// 获取集群客户端异常!
 	UpdateClusterInfoErr = errorx.New(102010, "更新集群信息失败!")
 	// 集群信息同步失败
-	SyncClusterInfoErr = errorx.New(102011, "集群信息同步失败!")
+	SyncClusterInfoErr  = errorx.New(102011, "集群信息同步失败!")
+	DictItemNotExistErr = errorx.New(102012, "字典项不存在!")
+	GetClusterIdErr     = errorx.New(102013, "获取集群ID失败!")
 )

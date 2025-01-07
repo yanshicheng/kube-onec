@@ -55,6 +55,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SysDictRpc:         sysdictservice.NewSysDictService(protalRpc),
 		SysDictItemRpc:     sysdictitemservice.NewSysDictItemService(protalRpc),
 		StoreRpc:           imageservice.NewImageService(protalRpc),
-		JWTAuthMiddleware:  middleware.NewJWTAuthMiddleware(c, sysauthservice.NewSysAuthService(protalRpc)).Handle,
+		JWTAuthMiddleware:  middleware.NewJWTAuthMiddleware(sysauthservice.NewSysAuthService(protalRpc)).Handle,
 	}
 }

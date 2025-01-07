@@ -24,8 +24,8 @@ message SysUser {
   uint64 positionId = 12; //职位ID，关联职位表
   uint64 organizationId = 13; //组织ID，关联组织表
   int64 lastLoginTime = 14; //上次登录时间
-  int64 createTime = 15; //创建时间
-  int64 updateTime = 16; //最后修改时间
+  int64 createdAt = 15; //创建时间
+  int64 updatedAt = 16; //最后修改时间
 }
 
 message AddSysUserReq {
@@ -174,8 +174,8 @@ message GetUserInfoResp {
   string organizationName = 10;
   repeated string roleNames = 11;
   int64 lastLoginTime = 12; //上次登录时间
-  int64 createTime = 13; //创建时间
-  int64 updateTime = 14; //最后修改时间
+  int64 createdAt = 13; //创建时间
+  int64 updatedAt = 14; //最后修改时间
 }
 
 
@@ -443,8 +443,8 @@ message SysOrganization {
   uint64 parentId = 3; //父级组织的 ID，根级为 NULL
   int64 level = 4; //组织层级，从 0 开始
   string description = 5; //组织描述
-  int64 createTime = 6; //创建时间
-  int64 updateTime = 7; //最后修改时间
+  int64 createdAt = 6; //创建时间
+  int64 updatedAt = 7; //最后修改时间
 }
 
 message AddSysOrganizationReq {
@@ -495,11 +495,11 @@ message SearchSysOrganizationResp {
 message SysOrganizationSearch {
   uint64 id = 1;
   string name = 2;
-  uint64 parent_id = 3;
+  uint64 parentId = 3;
   int64 level = 4;
   string description = 5;
-  int64 create_time = 6;
-  int64 update_time = 7;
+  int64 createdAt = 6;
+  int64 updatedAt = 7;
   repeated SysOrganizationSearch children = 8; // children
 }
 
@@ -523,8 +523,8 @@ message SysPermission {
   string uri = 4; //权限对应的资源URI或路径
   string action = 5; //对资源执行的操作
   uint64 level = 6;
-  int64 createTime = 7; //创建时间
-  int64 updateTime = 8; //最后修改时间
+  int64 createdAt = 7; //创建时间
+  int64 updatedAt = 8; //最后修改时间
 }
 
 message AddSysPermissionReq {
@@ -608,8 +608,8 @@ service SysPermissionService {
 message SysPosition {
   uint64 id = 1; //自增主键
   string name = 2; //职位名称
-  int64 createTime = 4; //创建时间
-  int64 updateTime = 5; //最后修改时间
+  int64 createdAt = 4; //创建时间
+  int64 updatedAt = 5; //最后修改时间
 }
 
 message AddSysPositionReq {
@@ -679,19 +679,19 @@ message SysRole {
   uint64 id = 1; //自增主键
   string roleName = 2; //角色名称
   string roleCode = 3;
-  int64 createTime = 4; //创建时间
-  int64 updateTime = 5; //最后修改时间
+  int64 createdAt = 4; //创建时间
+  int64 updatedAt = 5; //最后修改时间
   string description = 6; //描述
-  string createBy = 7; //创建人
-  string updateBy = 8; //更新人
+  string createdBy = 7; //创建人
+  string updatedBy = 8; //更新人
 }
 
 message AddSysRoleReq {
   string roleName = 1; //角色名称
   string roleCode = 2;
   string description = 3; //描述
-  string createBy = 4; //创建人
-  string updateBy = 5; //更新人
+  string createdBy = 4; //创建人
+  string updatedBy = 5; //更新人
 }
 
 message AddSysRoleResp {
@@ -701,7 +701,7 @@ message UpdateSysRoleReq {
   uint64 id = 1; //自增主键
   string roleName = 2; //角色名称
   string description = 3; //描述
-  string updateBy = 4; //更新人
+  string updatedBy = 4; //更新人
 }
 
 message UpdateSysRoleResp {
@@ -730,8 +730,8 @@ message SearchSysRoleReq {
   string roleName = 5; //角色名称
   string roleCode = 6;
   string description = 7; //描述
-  string createBy = 8; //创建人
-  string updateBy = 9; //更新人
+  string createdBy = 8; //创建人
+  string updatedBy = 9; //更新人
 }
 
 message SearchSysRoleResp {
@@ -810,17 +810,17 @@ message GetTokenRequest {
 
 // Token 响应消息，包含访问令牌和刷新令牌
 message TokenResponse {
-  string access_token = 1;         // 访问令牌
-  int64 access_expires_in = 2;     // 访问令牌过期时间（秒）
-  string refresh_token = 3;        // 刷新令牌
-  int64 refresh_expires_in = 4;    // 刷新令牌过期时间（秒）
+  string accessToken = 1;         // 访问令牌
+  int64 accessExpiresIn = 2;     // 访问令牌过期时间（秒）
+  string refreshToken = 3;        // 刷新令牌
+  int64 refreshExpiresIn = 4;    // 刷新令牌过期时间（秒）
 }
 
 // 获取令牌的响应消息
 message GetTokenResponse {
-  uint64 account_id = 1;        // 账号ID
+  uint64 accountId = 1;        // 账号ID
   string account = 2;           // 账号
-  string user_name = 3;         // 用户名
+  string userName = 3;         // 用户名
   string uuid = 4;
   repeated string roles = 5;    // 角色列表
   TokenResponse token = 6;      // 令牌信息
@@ -833,14 +833,14 @@ message VerifyTokenRequest {
 
 // 验证令牌的响应消息
 message VerifyTokenResponse {
-  bool is_valid = 1;            // 令牌是否有效
-  int64 error_type = 2;        // 错误类型
-  string error_message = 3;     // 错误信息
-  int64 expire_time = 4;        // 过期时间（Unix 时间戳）
-  uint64 account_id = 5;        // 账号ID
+  bool isValid = 1;            // 令牌是否有效
+  int64 errorType = 2;        // 错误类型
+  string errorMessage = 3;     // 错误信息
+  int64 expireTime = 4;        // 过期时间（Unix 时间戳）
+  uint64 accountId = 5;        // 账号ID
   string account = 6;           // 账号
   string uuid = 7;              // 用户UUID
-  string user_name = 8;         // 用户名
+  string userName = 8;         // 用户名
   repeated string roles = 9;    // 角色列表
 }
 
@@ -856,13 +856,13 @@ message LogoutResponse {
 
 // 刷新令牌的请求消息
 message RefreshTokenRequest {
-  string refresh_token = 1; // 刷新令牌
+  string refreshToken = 1; // 刷新令牌
 }
 
 // 刷新令牌的响应消息
 message RefreshTokenResponse {
-  string access_token = 1;         // 访问令牌
-  int64 access_expires_in = 2;     // 访问令牌过期时间（秒）
+  string accessToken = 1;         // 访问令牌
+  int64 accessExpiresIn = 2;     // 访问令牌过期时间（秒）
 }
 
 // 系统认证服务定义
@@ -886,8 +886,8 @@ service SysAuthService {
 //  uint64 id = 1; //自增主键
 //  uint64 roleId = 2; //角色ID，关联 sys_role 表
 //  uint64 menuId = 3; //菜单ID，关联 sys_menu 表
-//  int64 createTime = 4; //创建时间
-//  int64 updateTime = 5; //最后修改时间
+//  int64 createdAt = 4; //创建时间
+//  int64 updatedAt = 5; //最后修改时间
 //}
 //
 //message AddSysRoleMenuReq {
@@ -951,8 +951,8 @@ service SysAuthService {
 //  uint64 id = 1; //自增主键
 //  uint64 roleId = 2; //角色ID，关联 sys_role 表
 //  uint64 permissionId = 3; //权限ID，关联 sys_permission 表
-//  int64 createTime = 4; //创建时间
-//  int64 updateTime = 5; //最后修改时间
+//  int64 createdAt = 4; //创建时间
+//  int64 updatedAt = 5; //最后修改时间
 //}
 //
 //message AddSysRolePermissionReq {
@@ -1017,8 +1017,8 @@ service SysAuthService {
 //  uint64 id = 1; //自增主键
 //  uint64 userId = 2; //用户ID，关联 sys_user 表
 //  uint64 roleId = 3; //角色ID，关联 sys_role 表
-//  int64 createTime = 4; //创建时间
-//  int64 updateTime = 5; //最后修改时间
+//  int64 createdAt = 4; //创建时间
+//  int64 updatedAt = 5; //最后修改时间
 //}
 //
 //message AddSysUserRoleReq {
@@ -1093,18 +1093,18 @@ message SysDict {
   string dictName = 2; //字典名称
   string dictCode = 3; //字典编码
   string description = 4; //描述
-  string createBy = 5; //创建人
-  string updateBy = 6; //更新人
-  int64 createTime = 7; //创建时间
-  int64 updateTime = 8; //最后修改时间
+  string createdBy = 5; //创建人
+  string updatedBy = 6; //更新人
+  int64 createdAt = 7; //创建时间
+  int64 updatedAt = 8; //最后修改时间
 }
 
 message AddSysDictReq {
   string dictName = 1; //字典名称
   string dictCode = 2; //字典编码
   string description = 3; //描述
-  string createBy = 4; //创建人
-  string updateBy = 5; //更新人
+  string createdBy = 4; //创建人
+  string updatedBy = 5; //更新人
 }
 
 message AddSysDictResp {
@@ -1114,7 +1114,7 @@ message UpdateSysDictReq {
   uint64 id = 1; //自增主键
   string dictName = 2; //字典名称
   string description = 3; //描述
-  string updateBy = 4; //更新人
+  string updatedBy = 4; //更新人
 }
 
 message UpdateSysDictResp {
@@ -1122,7 +1122,7 @@ message UpdateSysDictResp {
 
 message DelSysDictReq {
   uint64 id = 1; //id
-  string updateBy = 2;
+  string updatedBy = 2;
 }
 
 message DelSysDictResp {
@@ -1144,8 +1144,8 @@ message SearchSysDictReq {
   string dictName = 5; //字典名称
   string dictCode = 6; //字典编码
   string description = 7; //描述
-  string createBy = 9; //创建人
-  string updateBy = 10; //更新人
+  string createdBy = 9; //创建人
+  string updatedBy = 10; //更新人
 }
 
 message SearchSysDictResp {
@@ -1170,10 +1170,10 @@ message SysDictItem {
   string itemCode = 4; //字典项值
   string description = 5; //描述
   int64 sortOrder = 6; //排序
-  string createBy = 7; //创建人
-  string updateBy = 8; //更新人
-  int64 createTime = 9; //创建时间
-  int64 updateTime = 10; //最后修改时间
+  string createdBy = 7; //创建人
+  string updatedBy = 8; //更新人
+  int64 createdAt = 9; //创建时间
+  int64 updatedAt = 10; //最后修改时间
 }
 
 message AddSysDictItemReq {
@@ -1182,8 +1182,8 @@ message AddSysDictItemReq {
   string itemCode = 3; //字典项值
   string description = 4; //描述
   int64 sortOrder = 5; //排序
-  string createBy = 6; //创建人
-  string updateBy = 7; //更新人
+  string createdBy = 6; //创建人
+  string updatedBy = 7; //更新人
 }
 
 message AddSysDictItemResp {
@@ -1194,7 +1194,7 @@ message UpdateSysDictItemReq {
   string itemText = 2; //字典项文本
   string description = 3; //描述
   int64 sortOrder = 4; //排序
-  string updateBy = 5; //更新人
+  string updatedBy = 5; //更新人
 }
 
 message UpdateSysDictItemResp {
@@ -1202,7 +1202,7 @@ message UpdateSysDictItemResp {
 
 message DelSysDictItemReq {
   uint64 id = 1; //id
-  string updateBy = 2;
+  string updatedBy = 2;
 }
 
 message DelSysDictItemResp {
@@ -1225,13 +1225,34 @@ message SearchSysDictItemReq {
   string itemText = 6; //字典项文本
   string itemCode = 7; //字典项值
   string description = 8; //描述
-  string createBy = 9; //创建人
-  string updateBy = 10; //更新人
+  string createdBy = 9; //创建人
+  string updatedBy = 10; //更新人
 }
 
 message SearchSysDictItemResp {
   repeated SysDictItem data = 1; //sysDictItem
   uint64 total = 2; //total
+}
+
+
+// 根据ItemCode 检查数据是否存在
+message CheckDictItemCodeReq {
+  string dictCode = 1; //字典ID，关联 sys_dict 表
+  string itemCode = 2; //字典项值
+}
+
+
+message CheckDictItemCodeResp {
+}
+
+// 根据 itemCode 获取字典 name
+message GetDictItemNameReq {
+  string dictCode = 1; //字典ID，关联 sys_dict 表
+  string itemCode = 2; //字典项值
+}
+
+message GetDictItemTextResp {
+  string itemText = 1; //字典项文本
 }
 
 service SysDictItemService {
@@ -1241,6 +1262,9 @@ service SysDictItemService {
   rpc DelSysDictItem(DelSysDictItemReq) returns (DelSysDictItemResp);
   rpc GetSysDictItemById(GetSysDictItemByIdReq) returns (GetSysDictItemByIdResp);
   rpc SearchSysDictItem(SearchSysDictItemReq) returns (SearchSysDictItemResp);
+
+  rpc CheckDictItemCode(CheckDictItemCodeReq) returns (CheckDictItemCodeResp);
+  rpc GetDictItemText(GetDictItemNameReq) returns (GetDictItemTextResp);
 }
 
 // 上传图片请求消息

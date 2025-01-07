@@ -33,8 +33,8 @@ func (l *SearchSysRoleLogic) SearchSysRole(req *types.SearchSysRoleRequest) (res
 		OrderStr:    req.OrderStr,
 		IsAsc:       req.IsAsc,
 		Description: req.Description,
-		CreateBy:    req.CreateBy,
-		UpdateBy:    req.UpdateBy,
+		CreatedBy:   req.CreatedBy,
+		UpdatedBy:   req.UpdatedBy,
 	})
 	if err != nil {
 		// 错误日志，明确上下文
@@ -53,11 +53,11 @@ func (l *SearchSysRoleLogic) SearchSysRole(req *types.SearchSysRoleRequest) (res
 		temp := types.GetSysRoleByIdResponse{
 			Id:          v.Id,
 			RoleName:    v.RoleName,
-			CreateTime:  v.CreateTime,
-			UpdateTime:  v.UpdateTime,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 			Description: v.Description,
-			CreateBy:    v.CreateBy,
-			UpdateBy:    v.UpdateBy,
+			CreatedBy:   v.CreatedBy,
+			UpdatedBy:   v.UpdatedBy,
 		}
 		resp.Items = append(resp.Items, temp)
 	}

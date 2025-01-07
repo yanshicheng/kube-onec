@@ -31,6 +31,7 @@ var (
 type (
 	sysDictModel interface {
 		Insert(ctx context.Context, data *SysDict) (sql.Result, error)
+
 		FindOne(ctx context.Context, id uint64) (*SysDict, error)
 		Search(ctx context.Context, orderStr string, isAsc bool, page, pageSize uint64, queryStr string, args ...any) ([]*SysDict, uint64, error)
 		SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysDict, error)
@@ -49,15 +50,15 @@ type (
 	}
 
 	SysDict struct {
-		Id          uint64       `db:"id"`          // 自增主键
-		DictName    string       `db:"dict_name"`   // 字典名称
-		DictCode    string       `db:"dict_code"`   // 字典编码
-		Description string       `db:"description"` // 描述
-		CreateBy    string       `db:"create_by"`   // 创建人
-		UpdateBy    string       `db:"update_by"`   // 更新人
-		CreateTime  time.Time    `db:"create_time"` // 创建时间
-		UpdateTime  time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime  sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id          uint64    `db:"id"`          // 自增主键
+		DictName    string    `db:"dict_name"`   // 字典名称
+		DictCode    string    `db:"dict_code"`   // 字典编码
+		Description string    `db:"description"` // 描述
+		CreatedBy   string    `db:"created_by"`  // 创建者
+		UpdatedBy   string    `db:"updated_by"`  // 更新者
+		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -89,13 +90,13 @@ func (m *defaultSysDictModel) DeleteSoft(ctx context.Context, id uint64) error {
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysDictDictCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictDictCodePrefix, data.DictCode)
 	kubeOnecSysDictIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictIdPrefix, id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysDictDictCodeKey, kubeOnecSysDictIdKey)
 	return err
@@ -164,7 +165,7 @@ func (m *defaultSysDictModel) FindOne(ctx context.Context, id uint64) (*SysDict,
 	kubeOnecSysDictIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictIdPrefix, id)
 	var resp SysDict
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysDictIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysDictRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysDictRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -187,11 +188,11 @@ func (m *defaultSysDictModel) Search(ctx context.Context, orderStr string, isAsc
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -236,9 +237,9 @@ func (m *defaultSysDictModel) Search(ctx context.Context, orderStr string, isAsc
 
 func (m *defaultSysDictModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysDict, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -272,7 +273,7 @@ func (m *defaultSysDictModel) FindOneByDictCode(ctx context.Context, dictCode st
 	kubeOnecSysDictDictCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictDictCodePrefix, dictCode)
 	var resp SysDict
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysDictDictCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `dict_code` = ? AND `delete_time` IS NULL limit 1", sysDictRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `dict_code` = ? AND `is_deleted` = 0  limit 1", sysDictRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, dictCode); err != nil {
 			return nil, err
 		}
@@ -293,7 +294,7 @@ func (m *defaultSysDictModel) Insert(ctx context.Context, data *SysDict) (sql.Re
 	kubeOnecSysDictIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysDictRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DictName, data.DictCode, data.Description, data.CreateBy, data.UpdateBy, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.DictName, data.DictCode, data.Description, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
 	}, kubeOnecSysDictDictCodeKey, kubeOnecSysDictIdKey)
 	return ret, err
 }
@@ -308,7 +309,7 @@ func (m *defaultSysDictModel) Update(ctx context.Context, newData *SysDict) erro
 	kubeOnecSysDictIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysDictRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DictName, newData.DictCode, newData.Description, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.DictName, newData.DictCode, newData.Description, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysDictDictCodeKey, kubeOnecSysDictIdKey)
 	return err
 }
@@ -318,7 +319,7 @@ func (m *defaultSysDictModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysDictModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysDictRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysDictRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

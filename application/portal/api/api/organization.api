@@ -18,8 +18,8 @@ type (
         ParentId uint64 `json:"parentId"`       // 父级机构的 Id，根级为 0
         Level int64 `json:"level"`              // 机构层级，从 0 开始
         Description string `json:"description"` // 机构描述
-        CreateTime int64 `json:"createTime"`    // 创建时间
-        UpdateTime int64 `json:"updateTime"`    // 最后修改时间
+        CreatedAt int64 `json:"createdAt"`    // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`    // 最后修改时间
     }
 
         // 添加机构请求
@@ -58,7 +58,7 @@ type (
 
         // 搜索机构响应
     SearchSysOrganizationResponse {
-        Items []OrganizationNode `json:"data"`   // 机构数据列表
+        Items []OrganizationNode `json:"items"`   // 机构数据列表
     }
 
         // 机构树节点
@@ -68,8 +68,8 @@ type (
         ParentId uint64 `json:"parentId"`                // 父级机构的 Id，根级为 0
         Level int64 `json:"level"`                       // 机构层级，从 0 开始
         Description string `json:"description"`          // 机构描述
-        CreateTime int64 `json:"createTime"`             // 创建时间
-        UpdateTime int64 `json:"updateTime"`             // 最后修改时间
+        CreatedAt int64 `json:"createdAt"`             // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`             // 最后修改时间
         Children []OrganizationNode `json:"children"`    // 子机构
     }
 
@@ -80,7 +80,7 @@ type (
 
         // 获取机构树响应
     GetOrganizationTreeResponse {
-        Data []OrganizationNode `json:"data"` // 机构树
+        Items []OrganizationNode `json:"items"` // 机构树
     }
 )
 

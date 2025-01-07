@@ -48,14 +48,14 @@ type (
 	}
 
 	SysOrganization struct {
-		Id          uint64       `db:"id"`          // 自增主键
-		Name        string       `db:"name"`        // 团队名称
-		ParentId    uint64       `db:"parent_id"`   // 父级组织的 ID，根级为 NULL
-		Level       int64        `db:"level"`       // 组织层级，从 0 开始
-		Description string       `db:"description"` // 组织描述
-		CreateTime  time.Time    `db:"create_time"` // 创建时间
-		UpdateTime  time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime  sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id          uint64    `db:"id"`          // 自增主键
+		Name        string    `db:"name"`        // 团队名称
+		ParentId    uint64    `db:"parent_id"`   // 父级组织的 ID，根级为 NULL
+		Level       int64     `db:"level"`       // 组织层级，从 0 开始
+		Description string    `db:"description"` // 组织描述
+		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -78,7 +78,7 @@ func (m *defaultSysOrganizationModel) Delete(ctx context.Context, id uint64) err
 func (m *defaultSysOrganizationModel) DeleteSoft(ctx context.Context, id uint64) error {
 	kubeOnecSysOrganizationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysOrganizationIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysOrganizationIdKey)
 	return err
@@ -137,7 +137,7 @@ func (m *defaultSysOrganizationModel) FindOne(ctx context.Context, id uint64) (*
 	kubeOnecSysOrganizationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysOrganizationIdPrefix, id)
 	var resp SysOrganization
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysOrganizationIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysOrganizationRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysOrganizationRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -160,11 +160,11 @@ func (m *defaultSysOrganizationModel) Search(ctx context.Context, orderStr strin
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -209,9 +209,9 @@ func (m *defaultSysOrganizationModel) Search(ctx context.Context, orderStr strin
 
 func (m *defaultSysOrganizationModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysOrganization, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -246,7 +246,7 @@ func (m *defaultSysOrganizationModel) Insert(ctx context.Context, data *SysOrgan
 	kubeOnecSysOrganizationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysOrganizationIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?)", m.table, sysOrganizationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.ParentId, data.Level, data.Description, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.Name, data.ParentId, data.Level, data.Description, data.IsDeleted)
 	}, kubeOnecSysOrganizationIdKey)
 	return ret, err
 }
@@ -255,7 +255,7 @@ func (m *defaultSysOrganizationModel) Update(ctx context.Context, data *SysOrgan
 	kubeOnecSysOrganizationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysOrganizationIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysOrganizationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.Name, data.ParentId, data.Level, data.Description, data.DeleteTime, data.Id)
+		return conn.ExecCtx(ctx, query, data.Name, data.ParentId, data.Level, data.Description, data.IsDeleted, data.Id)
 	}, kubeOnecSysOrganizationIdKey)
 	return err
 }
@@ -265,7 +265,7 @@ func (m *defaultSysOrganizationModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysOrganizationModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysOrganizationRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysOrganizationRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

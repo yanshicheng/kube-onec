@@ -24,9 +24,9 @@ var (
 	onecNodeRowsExpectAutoSet   = strings.Join(stringx.Remove(onecNodeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	onecNodeRowsWithPlaceHolder = strings.Join(stringx.Remove(onecNodeFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
-	cacheKubeOnecOnecNodeIdPrefix                = "cache:kubeOnec:onecNode:id:"
-	cacheKubeOnecOnecNodeClusterIdNodeNamePrefix = "cache:kubeOnec:onecNode:clusterId:nodeName:"
-	cacheKubeOnecOnecNodeNodeUidPrefix           = "cache:kubeOnec:onecNode:nodeUid:"
+	cacheKubeOnecOnecNodeIdPrefix                  = "cache:kubeOnec:onecNode:id:"
+	cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix = "cache:kubeOnec:onecNode:clusterUuid:nodeName:"
+	cacheKubeOnecOnecNodeNodeUidPrefix             = "cache:kubeOnec:onecNode:nodeUid:"
 )
 
 type (
@@ -36,7 +36,7 @@ type (
 		FindOne(ctx context.Context, id uint64) (*OnecNode, error)
 		Search(ctx context.Context, orderStr string, isAsc bool, page, pageSize uint64, queryStr string, args ...any) ([]*OnecNode, uint64, error)
 		SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*OnecNode, error)
-		FindOneByClusterIdNodeName(ctx context.Context, clusterId uint64, nodeName string) (*OnecNode, error)
+		FindOneByClusterUuidNodeName(ctx context.Context, clusterUuid string, nodeName string) (*OnecNode, error)
 		FindOneByNodeUid(ctx context.Context, nodeUid string) (*OnecNode, error)
 		Update(ctx context.Context, data *OnecNode) error
 		Delete(ctx context.Context, id uint64) error
@@ -52,35 +52,32 @@ type (
 	}
 
 	OnecNode struct {
-		Id               uint64       `db:"id"`                // 自增主键
-		ClusterId        uint64       `db:"cluster_id"`        // 所属集群ID
-		NodeName         string       `db:"node_name"`         // 节点名称，在同一集群中唯一
-		Cpu              int64        `db:"cpu"`               // CPU核数
-		Memory           int64        `db:"memory"`            // 内存大小，Mi
-		MaxPods          int64        `db:"max_pods"`          // 最大Pod数量
-		IsGpu            int64        `db:"is_gpu"`            // 节点是否包含GPU
-		NodeUid          string       `db:"node_uid"`          // 节点UID，唯一标识
-		Status           string       `db:"status"`            // 节点状态
-		Roles            string       `db:"roles"`             // 节点角色列表
-		JoinTime         time.Time    `db:"join_time"`         // 节点加入集群时间
-		Labels           string       `db:"labels"`            // 节点标签，键值对形式
-		Annotations      string       `db:"annotations"`       // 节点注解，键值对形式
-		PodCidr          string       `db:"pod_cidr"`          // Pod CIDR
-		Unschedulable    int64        `db:"unschedulable"`     // 节点是否不可调度（0：可调度，1：不可调度）
-		Taints           string       `db:"taints"`            // 节点污点列表
-		NodeIp           string       `db:"node_ip"`           // 节点地址
-		Os               string       `db:"os"`                // 操作系统
-		KernelVersion    string       `db:"kernel_version"`    // 内核版本
-		ContainerRuntime string       `db:"container_runtime"` // 容器运行时
-		KubeletVersion   string       `db:"kubelet_version"`   // Kubelet版本
-		KubeletPort      uint64       `db:"kubelet_port"`      // Kubelet端口号
-		OperatingSystem  string       `db:"operating_system"`  // 操作系统类型
-		Architecture     string       `db:"architecture"`      // 架构类型
-		CreateBy         string       `db:"create_by"`         // 记录创建人
-		UpdateBy         string       `db:"update_by"`         // 记录更新人
-		CreateTime       time.Time    `db:"create_time"`       // 记录创建时间
-		UpdateTime       time.Time    `db:"update_time"`       // 记录更新时间
-		DeleteTime       sql.NullTime `db:"delete_time"`       // 记录删除时间（软删除）
+		Id               uint64    `db:"id"`                // 自增主键
+		ClusterUuid      string    `db:"cluster_uuid"`      // 所属集群ID
+		NodeName         string    `db:"node_name"`         // 节点名称，在同一集群中唯一
+		Cpu              int64     `db:"cpu"`               // CPU核数
+		Memory           float64   `db:"memory"`            // 内存大小，Mi
+		MaxPods          int64     `db:"max_pods"`          // 最大Pod数量
+		IsGpu            int64     `db:"is_gpu"`            // 节点是否包含GPU
+		NodeUid          string    `db:"node_uid"`          // 节点UID，唯一标识
+		Status           string    `db:"status"`            // 节点状态
+		Roles            string    `db:"roles"`             // 节点角色列表
+		JoinAt           time.Time `db:"join_at"`           // 节点加入集群时间
+		PodCidr          string    `db:"pod_cidr"`          // Pod CIDR
+		Unschedulable    int64     `db:"unschedulable"`     // 节点是否不可调度（0：可调度，1：不可调度）
+		NodeIp           string    `db:"node_ip"`           // 节点地址
+		Os               string    `db:"os"`                // 操作系统
+		KernelVersion    string    `db:"kernel_version"`    // 内核版本
+		ContainerRuntime string    `db:"container_runtime"` // 容器运行时
+		KubeletVersion   string    `db:"kubelet_version"`   // Kubelet版本
+		KubeletPort      uint64    `db:"kubelet_port"`      // Kubelet端口号
+		OperatingSystem  string    `db:"operating_system"`  // 操作系统类型
+		Architecture     string    `db:"architecture"`      // 架构类型
+		CreatedBy        string    `db:"created_by"`        // 记录创建人
+		UpdatedBy        string    `db:"updated_by"`        // 记录更新人
+		CreatedAt        time.Time `db:"created_at"`        // 记录创建时间
+		UpdatedAt        time.Time `db:"updated_at"`        // 记录更新时间
+		IsDeleted        int64     `db:"is_deleted"`        // 是否删除
 	}
 )
 
@@ -97,13 +94,13 @@ func (m *defaultOnecNodeModel) Delete(ctx context.Context, id uint64) error {
 		return err
 	}
 
-	kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+	kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, id)
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
+	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return err
 }
 
@@ -113,16 +110,16 @@ func (m *defaultOnecNodeModel) DeleteSoft(ctx context.Context, id uint64) error 
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
-	kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+	kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, id)
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
-	}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
+	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return err
 }
 
@@ -144,13 +141,13 @@ func (m *defaultOnecNodeModel) TransOnSql(ctx context.Context, session sqlx.Sess
 
 		// 缓存相关处理
 
-		kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+		kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 		kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, id)
 		kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid) // 处理缓存逻辑，例如删除或更新缓存
 		// 执行带缓存处理的 SQL 操作
 		return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 			return session.ExecCtx(ctx, query, args...)
-		}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey) // 传递缓存相关的键值
+		}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey) // 传递缓存相关的键值
 
 	}
 
@@ -172,13 +169,13 @@ func (m *defaultOnecNodeModel) ExecSql(ctx context.Context, id uint64, sqlStr st
 			return nil, err
 		}
 
-		kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+		kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 		kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, id)
 		kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid) // 处理缓存逻辑，例如删除或更新缓存
 		// 执行带缓存处理的 SQL 操作
 		return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (sql.Result, error) {
 			return conn.ExecCtx(ctx, query, args...)
-		}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey) // 传递缓存相关的键值
+		}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey) // 传递缓存相关的键值
 
 	}
 
@@ -191,7 +188,7 @@ func (m *defaultOnecNodeModel) FindOne(ctx context.Context, id uint64) (*OnecNod
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, id)
 	var resp OnecNode
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecOnecNodeIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecNodeRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecNodeRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -214,11 +211,11 @@ func (m *defaultOnecNodeModel) Search(ctx context.Context, orderStr string, isAs
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -263,9 +260,9 @@ func (m *defaultOnecNodeModel) Search(ctx context.Context, orderStr string, isAs
 
 func (m *defaultOnecNodeModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*OnecNode, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -295,12 +292,12 @@ func (m *defaultOnecNodeModel) SearchNoPage(ctx context.Context, orderStr string
 		return nil, err
 	}
 }
-func (m *defaultOnecNodeModel) FindOneByClusterIdNodeName(ctx context.Context, clusterId uint64, nodeName string) (*OnecNode, error) {
-	kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, clusterId, nodeName)
+func (m *defaultOnecNodeModel) FindOneByClusterUuidNodeName(ctx context.Context, clusterUuid string, nodeName string) (*OnecNode, error) {
+	kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, clusterUuid, nodeName)
 	var resp OnecNode
-	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecNodeClusterIdNodeNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `cluster_id` = ? and `node_name` = ? AND `delete_time` IS NULL limit 1", onecNodeRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, clusterId, nodeName); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecNodeClusterUuidNodeNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
+		query := fmt.Sprintf("select %s from %s where `cluster_uuid` = ? and `node_name` = ? AND `is_deleted` = 0  limit 1", onecNodeRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, clusterUuid, nodeName); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -319,7 +316,7 @@ func (m *defaultOnecNodeModel) FindOneByNodeUid(ctx context.Context, nodeUid str
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, nodeUid)
 	var resp OnecNode
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecOnecNodeNodeUidKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `node_uid` = ? AND `delete_time` IS NULL limit 1", onecNodeRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `node_uid` = ? AND `is_deleted` = 0  limit 1", onecNodeRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, nodeUid); err != nil {
 			return nil, err
 		}
@@ -336,13 +333,13 @@ func (m *defaultOnecNodeModel) FindOneByNodeUid(ctx context.Context, nodeUid str
 }
 
 func (m *defaultOnecNodeModel) Insert(ctx context.Context, data *OnecNode) (sql.Result, error) {
-	kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+	kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, data.Id)
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecNodeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ClusterId, data.NodeName, data.Cpu, data.Memory, data.MaxPods, data.IsGpu, data.NodeUid, data.Status, data.Roles, data.JoinTime, data.Labels, data.Annotations, data.PodCidr, data.Unschedulable, data.Taints, data.NodeIp, data.Os, data.KernelVersion, data.ContainerRuntime, data.KubeletVersion, data.KubeletPort, data.OperatingSystem, data.Architecture, data.CreateBy, data.UpdateBy, data.DeleteTime)
-	}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecNodeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.NodeName, data.Cpu, data.Memory, data.MaxPods, data.IsGpu, data.NodeUid, data.Status, data.Roles, data.JoinAt, data.PodCidr, data.Unschedulable, data.NodeIp, data.Os, data.KernelVersion, data.ContainerRuntime, data.KubeletVersion, data.KubeletPort, data.OperatingSystem, data.Architecture, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return ret, err
 }
 
@@ -352,13 +349,13 @@ func (m *defaultOnecNodeModel) Update(ctx context.Context, newData *OnecNode) er
 		return err
 	}
 
-	kubeOnecOnecNodeClusterIdNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterIdNodeNamePrefix, data.ClusterId, data.NodeName)
+	kubeOnecOnecNodeClusterUuidNodeNameKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecNodeClusterUuidNodeNamePrefix, data.ClusterUuid, data.NodeName)
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, data.Id)
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecNodeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ClusterId, newData.NodeName, newData.Cpu, newData.Memory, newData.MaxPods, newData.IsGpu, newData.NodeUid, newData.Status, newData.Roles, newData.JoinTime, newData.Labels, newData.Annotations, newData.PodCidr, newData.Unschedulable, newData.Taints, newData.NodeIp, newData.Os, newData.KernelVersion, newData.ContainerRuntime, newData.KubeletVersion, newData.KubeletPort, newData.OperatingSystem, newData.Architecture, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
-	}, kubeOnecOnecNodeClusterIdNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
+		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.NodeName, newData.Cpu, newData.Memory, newData.MaxPods, newData.IsGpu, newData.NodeUid, newData.Status, newData.Roles, newData.JoinAt, newData.PodCidr, newData.Unschedulable, newData.NodeIp, newData.Os, newData.KernelVersion, newData.ContainerRuntime, newData.KubeletVersion, newData.KubeletPort, newData.OperatingSystem, newData.Architecture, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return err
 }
 
@@ -367,7 +364,7 @@ func (m *defaultOnecNodeModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultOnecNodeModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", onecNodeRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", onecNodeRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

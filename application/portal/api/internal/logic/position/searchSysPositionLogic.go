@@ -44,10 +44,10 @@ func (l *SearchSysPositionLogic) SearchSysPosition(req *types.SearchSysPositionR
 	}
 	for _, v := range res.Data {
 		resp.Items = append(resp.Items, types.SysPosition{
-			Id:         v.Id,
-			Name:       v.Name,
-			CreateTime: v.CreateTime,
-			UpdateTime: v.UpdateTime,
+			Id:        v.Id,
+			Name:      v.Name,
+			CreatedAt: v.CreatedAt,
+			UpdatedAt: v.UpdatedAt,
 		})
 	}
 	resp.Total = res.Total

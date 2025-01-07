@@ -50,12 +50,12 @@ type (
 	}
 
 	SysUserPosition struct {
-		Id         uint64       `db:"id"`          // 自增主键
-		UserId     uint64       `db:"user_id"`     // 用户ID，关联 sys_user 表
-		PositionId uint64       `db:"position_id"` // 职位ID，关联 sys_position 表
-		CreateTime time.Time    `db:"create_time"` // 创建时间
-		UpdateTime time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id         uint64    `db:"id"`          // 自增主键
+		UserId     uint64    `db:"user_id"`     // 用户ID，关联 sys_user 表
+		PositionId uint64    `db:"position_id"` // 职位ID，关联 sys_position 表
+		CreatedAt  time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt  time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted  int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -87,13 +87,13 @@ func (m *defaultSysUserPositionModel) DeleteSoft(ctx context.Context, id uint64)
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysUserPositionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserPositionIdPrefix, id)
 	kubeOnecSysUserPositionUserIdPositionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysUserPositionUserIdPositionIdPrefix, data.UserId, data.PositionId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysUserPositionIdKey, kubeOnecSysUserPositionUserIdPositionIdKey)
 	return err
@@ -162,7 +162,7 @@ func (m *defaultSysUserPositionModel) FindOne(ctx context.Context, id uint64) (*
 	kubeOnecSysUserPositionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserPositionIdPrefix, id)
 	var resp SysUserPosition
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysUserPositionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysUserPositionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysUserPositionRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -185,11 +185,11 @@ func (m *defaultSysUserPositionModel) Search(ctx context.Context, orderStr strin
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -234,9 +234,9 @@ func (m *defaultSysUserPositionModel) Search(ctx context.Context, orderStr strin
 
 func (m *defaultSysUserPositionModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysUserPosition, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -270,7 +270,7 @@ func (m *defaultSysUserPositionModel) FindOneByUserIdPositionId(ctx context.Cont
 	kubeOnecSysUserPositionUserIdPositionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysUserPositionUserIdPositionIdPrefix, userId, positionId)
 	var resp SysUserPosition
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysUserPositionUserIdPositionIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `user_id` = ? and `position_id` = ? AND `delete_time` IS NULL limit 1", sysUserPositionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? and `position_id` = ? AND `is_deleted` = 0  limit 1", sysUserPositionRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, userId, positionId); err != nil {
 			return nil, err
 		}
@@ -291,7 +291,7 @@ func (m *defaultSysUserPositionModel) Insert(ctx context.Context, data *SysUserP
 	kubeOnecSysUserPositionUserIdPositionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysUserPositionUserIdPositionIdPrefix, data.UserId, data.PositionId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysUserPositionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserId, data.PositionId, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.UserId, data.PositionId, data.IsDeleted)
 	}, kubeOnecSysUserPositionIdKey, kubeOnecSysUserPositionUserIdPositionIdKey)
 	return ret, err
 }
@@ -306,7 +306,7 @@ func (m *defaultSysUserPositionModel) Update(ctx context.Context, newData *SysUs
 	kubeOnecSysUserPositionUserIdPositionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysUserPositionUserIdPositionIdPrefix, data.UserId, data.PositionId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserPositionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserId, newData.PositionId, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.PositionId, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysUserPositionIdKey, kubeOnecSysUserPositionUserIdPositionIdKey)
 	return err
 }
@@ -316,7 +316,7 @@ func (m *defaultSysUserPositionModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysUserPositionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysUserPositionRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysUserPositionRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

@@ -63,14 +63,14 @@ func (l *SearchSysPermissionLogic) SearchSysPermission(in *pb.SearchSysPermissio
 	var permissionList []*pb.SysPermission
 	for _, permission := range permissions {
 		permissionList = append(permissionList, &pb.SysPermission{
-			Id:         permission.Id,
-			ParentId:   permission.ParentId,
-			Name:       permission.Name,
-			Uri:        permission.Uri,
-			Action:     permission.Action,
-			Level:      permission.Level,
-			CreateTime: permission.CreateTime.Unix(),
-			UpdateTime: permission.UpdateTime.Unix(),
+			Id:        permission.Id,
+			ParentId:  permission.ParentId,
+			Name:      permission.Name,
+			Uri:       permission.Uri,
+			Action:    permission.Action,
+			Level:     permission.Level,
+			CreatedAt: permission.CreatedAt.Unix(),
+			UpdatedAt: permission.UpdatedAt.Unix(),
 		})
 
 	}

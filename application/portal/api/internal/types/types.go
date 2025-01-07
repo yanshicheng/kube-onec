@@ -95,7 +95,7 @@ type GetOrganizationTreeRequest struct {
 }
 
 type GetOrganizationTreeResponse struct {
-	Data []OrganizationNode `json:"data"` // 机构树
+	Items []OrganizationNode `json:"items"` // 机构树
 }
 
 type GetSysRoleByIdResponse struct {
@@ -103,10 +103,10 @@ type GetSysRoleByIdResponse struct {
 	RoleName    string `json:"roleName"` // 角色名称
 	RoleCode    string `json:"roleCode"`
 	Description string `json:"description"` // 描述
-	CreateBy    string `json:"createBy"`    // 创建人
-	UpdateBy    string `json:"updateBy"`    // 更新人
-	CreateTime  int64  `json:"createTime"`  // 创建时间
-	UpdateTime  int64  `json:"updateTime"`  // 最后修改时间
+	CreatedBy   string `json:"createdBy"`   // 创建人
+	UpdatedBy   string `json:"updatedBy"`   // 更新人
+	CreatedAt   int64  `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64  `json:"updatedAt"`   // 最后修改时间
 }
 
 type LeaveRequest struct {
@@ -138,8 +138,8 @@ type OrganizationNode struct {
 	ParentId    uint64             `json:"parentId"`    // 父级机构的 Id，根级为 0
 	Level       int64              `json:"level"`       // 机构层级，从 0 开始
 	Description string             `json:"description"` // 机构描述
-	CreateTime  int64              `json:"createTime"`  // 创建时间
-	UpdateTime  int64              `json:"updateTime"`  // 最后修改时间
+	CreatedAt   int64              `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64              `json:"updatedAt"`   // 最后修改时间
 	Children    []OrganizationNode `json:"children"`    // 子机构
 }
 
@@ -181,12 +181,12 @@ type SearchSysDictItemRequest struct {
 	ItemText    string `form:"itemText,optional" validate:"omitempty,max=255"`                   // 字典项文本，可选，最长 255 字符
 	ItemCode    string `form:"itemCode,optional" validate:"omitempty,max=255"`                   // 字典项值，可选，最长 255 字符
 	Description string `form:"description,optional" validate:"omitempty,max=255"`                // 描述，可选，最长 255 字符
-	CreateBy    string `form:"createBy,optional" validate:"omitempty,max=50"`                    // 创建人，可选，最长 50 字符
-	UpdateBy    string `form:"updateBy,optional" validate:"omitempty,max=50"`                    // 更新人，可选，最长 50 字符
+	CreatedBy   string `form:"createdBy,optional" validate:"omitempty,max=50"`                   // 创建人，可选，最长 50 字符
+	UpdatedBy   string `form:"updatedBy,optional" validate:"omitempty,max=50"`                   // 更新人，可选，最长 50 字符
 }
 
 type SearchSysDictItemResponse struct {
-	Items []SysDictItem `json:"data"`  // 字典项数据列表
+	Items []SysDictItem `json:"items"` // 字典项数据列表
 	Total uint64        `json:"total"` // 总条数
 }
 
@@ -198,12 +198,12 @@ type SearchSysDictRequest struct {
 	DictName    string `form:"dictName,optional" validate:"omitempty,max=50"`                    // 字典名称，可选
 	DictCode    string `form:"dictCode,optional" validate:"omitempty,max=50"`                    // 字典编码，可选
 	Description string `form:"description,optional" validate:"omitempty,max=255"`                // 描述，可选
-	CreateBy    string `form:"createBy,optional" validate:"omitempty,max=50"`                    // 创建人，可选
-	UpdateBy    string `form:"updateBy,optional" validate:"omitempty,max=50"`                    // 更新人，可选
+	CreatedBy   string `form:"createdBy,optional" validate:"omitempty,max=50"`                   // 创建人，可选
+	UpdatedBy   string `form:"updatedBy,optional" validate:"omitempty,max=50"`                   // 更新人，可选
 }
 
 type SearchSysDictResponse struct {
-	Items []SysDict `json:"data"`  // 字典数据列表
+	Items []SysDict `json:"items"` // 字典数据列表
 	Total uint64    `json:"total"` // 总条数
 }
 
@@ -216,7 +216,7 @@ type SearchSysOrganizationRequest struct {
 }
 
 type SearchSysOrganizationResponse struct {
-	Items []OrganizationNode `json:"data"` // 机构数据列表
+	Items []OrganizationNode `json:"items"` // 机构数据列表
 }
 
 type SearchSysPermissionRequest struct {
@@ -231,7 +231,7 @@ type SearchSysPermissionRequest struct {
 }
 
 type SearchSysPermissionResponse struct {
-	Items []SysPermission `json:"data"`  // 权限数据列表
+	Items []SysPermission `json:"items"` // 权限数据列表
 	Total uint64          `json:"total"` // 总条数
 }
 
@@ -244,7 +244,7 @@ type SearchSysPositionRequest struct {
 }
 
 type SearchSysPositionResponse struct {
-	Items []SysPosition `json:"data"`  // 职位数据列表
+	Items []SysPosition `json:"items"` // 职位数据列表
 	Total uint64        `json:"total"` // 总条数
 }
 
@@ -264,12 +264,12 @@ type SearchSysRoleRequest struct {
 	RoleName    string `form:"roleName,optional" validate:"omitempty,max=50"`
 	RoleCode    string `form:"roleCode,optional" validate:"omitempty,max=50"`     // 角色名称，可选，最长 50 字符
 	Description string `form:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
-	CreateBy    string `form:"createBy,optional" validate:"omitempty,max=50"`     // 创建人，可选，最长 50 字符
-	UpdateBy    string `form:"updateBy,optional" validate:"omitempty,max=50"`     // 更新人，可选，最长 50 字符
+	CreatedBy   string `form:"createdBy,optional" validate:"omitempty,max=50"`    // 创建人，可选，最长 50 字符
+	UpdatedBy   string `form:"updatedBy,optional" validate:"omitempty,max=50"`    // 更新人，可选，最长 50 字符
 }
 
 type SearchSysRoleResponse struct {
-	Items []GetSysRoleByIdResponse `json:"data"`  // 角色数据列表
+	Items []GetSysRoleByIdResponse `json:"items"` // 角色数据列表
 	Total uint64                   `json:"total"` // 总条数
 }
 
@@ -293,7 +293,7 @@ type SearchSysUserRequest struct {
 }
 
 type SearchSysUserResponse struct {
-	Items []SysUser `json:"data"`  // 用户列表
+	Items []SysUser `json:"items"` // 用户列表
 	Total uint64    `json:"total"` // 总条数
 }
 
@@ -302,10 +302,10 @@ type SysDict struct {
 	DictName    string `json:"dictName"`    // 字典名称
 	DictCode    string `json:"dictCode"`    // 字典编码
 	Description string `json:"description"` // 描述
-	CreateBy    string `json:"createBy"`    // 创建人
-	UpdateBy    string `json:"updateBy"`    // 更新人
-	CreateTime  int64  `json:"createTime"`  // 创建时间
-	UpdateTime  int64  `json:"updateTime"`  // 最后修改时间
+	CreatedBy   string `json:"createdBy"`   // 创建人
+	UpdatedBy   string `json:"updatedBy"`   // 更新人
+	CreatedAt   int64  `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64  `json:"updatedAt"`   // 最后修改时间
 }
 
 type SysDictItem struct {
@@ -315,10 +315,10 @@ type SysDictItem struct {
 	ItemCode    string `json:"itemCode"`    // 字典项值
 	Description string `json:"description"` // 描述
 	SortOrder   int64  `json:"sortOrder"`   // 排序
-	CreateBy    string `json:"createBy"`    // 创建人
-	UpdateBy    string `json:"updateBy"`    // 更新人
-	CreateTime  int64  `json:"createTime"`  // 创建时间
-	UpdateTime  int64  `json:"updateTime"`  // 最后修改时间
+	CreatedBy   string `json:"createdBy"`   // 创建人
+	UpdatedBy   string `json:"updatedBy"`   // 更新人
+	CreatedAt   int64  `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64  `json:"updatedAt"`   // 最后修改时间
 }
 
 type SysOrganization struct {
@@ -327,19 +327,19 @@ type SysOrganization struct {
 	ParentId    uint64 `json:"parentId"`    // 父级机构的 Id，根级为 0
 	Level       int64  `json:"level"`       // 机构层级，从 0 开始
 	Description string `json:"description"` // 机构描述
-	CreateTime  int64  `json:"createTime"`  // 创建时间
-	UpdateTime  int64  `json:"updateTime"`  // 最后修改时间
+	CreatedAt   int64  `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64  `json:"updatedAt"`   // 最后修改时间
 }
 
 type SysPermission struct {
-	Id         uint64 `json:"id"`         // 自增主键
-	ParentId   uint64 `json:"parentId"`   // 父权限 Id
-	Name       string `json:"name"`       // 权限名称
-	Uri        string `json:"uri"`        // 权限对应的资源 URI 或路径
-	Action     string `json:"action"`     // 对资源执行的操作
-	Level      uint64 `json:"level"`      // 权限级别
-	CreateTime int64  `json:"createTime"` // 创建时间
-	UpdateTime int64  `json:"updateTime"` // 最后修改时间
+	Id        uint64 `json:"id"`        // 自增主键
+	ParentId  uint64 `json:"parentId"`  // 父权限 Id
+	Name      string `json:"name"`      // 权限名称
+	Uri       string `json:"uri"`       // 权限对应的资源 URI 或路径
+	Action    string `json:"action"`    // 对资源执行的操作
+	Level     uint64 `json:"level"`     // 权限级别
+	CreatedAt int64  `json:"createdAt"` // 创建时间
+	UpdatedAt int64  `json:"updatedAt"` // 最后修改时间
 }
 
 type SysPermissionTreeNode struct {
@@ -349,10 +349,10 @@ type SysPermissionTreeNode struct {
 }
 
 type SysPosition struct {
-	Id         uint64 `json:"id"`         // 自增主键
-	Name       string `json:"name"`       // 职位名称
-	CreateTime int64  `json:"createTime"` // 创建时间
-	UpdateTime int64  `json:"updateTime"` // 最后修改时间
+	Id        uint64 `json:"id"`        // 自增主键
+	Name      string `json:"name"`      // 职位名称
+	CreatedAt int64  `json:"CreatedAt"` // 创建时间
+	UpdatedAt int64  `json:"updatedAt"` // 最后修改时间
 }
 
 type SysUser struct {
@@ -370,8 +370,8 @@ type SysUser struct {
 	PositionId      uint64 `json:"positionId"`      // 职位 Id
 	OrganizationId  uint64 `json:"organizationId"`  // 组织 Id
 	LastLoginTime   int64  `json:"lastLoginTime"`   // 上次登录时间
-	CreateTime      int64  `json:"createTime"`      // 创建时间
-	UpdateTime      int64  `json:"updateTime"`      // 最后修改时间
+	CreatedAt       int64  `json:"createdAt"`       // 创建时间
+	UpdatedAt       int64  `json:"updatedAt"`       // 最后修改时间
 }
 
 type SysUserInfoResponse struct {
@@ -387,8 +387,8 @@ type SysUserInfoResponse struct {
 	OrganizationName string   `json:"organizationName"` // 组织名称
 	RoleNames        []string `json:"roleNames"`        // 角色名称列表
 	LastLoginTime    int64    `json:"lastLoginTime"`    // 上次登录时间
-	CreateTime       int64    `json:"createTime"`       // 创建时间
-	UpdateTime       int64    `json:"updateTime"`       // 最后修改时间
+	CreatedAt        int64    `json:"createdAt"`        // 创建时间
+	UpdatedAt        int64    `json:"updatedAt"`        // 最后修改时间
 }
 
 type Token struct {
@@ -414,7 +414,7 @@ type UpdateSysDictItemRequest struct {
 	ItemText    string `json:"itemText" validate:"required,max=255"`              // 字典项文本，必填，最长 255 字符
 	Description string `json:"description,optional" validate:"omitempty,max=255"` // 描述，可选，最长 255 字符
 	SortOrder   int64  `json:"sortOrder,optional" validate:"omitempty"`           // 排序，可选
-	UpdateBy    string `json:"updateBy" validate:"required,max=50"`               // 更新人，必填，最长 50 字符
+	UpdatedBy   string `json:"updatedBy" validate:"required,max=50"`              // 更新人，必填，最长 50 字符
 }
 
 type UpdateSysDictRequest struct {

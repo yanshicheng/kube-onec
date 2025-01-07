@@ -29,8 +29,8 @@ func (l *AddSysDictItemLogic) AddSysDictItem(req *types.AddSysDictItemRequest) (
 		account = "system"
 	}
 	_, err := l.svcCtx.SysDictItemRpc.AddSysDictItem(l.ctx, &sysdictservice.AddSysDictItemReq{
-		CreateBy:    account,
-		UpdateBy:    account,
+		CreatedBy:    account,
+		UpdatedBy:    account,
 		DictCode:    req.DictCode,
 		ItemText:    req.ItemText,
 		ItemCode:    req.ItemCode,

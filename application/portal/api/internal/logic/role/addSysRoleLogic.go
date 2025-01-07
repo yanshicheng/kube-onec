@@ -35,8 +35,8 @@ func (l *AddSysRoleLogic) AddSysRole(req *types.AddSysRoleRequest) (resp string,
 		RoleName:    req.RoleName,
 		Description: req.Description,
 		RoleCode:    req.RoleCode,
-		CreateBy:    account,
-		UpdateBy:    account,
+		CreatedBy:    account,
+		UpdatedBy:    account,
 	})
 	if err != nil {
 		logx.WithContext(l.ctx).Errorf("添加角色失败: %v", err)

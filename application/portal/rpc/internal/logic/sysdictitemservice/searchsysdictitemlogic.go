@@ -46,13 +46,13 @@ func (l *SearchSysDictItemLogic) SearchSysDictItem(in *pb.SearchSysDictItemReq) 
 		queryStr.WriteString("description LIKE ? AND ")
 		params = append(params, "%"+in.Description+"%")
 	}
-	if in.CreateBy != "" {
+	if in.CreatedBy != "" {
 		queryStr.WriteString("create_by LIKE ? AND ")
-		params = append(params, "%"+in.CreateBy+"%")
+		params = append(params, "%"+in.CreatedBy+"%")
 	}
-	if in.UpdateBy != "" {
+	if in.UpdatedBy != "" {
 		queryStr.WriteString("update_by LIKE ? AND ")
-		params = append(params, "%"+in.UpdateBy+"%")
+		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
@@ -78,10 +78,10 @@ func (l *SearchSysDictItemLogic) SearchSysDictItem(in *pb.SearchSysDictItemReq) 
 			ItemText:    item.ItemText,
 			ItemCode:    item.ItemCode,
 			Description: item.Description,
-			UpdateBy:    item.UpdateBy,
-			CreateBy:    item.CreateBy,
-			CreateTime:  item.CreateTime.Unix(),
-			UpdateTime:  item.UpdateTime.Unix(),
+			UpdatedBy:   item.UpdatedBy,
+			CreatedBy:   item.CreatedBy,
+			CreatedAt:   item.CreatedAt.Unix(),
+			UpdatedAt:   item.UpdatedAt.Unix(),
 		})
 	}
 

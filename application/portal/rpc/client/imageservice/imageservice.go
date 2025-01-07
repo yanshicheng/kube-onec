@@ -38,6 +38,8 @@ type (
 	BindRoleResp                = pb.BindRoleResp
 	ChangePasswordReq           = pb.ChangePasswordReq
 	ChangePasswordResp          = pb.ChangePasswordResp
+	CheckDictItemCodeReq        = pb.CheckDictItemCodeReq
+	CheckDictItemCodeResp       = pb.CheckDictItemCodeResp
 	DelSysDictItemReq           = pb.DelSysDictItemReq
 	DelSysDictItemResp          = pb.DelSysDictItemResp
 	DelSysDictReq               = pb.DelSysDictReq
@@ -56,6 +58,8 @@ type (
 	DelSysUserResp              = pb.DelSysUserResp
 	FrozenAccountsReq           = pb.FrozenAccountsReq
 	FrozenAccountsResp          = pb.FrozenAccountsResp
+	GetDictItemNameReq          = pb.GetDictItemNameReq
+	GetDictItemTextResp         = pb.GetDictItemTextResp
 	GetMenuTreeReq              = pb.GetMenuTreeReq
 	GetMenuTreeResp             = pb.GetMenuTreeResp
 	GetOrganizationTreeReq      = pb.GetOrganizationTreeReq

@@ -30,8 +30,8 @@ func (l *AddSysDictLogic) AddSysDict(req *types.AddSysDictRequest) (resp string,
 		account = "system"
 	}
 	_, err = l.svcCtx.SysDictRpc.AddSysDict(l.ctx, &sysdictservice.AddSysDictReq{
-		CreateBy:    account,
-		UpdateBy:    account,
+		CreatedBy:    account,
+		UpdatedBy:    account,
 		DictCode:    req.DictCode,
 		DictName:    req.DictName,
 		Description: req.Description,

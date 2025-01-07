@@ -31,13 +31,13 @@ func NewOnecNodeModel(conn sqlx.SqlConn, c cache.CacheConf, opts ...cache.Option
 }
 
 type clusterTotalInfo struct {
-	TotalNode   int64 `json:"totalNode"`
-	TotalCpu    int64 `json:"totalCpu"`
-	TotalMemory int64 `json:"totalMemory"`
-	TotalPods   int64 `json:"totalPods"`
+	TotalNode   int64   `json:"totalNode"`
+	TotalCpu    int64   `json:"totalCpu"`
+	TotalMemory float64 `json:"totalMemory"`
+	TotalPods   int64   `json:"totalPods"`
 }
 
-func (m *defaultOnecNodeModel) FindOneClusterTotalInfo(ctx context.Context, clusterId string) (*clusterTotalInfo, error) {
+func (m *defaultOnecNodeModel) FindOneClusterTotalInfo(ctx context.Context, cluster_uuid string) (*clusterTotalInfo, error) {
 	// 构建缓存键
 	var resp clusterTotalInfo
 	// 定义 SQL 查询语句
@@ -50,15 +50,15 @@ func (m *defaultOnecNodeModel) FindOneClusterTotalInfo(ctx context.Context, clus
 		FROM 
 			%s
 		WHERE 
-			cluster_id = ? AND delete_time IS NULL
+			cluster_uuid = ? AND delete_time IS NULL
 	`, m.table)
 
 	// 执行查询，直接从数据库获取数据，不使用缓存
 	//m.ExecCtx()
-	err := m.QueryRowNoCacheCtx(ctx, &resp, query, clusterId)
+	err := m.QueryRowNoCacheCtx(ctx, &resp, query, cluster_uuid)
 	if err != nil {
 		if err == sqlc.ErrNotFound {
-			return nil, fmt.Errorf("clusterId %s not found", clusterId)
+			return nil, fmt.Errorf("cluster_uuid %s not found", cluster_uuid)
 		}
 		return nil, err
 	}

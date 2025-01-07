@@ -29,8 +29,8 @@ func (l *SearchSysDictLogic) SearchSysDict(req *types.SearchSysDictRequest) (res
 		DictCode:    req.DictCode,
 		DictName:    req.DictName,
 		Description: req.Description,
-		CreateBy:    req.CreateBy,
-		UpdateBy:    req.UpdateBy,
+		CreatedBy:   req.CreatedBy,
+		UpdatedBy:   req.UpdatedBy,
 		Page:        req.Page,
 		PageSize:    req.PageSize,
 		OrderStr:    req.OrderStr,
@@ -48,10 +48,10 @@ func (l *SearchSysDictLogic) SearchSysDict(req *types.SearchSysDictRequest) (res
 			DictCode:    v.DictCode,
 			DictName:    v.DictName,
 			Description: v.Description,
-			CreateBy:    v.CreateBy,
-			CreateTime:  v.CreateTime,
-			UpdateBy:    v.UpdateBy,
-			UpdateTime:  v.UpdateTime,
+			CreatedBy:   v.CreatedBy,
+			CreatedAt:   v.CreatedAt,
+			UpdatedBy:   v.UpdatedBy,
+			UpdatedAt:   v.UpdatedAt,
 		}
 	}
 	return &types.SearchSysDictResponse{

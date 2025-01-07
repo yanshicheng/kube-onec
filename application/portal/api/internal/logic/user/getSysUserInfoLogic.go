@@ -50,8 +50,8 @@ func (l *GetSysUserInfoLogic) GetSysUserInfo() (resp *types.SysUserInfoResponse,
 		PositionName:     res.PositionName,
 		RoleNames:        res.RoleNames,
 		LastLoginTime:    res.LastLoginTime,
-		CreateTime:       res.CreateTime,
-		UpdateTime:       res.UpdateTime,
+		CreatedAt:        res.CreatedAt,
+		UpdatedAt:        res.UpdatedAt,
 	}
 	return
 }

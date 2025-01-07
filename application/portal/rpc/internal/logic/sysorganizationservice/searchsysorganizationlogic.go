@@ -190,8 +190,8 @@ func convertToProto(node *OrgNode) (*pb.SysOrganizationSearch, error) {
 		ParentId:    node.ParentId,
 		Level:       node.Level,
 		Description: node.Description,
-		CreateTime:  node.CreateTime.Unix(),
-		UpdateTime:  node.UpdateTime.Unix(),
+		CreatedAt:   node.CreatedAt.Unix(),
+		UpdatedAt:   node.UpdatedAt.Unix(),
 	}
 
 	for _, child := range node.Children {

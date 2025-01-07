@@ -31,7 +31,7 @@ func (l *DeleteSysDictItemLogic) DeleteSysDictItem(req *types.DefaultIdRequest) 
 	}
 	_, err = l.svcCtx.SysDictItemRpc.DelSysDictItem(l.ctx, &pb.DelSysDictItemReq{
 		Id:       req.Id,
-		UpdateBy: account,
+		UpdatedBy: account,
 	})
 
 	if err != nil {

@@ -1,0 +1,57 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.3 Chrome/130.0.6723.137 Electron/33.2.1 Safari/537.36" version="26.0.3">
+  <diagram name="第 1 页" id="xeObPx-dzBnmK5rDwB1g">
+    <mxGraphModel dx="1266" dy="684" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-1" value="项目A" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="230" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="W8dAy4Fu-AcyaVxrnYSD-2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="230" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-2" value="集群1" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="70" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="W8dAy4Fu-AcyaVxrnYSD-3" target="W8dAy4Fu-AcyaVxrnYSD-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="W8dAy4Fu-AcyaVxrnYSD-3" target="W8dAy4Fu-AcyaVxrnYSD-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-3" value="集群2" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="70" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-4" value="集群3" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="550" y="70" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-5" value="项目B" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="230" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.583;entryY=0.167;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="W8dAy4Fu-AcyaVxrnYSD-4" target="W8dAy4Fu-AcyaVxrnYSD-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-12" value="集群1-应用A(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="330" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-13" value="集群1-应用B(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="400" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-14" value="集群2-应用C(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="150" y="460" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-15" value="集群3-应用A(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="330" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-16" value="集群2-应用B(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="400" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="W8dAy4Fu-AcyaVxrnYSD-17" value="集群2-应用C(ns)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="460" width="120" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

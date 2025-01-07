@@ -84,8 +84,8 @@ func (l *GetSysUserByIdLogic) GetSysUserById(in *pb.GetSysUserByIdReq) (*pb.GetS
 			PositionId:      user.PositionId,
 			OrganizationId:  user.OrganizationId,
 			LastLoginTime:   user.LastLoginTime.Unix(),
-			CreateTime:      user.CreateTime.Unix(),
-			UpdateTime:      user.UpdateTime.Unix(),
+			CreatedAt:       user.CreatedAt.Unix(),
+			UpdatedAt:       user.UpdatedAt.Unix(),
 		},
 	}, nil
 }

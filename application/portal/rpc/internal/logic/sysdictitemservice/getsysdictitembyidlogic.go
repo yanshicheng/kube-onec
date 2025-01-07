@@ -44,10 +44,10 @@ func (l *GetSysDictItemByIdLogic) GetSysDictItemById(in *pb.GetSysDictItemByIdRe
 		ItemText:    res.ItemText,
 		ItemCode:    res.ItemCode,
 		SortOrder:   res.SortOrder,
-		CreateBy:    res.CreateBy,
-		UpdateBy:    res.UpdateBy,
-		UpdateTime:  res.UpdateTime.Unix(),
-		CreateTime:  res.CreateTime.Unix(),
+		CreatedBy:   res.CreatedBy,
+		UpdatedBy:   res.UpdatedBy,
+		UpdatedAt:   res.UpdatedAt.Unix(),
+		CreatedAt:   res.CreatedAt.Unix(),
 	}
 	return &pb.GetSysDictItemByIdResp{
 		Data: data,

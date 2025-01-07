@@ -64,8 +64,8 @@ func (l *SearchSysUserLogic) SearchSysUser(req *types.SearchSysUserRequest) (res
 			PositionId:      v.PositionId,
 			OrganizationId:  v.OrganizationId,
 			LastLoginTime:   v.LastLoginTime,
-			CreateTime:      v.CreateTime,
-			UpdateTime:      v.UpdateTime,
+			CreatedAt:       v.CreatedAt,
+			UpdatedAt:       v.UpdatedAt,
 		}
 	}
 	return &types.SearchSysUserResponse{

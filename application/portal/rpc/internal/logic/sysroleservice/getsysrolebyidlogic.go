@@ -42,10 +42,10 @@ func (l *GetSysRoleByIdLogic) GetSysRoleById(in *pb.GetSysRoleByIdReq) (*pb.GetS
 			RoleName:    role.RoleName,
 			RoleCode:    role.RoleCode,
 			Description: role.Description,
-			CreateBy:    role.CreateBy,
-			CreateTime:  role.CreateTime.Unix(),
-			UpdateBy:    role.UpdateBy,
-			UpdateTime:  role.UpdateTime.Unix(),
+			CreatedBy:   role.CreatedBy,
+			CreatedAt:   role.CreatedAt.Unix(),
+			UpdatedBy:   role.UpdatedBy,
+			UpdatedAt:   role.UpdatedAt.Unix(),
 		},
 	}, nil
 }

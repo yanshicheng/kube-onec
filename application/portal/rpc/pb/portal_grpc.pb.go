@@ -2693,6 +2693,8 @@ const (
 	SysDictItemService_DelSysDictItem_FullMethodName     = "/pb.SysDictItemService/DelSysDictItem"
 	SysDictItemService_GetSysDictItemById_FullMethodName = "/pb.SysDictItemService/GetSysDictItemById"
 	SysDictItemService_SearchSysDictItem_FullMethodName  = "/pb.SysDictItemService/SearchSysDictItem"
+	SysDictItemService_CheckDictItemCode_FullMethodName  = "/pb.SysDictItemService/CheckDictItemCode"
+	SysDictItemService_GetDictItemText_FullMethodName    = "/pb.SysDictItemService/GetDictItemText"
 )
 
 // SysDictItemServiceClient is the client API for SysDictItemService service.
@@ -2705,6 +2707,8 @@ type SysDictItemServiceClient interface {
 	DelSysDictItem(ctx context.Context, in *DelSysDictItemReq, opts ...grpc.CallOption) (*DelSysDictItemResp, error)
 	GetSysDictItemById(ctx context.Context, in *GetSysDictItemByIdReq, opts ...grpc.CallOption) (*GetSysDictItemByIdResp, error)
 	SearchSysDictItem(ctx context.Context, in *SearchSysDictItemReq, opts ...grpc.CallOption) (*SearchSysDictItemResp, error)
+	CheckDictItemCode(ctx context.Context, in *CheckDictItemCodeReq, opts ...grpc.CallOption) (*CheckDictItemCodeResp, error)
+	GetDictItemText(ctx context.Context, in *GetDictItemNameReq, opts ...grpc.CallOption) (*GetDictItemTextResp, error)
 }
 
 type sysDictItemServiceClient struct {
@@ -2765,6 +2769,26 @@ func (c *sysDictItemServiceClient) SearchSysDictItem(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *sysDictItemServiceClient) CheckDictItemCode(ctx context.Context, in *CheckDictItemCodeReq, opts ...grpc.CallOption) (*CheckDictItemCodeResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckDictItemCodeResp)
+	err := c.cc.Invoke(ctx, SysDictItemService_CheckDictItemCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sysDictItemServiceClient) GetDictItemText(ctx context.Context, in *GetDictItemNameReq, opts ...grpc.CallOption) (*GetDictItemTextResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDictItemTextResp)
+	err := c.cc.Invoke(ctx, SysDictItemService_GetDictItemText_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SysDictItemServiceServer is the server API for SysDictItemService service.
 // All implementations must embed UnimplementedSysDictItemServiceServer
 // for forward compatibility.
@@ -2775,6 +2799,8 @@ type SysDictItemServiceServer interface {
 	DelSysDictItem(context.Context, *DelSysDictItemReq) (*DelSysDictItemResp, error)
 	GetSysDictItemById(context.Context, *GetSysDictItemByIdReq) (*GetSysDictItemByIdResp, error)
 	SearchSysDictItem(context.Context, *SearchSysDictItemReq) (*SearchSysDictItemResp, error)
+	CheckDictItemCode(context.Context, *CheckDictItemCodeReq) (*CheckDictItemCodeResp, error)
+	GetDictItemText(context.Context, *GetDictItemNameReq) (*GetDictItemTextResp, error)
 	mustEmbedUnimplementedSysDictItemServiceServer()
 }
 
@@ -2799,6 +2825,12 @@ func (UnimplementedSysDictItemServiceServer) GetSysDictItemById(context.Context,
 }
 func (UnimplementedSysDictItemServiceServer) SearchSysDictItem(context.Context, *SearchSysDictItemReq) (*SearchSysDictItemResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchSysDictItem not implemented")
+}
+func (UnimplementedSysDictItemServiceServer) CheckDictItemCode(context.Context, *CheckDictItemCodeReq) (*CheckDictItemCodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckDictItemCode not implemented")
+}
+func (UnimplementedSysDictItemServiceServer) GetDictItemText(context.Context, *GetDictItemNameReq) (*GetDictItemTextResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDictItemText not implemented")
 }
 func (UnimplementedSysDictItemServiceServer) mustEmbedUnimplementedSysDictItemServiceServer() {}
 func (UnimplementedSysDictItemServiceServer) testEmbeddedByValue()                            {}
@@ -2911,6 +2943,42 @@ func _SysDictItemService_SearchSysDictItem_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SysDictItemService_CheckDictItemCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckDictItemCodeReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysDictItemServiceServer).CheckDictItemCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SysDictItemService_CheckDictItemCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysDictItemServiceServer).CheckDictItemCode(ctx, req.(*CheckDictItemCodeReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SysDictItemService_GetDictItemText_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDictItemNameReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SysDictItemServiceServer).GetDictItemText(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SysDictItemService_GetDictItemText_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SysDictItemServiceServer).GetDictItemText(ctx, req.(*GetDictItemNameReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SysDictItemService_ServiceDesc is the grpc.ServiceDesc for SysDictItemService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -2937,6 +3005,14 @@ var SysDictItemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchSysDictItem",
 			Handler:    _SysDictItemService_SearchSysDictItem_Handler,
+		},
+		{
+			MethodName: "CheckDictItemCode",
+			Handler:    _SysDictItemService_CheckDictItemCode_Handler,
+		},
+		{
+			MethodName: "GetDictItemText",
+			Handler:    _SysDictItemService_GetDictItemText_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

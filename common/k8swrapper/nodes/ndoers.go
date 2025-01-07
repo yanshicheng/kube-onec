@@ -429,13 +429,23 @@ func getNodeAddresses(addresses []corev1.NodeAddress) string {
 }
 
 // 获取内存资源的整数值（以 Mi 为单位）
-func getQuantityValueMi(q *resource.Quantity) int64 {
-	value := q.Value()           // 以字节为单位
-	return value / (1024 * 1024) // 转换为 Mi
+func getQuantityValueGi(q *resource.Quantity) float64 {
+	value, ok := q.AsInt64()
+	if !ok {
+		return 0
+	} // 以字节为单位
+	return float64(value) / (1024 * 1024 * 1024) // 转换为 Gi
 }
 
 // 获取资源的整数值（如 CPU 核心数）
-func getQuantityValue(q *resource.Quantity) int64 {
+func getQuantityValueFloat(q *resource.Quantity) float64 {
+	value, ok := q.AsInt64()
+	if !ok {
+		return 0
+	}
+	return float64(value)
+}
+func getQuantityValueInt(q *resource.Quantity) int64 {
 	value, ok := q.AsInt64()
 	if !ok {
 		return 0
@@ -450,9 +460,9 @@ func generateNodeInfo(node *corev1.Node) *core.NodeInfo {
 		NodeUid:          string(node.UID),
 		Status:           getNodeStatus(node),
 		Roles:            getNodeRoles(node.Labels),
-		Memory:           getQuantityValueMi(node.Status.Capacity.Memory()),
-		MaxPods:          getQuantityValue(node.Status.Capacity.Pods()),
-		Cpu:              getQuantityValue(node.Status.Capacity.Cpu()),
+		Memory:           getQuantityValueGi(node.Status.Capacity.Memory()),
+		MaxPods:          getQuantityValueInt(node.Status.Capacity.Pods()),
+		Cpu:              getQuantityValueInt(node.Status.Capacity.Cpu()),
 		JoinTime:         node.CreationTimestamp.Time,
 		Labels:           node.Labels,
 		Annotations:      node.Annotations,

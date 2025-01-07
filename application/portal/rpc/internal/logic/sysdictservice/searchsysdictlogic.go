@@ -43,13 +43,13 @@ func (l *SearchSysDictLogic) SearchSysDict(in *pb.SearchSysDictReq) (*pb.SearchS
 		queryStr.WriteString(" AND description = ? ")
 		params = append(params, "%"+in.Description+"%")
 	}
-	if in.CreateBy != "" {
+	if in.CreatedBy != "" {
 		queryStr.WriteString(" AND create_by = ? ")
-		params = append(params, in.CreateBy)
+		params = append(params, in.CreatedBy)
 	}
-	if in.UpdateBy != "" {
+	if in.UpdatedBy != "" {
 		queryStr.WriteString(" AND update_by = ? ")
-		params = append(params, in.UpdateBy)
+		params = append(params, in.UpdatedBy)
 	}
 	query := queryStr.String()
 	if len(query) > 0 {
@@ -76,10 +76,10 @@ func (l *SearchSysDictLogic) SearchSysDict(in *pb.SearchSysDictReq) (*pb.SearchS
 			DictName:    v.DictName,
 			DictCode:    v.DictCode,
 			Description: v.Description,
-			UpdateBy:    v.UpdateBy,
-			UpdateTime:  v.UpdateTime.Unix(),
-			CreateBy:    v.CreateBy,
-			CreateTime:  v.CreateTime.Unix(),
+			UpdatedBy:   v.UpdatedBy,
+			UpdatedAt:   v.UpdatedAt.Unix(),
+			CreatedBy:   v.CreatedBy,
+			CreatedAt:   v.CreatedAt.Unix(),
 		})
 	}
 	return &pb.SearchSysDictResp{

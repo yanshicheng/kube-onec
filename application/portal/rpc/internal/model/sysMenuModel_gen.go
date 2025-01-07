@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
 	"github.com/zeromicro/go-zero/core/stores/cache"
@@ -79,6 +80,9 @@ type (
 		OrderNum                 sql.NullInt64  `db:"order_num"`                   // 用于路由->菜单排序
 		Query                    sql.NullString `db:"query"`                       // 菜单所携带的参数
 		Title                    string         `db:"title"`                       // 标题名称
+		CreatedAt                time.Time      `db:"created_at"`                  // 记录创建时间
+		UpdatedAt                time.Time      `db:"updated_at"`                  // 记录更新时间
+		IsDeleted                int64          `db:"is_deleted"`                  // 是否删除
 	}
 )
 
@@ -101,7 +105,7 @@ func (m *defaultSysMenuModel) Delete(ctx context.Context, id uint64) error {
 func (m *defaultSysMenuModel) DeleteSoft(ctx context.Context, id uint64) error {
 	kubeOnecSysMenuIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysMenuIdPrefix, id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysMenuIdKey)
 	return err
@@ -160,7 +164,7 @@ func (m *defaultSysMenuModel) FindOne(ctx context.Context, id uint64) (*SysMenu,
 	kubeOnecSysMenuIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysMenuIdPrefix, id)
 	var resp SysMenu
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysMenuIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysMenuRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysMenuRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -183,11 +187,11 @@ func (m *defaultSysMenuModel) Search(ctx context.Context, orderStr string, isAsc
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -232,9 +236,9 @@ func (m *defaultSysMenuModel) Search(ctx context.Context, orderStr string, isAsc
 
 func (m *defaultSysMenuModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysMenu, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -268,8 +272,8 @@ func (m *defaultSysMenuModel) SearchNoPage(ctx context.Context, orderStr string,
 func (m *defaultSysMenuModel) Insert(ctx context.Context, data *SysMenu) (sql.Result, error) {
 	kubeOnecSysMenuIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysMenuIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Component, data.Name, data.Path, data.Redirect, data.ParentId, data.Type, data.IsEnable, data.Code, data.ActiveIcon, data.ActivePath, data.AffixTab, data.AffixTabOrder, data.Badge, data.BadgeType, data.BadgeVariants, data.HideChildrenInMenu, data.HideInBreadcrumb, data.HideInMenu, data.HideInTab, data.Icon, data.IframeSrc, data.IgnoreAccess, data.KeepAlive, data.Link, data.Loaded, data.MaxNumOfOpenTab, data.MenuVisibleWithForbidden, data.OpenInNewWindow, data.OrderNum, data.Query, data.Title)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Component, data.Name, data.Path, data.Redirect, data.ParentId, data.Type, data.IsEnable, data.Code, data.ActiveIcon, data.ActivePath, data.AffixTab, data.AffixTabOrder, data.Badge, data.BadgeType, data.BadgeVariants, data.HideChildrenInMenu, data.HideInBreadcrumb, data.HideInMenu, data.HideInTab, data.Icon, data.IframeSrc, data.IgnoreAccess, data.KeepAlive, data.Link, data.Loaded, data.MaxNumOfOpenTab, data.MenuVisibleWithForbidden, data.OpenInNewWindow, data.OrderNum, data.Query, data.Title, data.IsDeleted)
 	}, kubeOnecSysMenuIdKey)
 	return ret, err
 }
@@ -278,7 +282,7 @@ func (m *defaultSysMenuModel) Update(ctx context.Context, data *SysMenu) error {
 	kubeOnecSysMenuIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysMenuIdPrefix, data.Id)
 	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysMenuRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, data.Component, data.Name, data.Path, data.Redirect, data.ParentId, data.Type, data.IsEnable, data.Code, data.ActiveIcon, data.ActivePath, data.AffixTab, data.AffixTabOrder, data.Badge, data.BadgeType, data.BadgeVariants, data.HideChildrenInMenu, data.HideInBreadcrumb, data.HideInMenu, data.HideInTab, data.Icon, data.IframeSrc, data.IgnoreAccess, data.KeepAlive, data.Link, data.Loaded, data.MaxNumOfOpenTab, data.MenuVisibleWithForbidden, data.OpenInNewWindow, data.OrderNum, data.Query, data.Title, data.Id)
+		return conn.ExecCtx(ctx, query, data.Component, data.Name, data.Path, data.Redirect, data.ParentId, data.Type, data.IsEnable, data.Code, data.ActiveIcon, data.ActivePath, data.AffixTab, data.AffixTabOrder, data.Badge, data.BadgeType, data.BadgeVariants, data.HideChildrenInMenu, data.HideInBreadcrumb, data.HideInMenu, data.HideInTab, data.Icon, data.IframeSrc, data.IgnoreAccess, data.KeepAlive, data.Link, data.Loaded, data.MaxNumOfOpenTab, data.MenuVisibleWithForbidden, data.OpenInNewWindow, data.OrderNum, data.Query, data.Title, data.IsDeleted, data.Id)
 	}, kubeOnecSysMenuIdKey)
 	return err
 }
@@ -288,7 +292,7 @@ func (m *defaultSysMenuModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysMenuModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysMenuRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysMenuRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

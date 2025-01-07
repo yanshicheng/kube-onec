@@ -40,5 +40,6 @@ goctl rpc protoc \
   application/manager/rpc/manager.proto
 
 
-
+goctl api go -api=./application/manager/api/manager.api -dir=./application/manager/api/ -style=goZero
 go run application/manager/rpc/manager.go -f application/manager/rpc/etc/manager.yaml
+go run application/manager/api/manager.go -f application/manager/api/etc/manager-api.yaml

@@ -50,12 +50,12 @@ type (
 	}
 
 	SysRolePermission struct {
-		Id           uint64       `db:"id"`            // 自增主键
-		RoleId       uint64       `db:"role_id"`       // 角色ID，关联 sys_role 表
-		PermissionId uint64       `db:"permission_id"` // 权限ID，关联 sys_permission 表
-		CreateTime   time.Time    `db:"create_time"`   // 创建时间
-		UpdateTime   time.Time    `db:"update_time"`   // 最后修改时间
-		DeleteTime   sql.NullTime `db:"delete_time"`   // 记录删除时间（为 NULL 表示未删除）
+		Id           uint64    `db:"id"`            // 自增主键
+		RoleId       uint64    `db:"role_id"`       // 角色ID，关联 sys_role 表
+		PermissionId uint64    `db:"permission_id"` // 权限ID，关联 sys_permission 表
+		CreatedAt    time.Time `db:"created_at"`    // 记录创建时间
+		UpdatedAt    time.Time `db:"updated_at"`    // 记录更新时间
+		IsDeleted    int64     `db:"is_deleted"`    // 是否删除
 	}
 )
 
@@ -87,13 +87,13 @@ func (m *defaultSysRolePermissionModel) DeleteSoft(ctx context.Context, id uint6
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysRolePermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRolePermissionIdPrefix, id)
 	kubeOnecSysRolePermissionRoleIdPermissionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysRolePermissionRoleIdPermissionIdPrefix, data.RoleId, data.PermissionId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysRolePermissionIdKey, kubeOnecSysRolePermissionRoleIdPermissionIdKey)
 	return err
@@ -162,7 +162,7 @@ func (m *defaultSysRolePermissionModel) FindOne(ctx context.Context, id uint64) 
 	kubeOnecSysRolePermissionIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRolePermissionIdPrefix, id)
 	var resp SysRolePermission
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysRolePermissionIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysRolePermissionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysRolePermissionRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -185,11 +185,11 @@ func (m *defaultSysRolePermissionModel) Search(ctx context.Context, orderStr str
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -234,9 +234,9 @@ func (m *defaultSysRolePermissionModel) Search(ctx context.Context, orderStr str
 
 func (m *defaultSysRolePermissionModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysRolePermission, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -270,7 +270,7 @@ func (m *defaultSysRolePermissionModel) FindOneByRoleIdPermissionId(ctx context.
 	kubeOnecSysRolePermissionRoleIdPermissionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysRolePermissionRoleIdPermissionIdPrefix, roleId, permissionId)
 	var resp SysRolePermission
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysRolePermissionRoleIdPermissionIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `role_id` = ? and `permission_id` = ? AND `delete_time` IS NULL limit 1", sysRolePermissionRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `role_id` = ? and `permission_id` = ? AND `is_deleted` = 0  limit 1", sysRolePermissionRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, roleId, permissionId); err != nil {
 			return nil, err
 		}
@@ -291,7 +291,7 @@ func (m *defaultSysRolePermissionModel) Insert(ctx context.Context, data *SysRol
 	kubeOnecSysRolePermissionRoleIdPermissionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysRolePermissionRoleIdPermissionIdPrefix, data.RoleId, data.PermissionId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?)", m.table, sysRolePermissionRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.RoleId, data.PermissionId, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.RoleId, data.PermissionId, data.IsDeleted)
 	}, kubeOnecSysRolePermissionIdKey, kubeOnecSysRolePermissionRoleIdPermissionIdKey)
 	return ret, err
 }
@@ -306,7 +306,7 @@ func (m *defaultSysRolePermissionModel) Update(ctx context.Context, newData *Sys
 	kubeOnecSysRolePermissionRoleIdPermissionIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysRolePermissionRoleIdPermissionIdPrefix, data.RoleId, data.PermissionId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRolePermissionRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.RoleId, newData.PermissionId, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.RoleId, newData.PermissionId, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysRolePermissionIdKey, kubeOnecSysRolePermissionRoleIdPermissionIdKey)
 	return err
 }
@@ -316,7 +316,7 @@ func (m *defaultSysRolePermissionModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysRolePermissionModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysRolePermissionRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysRolePermissionRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

@@ -39,10 +39,10 @@ func (l *SearchSysPositionLogic) SearchSysPosition(in *pb.SearchSysPositionReq) 
 
 	for _, item := range resp {
 		data = append(data, &pb.SysPosition{
-			Id:         item.Id,
-			Name:       item.Name,
-			CreateTime: item.CreateTime.Unix(),
-			UpdateTime: item.UpdateTime.Unix(),
+			Id:        item.Id,
+			Name:      item.Name,
+			CreatedAt: item.CreatedAt.Unix(),
+			UpdatedAt: item.UpdatedAt.Unix(),
 		})
 	}
 	return &pb.SearchSysPositionResp{

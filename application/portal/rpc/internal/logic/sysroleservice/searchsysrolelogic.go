@@ -42,13 +42,13 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 		queryStr.WriteString("role_code LIKE ? AND ")
 		params = append(params, "%"+in.RoleCode+"%")
 	}
-	if in.CreateBy != "" {
+	if in.CreatedBy != "" {
 		queryStr.WriteString("create_by LIKE ? AND ")
-		params = append(params, "%"+in.CreateBy+"%")
+		params = append(params, "%"+in.CreatedBy+"%")
 	}
-	if in.UpdateBy != "" {
+	if in.UpdatedBy != "" {
 		queryStr.WriteString("update_by LIKE ? AND ")
-		params = append(params, "%"+in.UpdateBy+"%")
+		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
@@ -76,10 +76,10 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 			RoleName:    role.RoleName,
 			RoleCode:    role.RoleCode,
 			Description: role.Description,
-			CreateTime:  role.CreateTime.Unix(),
-			UpdateTime:  role.UpdateTime.Unix(),
-			CreateBy:    role.CreateBy,
-			UpdateBy:    role.UpdateBy,
+			CreatedAt:   role.CreatedAt.Unix(),
+			UpdatedAt:   role.UpdatedAt.Unix(),
+			CreatedBy:   role.CreatedBy,
+			UpdatedBy:   role.UpdatedBy,
 		})
 	}
 

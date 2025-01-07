@@ -353,6 +353,263 @@ var OnecClusterService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	OnecClusterConnInfoService_AddOnecClusterConnInfo_FullMethodName     = "/pb.OnecClusterConnInfoService/AddOnecClusterConnInfo"
+	OnecClusterConnInfoService_UpdateOnecClusterConnInfo_FullMethodName  = "/pb.OnecClusterConnInfoService/UpdateOnecClusterConnInfo"
+	OnecClusterConnInfoService_DelOnecClusterConnInfo_FullMethodName     = "/pb.OnecClusterConnInfoService/DelOnecClusterConnInfo"
+	OnecClusterConnInfoService_GetOnecClusterConnInfoById_FullMethodName = "/pb.OnecClusterConnInfoService/GetOnecClusterConnInfoById"
+	OnecClusterConnInfoService_SearchOnecClusterConnInfo_FullMethodName  = "/pb.OnecClusterConnInfoService/SearchOnecClusterConnInfo"
+)
+
+// OnecClusterConnInfoServiceClient is the client API for OnecClusterConnInfoService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OnecClusterConnInfoServiceClient interface {
+	// -----------------------通用的服务连接信息表，动态支持多个服务-----------------------
+	AddOnecClusterConnInfo(ctx context.Context, in *AddOnecClusterConnInfoReq, opts ...grpc.CallOption) (*AddOnecClusterConnInfoResp, error)
+	UpdateOnecClusterConnInfo(ctx context.Context, in *UpdateOnecClusterConnInfoReq, opts ...grpc.CallOption) (*UpdateOnecClusterConnInfoResp, error)
+	DelOnecClusterConnInfo(ctx context.Context, in *DelOnecClusterConnInfoReq, opts ...grpc.CallOption) (*DelOnecClusterConnInfoResp, error)
+	GetOnecClusterConnInfoById(ctx context.Context, in *GetOnecClusterConnInfoByIdReq, opts ...grpc.CallOption) (*GetOnecClusterConnInfoByIdResp, error)
+	SearchOnecClusterConnInfo(ctx context.Context, in *SearchOnecClusterConnInfoReq, opts ...grpc.CallOption) (*SearchOnecClusterConnInfoResp, error)
+}
+
+type onecClusterConnInfoServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOnecClusterConnInfoServiceClient(cc grpc.ClientConnInterface) OnecClusterConnInfoServiceClient {
+	return &onecClusterConnInfoServiceClient{cc}
+}
+
+func (c *onecClusterConnInfoServiceClient) AddOnecClusterConnInfo(ctx context.Context, in *AddOnecClusterConnInfoReq, opts ...grpc.CallOption) (*AddOnecClusterConnInfoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOnecClusterConnInfoResp)
+	err := c.cc.Invoke(ctx, OnecClusterConnInfoService_AddOnecClusterConnInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecClusterConnInfoServiceClient) UpdateOnecClusterConnInfo(ctx context.Context, in *UpdateOnecClusterConnInfoReq, opts ...grpc.CallOption) (*UpdateOnecClusterConnInfoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOnecClusterConnInfoResp)
+	err := c.cc.Invoke(ctx, OnecClusterConnInfoService_UpdateOnecClusterConnInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecClusterConnInfoServiceClient) DelOnecClusterConnInfo(ctx context.Context, in *DelOnecClusterConnInfoReq, opts ...grpc.CallOption) (*DelOnecClusterConnInfoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelOnecClusterConnInfoResp)
+	err := c.cc.Invoke(ctx, OnecClusterConnInfoService_DelOnecClusterConnInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecClusterConnInfoServiceClient) GetOnecClusterConnInfoById(ctx context.Context, in *GetOnecClusterConnInfoByIdReq, opts ...grpc.CallOption) (*GetOnecClusterConnInfoByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOnecClusterConnInfoByIdResp)
+	err := c.cc.Invoke(ctx, OnecClusterConnInfoService_GetOnecClusterConnInfoById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecClusterConnInfoServiceClient) SearchOnecClusterConnInfo(ctx context.Context, in *SearchOnecClusterConnInfoReq, opts ...grpc.CallOption) (*SearchOnecClusterConnInfoResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecClusterConnInfoResp)
+	err := c.cc.Invoke(ctx, OnecClusterConnInfoService_SearchOnecClusterConnInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OnecClusterConnInfoServiceServer is the server API for OnecClusterConnInfoService service.
+// All implementations must embed UnimplementedOnecClusterConnInfoServiceServer
+// for forward compatibility.
+type OnecClusterConnInfoServiceServer interface {
+	// -----------------------通用的服务连接信息表，动态支持多个服务-----------------------
+	AddOnecClusterConnInfo(context.Context, *AddOnecClusterConnInfoReq) (*AddOnecClusterConnInfoResp, error)
+	UpdateOnecClusterConnInfo(context.Context, *UpdateOnecClusterConnInfoReq) (*UpdateOnecClusterConnInfoResp, error)
+	DelOnecClusterConnInfo(context.Context, *DelOnecClusterConnInfoReq) (*DelOnecClusterConnInfoResp, error)
+	GetOnecClusterConnInfoById(context.Context, *GetOnecClusterConnInfoByIdReq) (*GetOnecClusterConnInfoByIdResp, error)
+	SearchOnecClusterConnInfo(context.Context, *SearchOnecClusterConnInfoReq) (*SearchOnecClusterConnInfoResp, error)
+	mustEmbedUnimplementedOnecClusterConnInfoServiceServer()
+}
+
+// UnimplementedOnecClusterConnInfoServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOnecClusterConnInfoServiceServer struct{}
+
+func (UnimplementedOnecClusterConnInfoServiceServer) AddOnecClusterConnInfo(context.Context, *AddOnecClusterConnInfoReq) (*AddOnecClusterConnInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddOnecClusterConnInfo not implemented")
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) UpdateOnecClusterConnInfo(context.Context, *UpdateOnecClusterConnInfoReq) (*UpdateOnecClusterConnInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnecClusterConnInfo not implemented")
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) DelOnecClusterConnInfo(context.Context, *DelOnecClusterConnInfoReq) (*DelOnecClusterConnInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelOnecClusterConnInfo not implemented")
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) GetOnecClusterConnInfoById(context.Context, *GetOnecClusterConnInfoByIdReq) (*GetOnecClusterConnInfoByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecClusterConnInfoById not implemented")
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) SearchOnecClusterConnInfo(context.Context, *SearchOnecClusterConnInfoReq) (*SearchOnecClusterConnInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecClusterConnInfo not implemented")
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) mustEmbedUnimplementedOnecClusterConnInfoServiceServer() {
+}
+func (UnimplementedOnecClusterConnInfoServiceServer) testEmbeddedByValue() {}
+
+// UnsafeOnecClusterConnInfoServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OnecClusterConnInfoServiceServer will
+// result in compilation errors.
+type UnsafeOnecClusterConnInfoServiceServer interface {
+	mustEmbedUnimplementedOnecClusterConnInfoServiceServer()
+}
+
+func RegisterOnecClusterConnInfoServiceServer(s grpc.ServiceRegistrar, srv OnecClusterConnInfoServiceServer) {
+	// If the following call pancis, it indicates UnimplementedOnecClusterConnInfoServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OnecClusterConnInfoService_ServiceDesc, srv)
+}
+
+func _OnecClusterConnInfoService_AddOnecClusterConnInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOnecClusterConnInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecClusterConnInfoServiceServer).AddOnecClusterConnInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecClusterConnInfoService_AddOnecClusterConnInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecClusterConnInfoServiceServer).AddOnecClusterConnInfo(ctx, req.(*AddOnecClusterConnInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecClusterConnInfoService_UpdateOnecClusterConnInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnecClusterConnInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecClusterConnInfoServiceServer).UpdateOnecClusterConnInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecClusterConnInfoService_UpdateOnecClusterConnInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecClusterConnInfoServiceServer).UpdateOnecClusterConnInfo(ctx, req.(*UpdateOnecClusterConnInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecClusterConnInfoService_DelOnecClusterConnInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelOnecClusterConnInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecClusterConnInfoServiceServer).DelOnecClusterConnInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecClusterConnInfoService_DelOnecClusterConnInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecClusterConnInfoServiceServer).DelOnecClusterConnInfo(ctx, req.(*DelOnecClusterConnInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecClusterConnInfoService_GetOnecClusterConnInfoById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecClusterConnInfoByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecClusterConnInfoServiceServer).GetOnecClusterConnInfoById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecClusterConnInfoService_GetOnecClusterConnInfoById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecClusterConnInfoServiceServer).GetOnecClusterConnInfoById(ctx, req.(*GetOnecClusterConnInfoByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecClusterConnInfoService_SearchOnecClusterConnInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecClusterConnInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecClusterConnInfoServiceServer).SearchOnecClusterConnInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecClusterConnInfoService_SearchOnecClusterConnInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecClusterConnInfoServiceServer).SearchOnecClusterConnInfo(ctx, req.(*SearchOnecClusterConnInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OnecClusterConnInfoService_ServiceDesc is the grpc.ServiceDesc for OnecClusterConnInfoService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OnecClusterConnInfoService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.OnecClusterConnInfoService",
+	HandlerType: (*OnecClusterConnInfoServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddOnecClusterConnInfo",
+			Handler:    _OnecClusterConnInfoService_AddOnecClusterConnInfo_Handler,
+		},
+		{
+			MethodName: "UpdateOnecClusterConnInfo",
+			Handler:    _OnecClusterConnInfoService_UpdateOnecClusterConnInfo_Handler,
+		},
+		{
+			MethodName: "DelOnecClusterConnInfo",
+			Handler:    _OnecClusterConnInfoService_DelOnecClusterConnInfo_Handler,
+		},
+		{
+			MethodName: "GetOnecClusterConnInfoById",
+			Handler:    _OnecClusterConnInfoService_GetOnecClusterConnInfoById_Handler,
+		},
+		{
+			MethodName: "SearchOnecClusterConnInfo",
+			Handler:    _OnecClusterConnInfoService_SearchOnecClusterConnInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "manager.proto",
+}
+
+const (
 	OnecNodeService_DelOnecNode_FullMethodName           = "/pb.OnecNodeService/DelOnecNode"
 	OnecNodeService_GetOnecNodeById_FullMethodName       = "/pb.OnecNodeService/GetOnecNodeById"
 	OnecNodeService_SearchOnecNode_FullMethodName        = "/pb.OnecNodeService/SearchOnecNode"
@@ -886,6 +1143,1033 @@ var OnecNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncOnecNode",
 			Handler:    _OnecNodeService_SyncOnecNode_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "manager.proto",
+}
+
+const (
+	OnecProjectService_AddOnecProject_FullMethodName     = "/pb.OnecProjectService/AddOnecProject"
+	OnecProjectService_UpdateOnecProject_FullMethodName  = "/pb.OnecProjectService/UpdateOnecProject"
+	OnecProjectService_DelOnecProject_FullMethodName     = "/pb.OnecProjectService/DelOnecProject"
+	OnecProjectService_GetOnecProjectById_FullMethodName = "/pb.OnecProjectService/GetOnecProjectById"
+	OnecProjectService_SearchOnecProject_FullMethodName  = "/pb.OnecProjectService/SearchOnecProject"
+)
+
+// OnecProjectServiceClient is the client API for OnecProjectService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OnecProjectServiceClient interface {
+	// -----------------------项目表，记录项目信息-----------------------
+	AddOnecProject(ctx context.Context, in *AddOnecProjectReq, opts ...grpc.CallOption) (*AddOnecProjectResp, error)
+	UpdateOnecProject(ctx context.Context, in *UpdateOnecProjectReq, opts ...grpc.CallOption) (*UpdateOnecProjectResp, error)
+	DelOnecProject(ctx context.Context, in *DelOnecProjectReq, opts ...grpc.CallOption) (*DelOnecProjectResp, error)
+	GetOnecProjectById(ctx context.Context, in *GetOnecProjectByIdReq, opts ...grpc.CallOption) (*GetOnecProjectByIdResp, error)
+	SearchOnecProject(ctx context.Context, in *SearchOnecProjectReq, opts ...grpc.CallOption) (*SearchOnecProjectResp, error)
+}
+
+type onecProjectServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOnecProjectServiceClient(cc grpc.ClientConnInterface) OnecProjectServiceClient {
+	return &onecProjectServiceClient{cc}
+}
+
+func (c *onecProjectServiceClient) AddOnecProject(ctx context.Context, in *AddOnecProjectReq, opts ...grpc.CallOption) (*AddOnecProjectResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOnecProjectResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_AddOnecProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectServiceClient) UpdateOnecProject(ctx context.Context, in *UpdateOnecProjectReq, opts ...grpc.CallOption) (*UpdateOnecProjectResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOnecProjectResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_UpdateOnecProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectServiceClient) DelOnecProject(ctx context.Context, in *DelOnecProjectReq, opts ...grpc.CallOption) (*DelOnecProjectResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelOnecProjectResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_DelOnecProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectServiceClient) GetOnecProjectById(ctx context.Context, in *GetOnecProjectByIdReq, opts ...grpc.CallOption) (*GetOnecProjectByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOnecProjectByIdResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_GetOnecProjectById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectServiceClient) SearchOnecProject(ctx context.Context, in *SearchOnecProjectReq, opts ...grpc.CallOption) (*SearchOnecProjectResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecProjectResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_SearchOnecProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OnecProjectServiceServer is the server API for OnecProjectService service.
+// All implementations must embed UnimplementedOnecProjectServiceServer
+// for forward compatibility.
+type OnecProjectServiceServer interface {
+	// -----------------------项目表，记录项目信息-----------------------
+	AddOnecProject(context.Context, *AddOnecProjectReq) (*AddOnecProjectResp, error)
+	UpdateOnecProject(context.Context, *UpdateOnecProjectReq) (*UpdateOnecProjectResp, error)
+	DelOnecProject(context.Context, *DelOnecProjectReq) (*DelOnecProjectResp, error)
+	GetOnecProjectById(context.Context, *GetOnecProjectByIdReq) (*GetOnecProjectByIdResp, error)
+	SearchOnecProject(context.Context, *SearchOnecProjectReq) (*SearchOnecProjectResp, error)
+	mustEmbedUnimplementedOnecProjectServiceServer()
+}
+
+// UnimplementedOnecProjectServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOnecProjectServiceServer struct{}
+
+func (UnimplementedOnecProjectServiceServer) AddOnecProject(context.Context, *AddOnecProjectReq) (*AddOnecProjectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddOnecProject not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) UpdateOnecProject(context.Context, *UpdateOnecProjectReq) (*UpdateOnecProjectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnecProject not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) DelOnecProject(context.Context, *DelOnecProjectReq) (*DelOnecProjectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelOnecProject not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) GetOnecProjectById(context.Context, *GetOnecProjectByIdReq) (*GetOnecProjectByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectById not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) SearchOnecProject(context.Context, *SearchOnecProjectReq) (*SearchOnecProjectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProject not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) mustEmbedUnimplementedOnecProjectServiceServer() {}
+func (UnimplementedOnecProjectServiceServer) testEmbeddedByValue()                            {}
+
+// UnsafeOnecProjectServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OnecProjectServiceServer will
+// result in compilation errors.
+type UnsafeOnecProjectServiceServer interface {
+	mustEmbedUnimplementedOnecProjectServiceServer()
+}
+
+func RegisterOnecProjectServiceServer(s grpc.ServiceRegistrar, srv OnecProjectServiceServer) {
+	// If the following call pancis, it indicates UnimplementedOnecProjectServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OnecProjectService_ServiceDesc, srv)
+}
+
+func _OnecProjectService_AddOnecProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOnecProjectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).AddOnecProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_AddOnecProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).AddOnecProject(ctx, req.(*AddOnecProjectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectService_UpdateOnecProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnecProjectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).UpdateOnecProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_UpdateOnecProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).UpdateOnecProject(ctx, req.(*UpdateOnecProjectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectService_DelOnecProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelOnecProjectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).DelOnecProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_DelOnecProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).DelOnecProject(ctx, req.(*DelOnecProjectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectService_GetOnecProjectById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecProjectByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).GetOnecProjectById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_GetOnecProjectById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).GetOnecProjectById(ctx, req.(*GetOnecProjectByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectService_SearchOnecProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecProjectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).SearchOnecProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_SearchOnecProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).SearchOnecProject(ctx, req.(*SearchOnecProjectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OnecProjectService_ServiceDesc is the grpc.ServiceDesc for OnecProjectService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OnecProjectService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.OnecProjectService",
+	HandlerType: (*OnecProjectServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddOnecProject",
+			Handler:    _OnecProjectService_AddOnecProject_Handler,
+		},
+		{
+			MethodName: "UpdateOnecProject",
+			Handler:    _OnecProjectService_UpdateOnecProject_Handler,
+		},
+		{
+			MethodName: "DelOnecProject",
+			Handler:    _OnecProjectService_DelOnecProject_Handler,
+		},
+		{
+			MethodName: "GetOnecProjectById",
+			Handler:    _OnecProjectService_GetOnecProjectById_Handler,
+		},
+		{
+			MethodName: "SearchOnecProject",
+			Handler:    _OnecProjectService_SearchOnecProject_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "manager.proto",
+}
+
+const (
+	OnecProjectQuotaService_AddOnecProjectQuota_FullMethodName     = "/pb.OnecProjectQuotaService/AddOnecProjectQuota"
+	OnecProjectQuotaService_UpdateOnecProjectQuota_FullMethodName  = "/pb.OnecProjectQuotaService/UpdateOnecProjectQuota"
+	OnecProjectQuotaService_DelOnecProjectQuota_FullMethodName     = "/pb.OnecProjectQuotaService/DelOnecProjectQuota"
+	OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName = "/pb.OnecProjectQuotaService/GetOnecProjectQuotaById"
+	OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName  = "/pb.OnecProjectQuotaService/SearchOnecProjectQuota"
+)
+
+// OnecProjectQuotaServiceClient is the client API for OnecProjectQuotaService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OnecProjectQuotaServiceClient interface {
+	// -----------------------项目与集群的对应关系表，记录资源配额和使用情况-----------------------
+	AddOnecProjectQuota(ctx context.Context, in *AddOnecProjectQuotaReq, opts ...grpc.CallOption) (*AddOnecProjectQuotaResp, error)
+	UpdateOnecProjectQuota(ctx context.Context, in *UpdateOnecProjectQuotaReq, opts ...grpc.CallOption) (*UpdateOnecProjectQuotaResp, error)
+	DelOnecProjectQuota(ctx context.Context, in *DelOnecProjectQuotaReq, opts ...grpc.CallOption) (*DelOnecProjectQuotaResp, error)
+	GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error)
+	SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error)
+}
+
+type onecProjectQuotaServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOnecProjectQuotaServiceClient(cc grpc.ClientConnInterface) OnecProjectQuotaServiceClient {
+	return &onecProjectQuotaServiceClient{cc}
+}
+
+func (c *onecProjectQuotaServiceClient) AddOnecProjectQuota(ctx context.Context, in *AddOnecProjectQuotaReq, opts ...grpc.CallOption) (*AddOnecProjectQuotaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOnecProjectQuotaResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_AddOnecProjectQuota_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectQuotaServiceClient) UpdateOnecProjectQuota(ctx context.Context, in *UpdateOnecProjectQuotaReq, opts ...grpc.CallOption) (*UpdateOnecProjectQuotaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOnecProjectQuotaResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_UpdateOnecProjectQuota_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectQuotaServiceClient) DelOnecProjectQuota(ctx context.Context, in *DelOnecProjectQuotaReq, opts ...grpc.CallOption) (*DelOnecProjectQuotaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelOnecProjectQuotaResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_DelOnecProjectQuota_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectQuotaServiceClient) GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOnecProjectQuotaByIdResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectQuotaServiceClient) SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecProjectQuotaResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OnecProjectQuotaServiceServer is the server API for OnecProjectQuotaService service.
+// All implementations must embed UnimplementedOnecProjectQuotaServiceServer
+// for forward compatibility.
+type OnecProjectQuotaServiceServer interface {
+	// -----------------------项目与集群的对应关系表，记录资源配额和使用情况-----------------------
+	AddOnecProjectQuota(context.Context, *AddOnecProjectQuotaReq) (*AddOnecProjectQuotaResp, error)
+	UpdateOnecProjectQuota(context.Context, *UpdateOnecProjectQuotaReq) (*UpdateOnecProjectQuotaResp, error)
+	DelOnecProjectQuota(context.Context, *DelOnecProjectQuotaReq) (*DelOnecProjectQuotaResp, error)
+	GetOnecProjectQuotaById(context.Context, *GetOnecProjectQuotaByIdReq) (*GetOnecProjectQuotaByIdResp, error)
+	SearchOnecProjectQuota(context.Context, *SearchOnecProjectQuotaReq) (*SearchOnecProjectQuotaResp, error)
+	mustEmbedUnimplementedOnecProjectQuotaServiceServer()
+}
+
+// UnimplementedOnecProjectQuotaServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOnecProjectQuotaServiceServer struct{}
+
+func (UnimplementedOnecProjectQuotaServiceServer) AddOnecProjectQuota(context.Context, *AddOnecProjectQuotaReq) (*AddOnecProjectQuotaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddOnecProjectQuota not implemented")
+}
+func (UnimplementedOnecProjectQuotaServiceServer) UpdateOnecProjectQuota(context.Context, *UpdateOnecProjectQuotaReq) (*UpdateOnecProjectQuotaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnecProjectQuota not implemented")
+}
+func (UnimplementedOnecProjectQuotaServiceServer) DelOnecProjectQuota(context.Context, *DelOnecProjectQuotaReq) (*DelOnecProjectQuotaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelOnecProjectQuota not implemented")
+}
+func (UnimplementedOnecProjectQuotaServiceServer) GetOnecProjectQuotaById(context.Context, *GetOnecProjectQuotaByIdReq) (*GetOnecProjectQuotaByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectQuotaById not implemented")
+}
+func (UnimplementedOnecProjectQuotaServiceServer) SearchOnecProjectQuota(context.Context, *SearchOnecProjectQuotaReq) (*SearchOnecProjectQuotaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProjectQuota not implemented")
+}
+func (UnimplementedOnecProjectQuotaServiceServer) mustEmbedUnimplementedOnecProjectQuotaServiceServer() {
+}
+func (UnimplementedOnecProjectQuotaServiceServer) testEmbeddedByValue() {}
+
+// UnsafeOnecProjectQuotaServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OnecProjectQuotaServiceServer will
+// result in compilation errors.
+type UnsafeOnecProjectQuotaServiceServer interface {
+	mustEmbedUnimplementedOnecProjectQuotaServiceServer()
+}
+
+func RegisterOnecProjectQuotaServiceServer(s grpc.ServiceRegistrar, srv OnecProjectQuotaServiceServer) {
+	// If the following call pancis, it indicates UnimplementedOnecProjectQuotaServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OnecProjectQuotaService_ServiceDesc, srv)
+}
+
+func _OnecProjectQuotaService_AddOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOnecProjectQuotaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectQuotaServiceServer).AddOnecProjectQuota(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectQuotaService_AddOnecProjectQuota_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectQuotaServiceServer).AddOnecProjectQuota(ctx, req.(*AddOnecProjectQuotaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectQuotaService_UpdateOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnecProjectQuotaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectQuotaServiceServer).UpdateOnecProjectQuota(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectQuotaService_UpdateOnecProjectQuota_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectQuotaServiceServer).UpdateOnecProjectQuota(ctx, req.(*UpdateOnecProjectQuotaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectQuotaService_DelOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelOnecProjectQuotaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectQuotaServiceServer).DelOnecProjectQuota(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectQuotaService_DelOnecProjectQuota_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectQuotaServiceServer).DelOnecProjectQuota(ctx, req.(*DelOnecProjectQuotaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectQuotaService_GetOnecProjectQuotaById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecProjectQuotaByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuotaById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuotaById(ctx, req.(*GetOnecProjectQuotaByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectQuotaService_SearchOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecProjectQuotaReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectQuotaServiceServer).SearchOnecProjectQuota(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectQuotaServiceServer).SearchOnecProjectQuota(ctx, req.(*SearchOnecProjectQuotaReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OnecProjectQuotaService_ServiceDesc is the grpc.ServiceDesc for OnecProjectQuotaService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OnecProjectQuotaService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.OnecProjectQuotaService",
+	HandlerType: (*OnecProjectQuotaServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddOnecProjectQuota",
+			Handler:    _OnecProjectQuotaService_AddOnecProjectQuota_Handler,
+		},
+		{
+			MethodName: "UpdateOnecProjectQuota",
+			Handler:    _OnecProjectQuotaService_UpdateOnecProjectQuota_Handler,
+		},
+		{
+			MethodName: "DelOnecProjectQuota",
+			Handler:    _OnecProjectQuotaService_DelOnecProjectQuota_Handler,
+		},
+		{
+			MethodName: "GetOnecProjectQuotaById",
+			Handler:    _OnecProjectQuotaService_GetOnecProjectQuotaById_Handler,
+		},
+		{
+			MethodName: "SearchOnecProjectQuota",
+			Handler:    _OnecProjectQuotaService_SearchOnecProjectQuota_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "manager.proto",
+}
+
+const (
+	OnecProjectAdminService_AddOnecProjectAdmin_FullMethodName     = "/pb.OnecProjectAdminService/AddOnecProjectAdmin"
+	OnecProjectAdminService_UpdateOnecProjectAdmin_FullMethodName  = "/pb.OnecProjectAdminService/UpdateOnecProjectAdmin"
+	OnecProjectAdminService_DelOnecProjectAdmin_FullMethodName     = "/pb.OnecProjectAdminService/DelOnecProjectAdmin"
+	OnecProjectAdminService_GetOnecProjectAdminById_FullMethodName = "/pb.OnecProjectAdminService/GetOnecProjectAdminById"
+	OnecProjectAdminService_SearchOnecProjectAdmin_FullMethodName  = "/pb.OnecProjectAdminService/SearchOnecProjectAdmin"
+)
+
+// OnecProjectAdminServiceClient is the client API for OnecProjectAdminService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OnecProjectAdminServiceClient interface {
+	// -----------------------项目管理员表，关联项目与用户的多对多关系-----------------------
+	AddOnecProjectAdmin(ctx context.Context, in *AddOnecProjectAdminReq, opts ...grpc.CallOption) (*AddOnecProjectAdminResp, error)
+	UpdateOnecProjectAdmin(ctx context.Context, in *UpdateOnecProjectAdminReq, opts ...grpc.CallOption) (*UpdateOnecProjectAdminResp, error)
+	DelOnecProjectAdmin(ctx context.Context, in *DelOnecProjectAdminReq, opts ...grpc.CallOption) (*DelOnecProjectAdminResp, error)
+	GetOnecProjectAdminById(ctx context.Context, in *GetOnecProjectAdminByIdReq, opts ...grpc.CallOption) (*GetOnecProjectAdminByIdResp, error)
+	SearchOnecProjectAdmin(ctx context.Context, in *SearchOnecProjectAdminReq, opts ...grpc.CallOption) (*SearchOnecProjectAdminResp, error)
+}
+
+type onecProjectAdminServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOnecProjectAdminServiceClient(cc grpc.ClientConnInterface) OnecProjectAdminServiceClient {
+	return &onecProjectAdminServiceClient{cc}
+}
+
+func (c *onecProjectAdminServiceClient) AddOnecProjectAdmin(ctx context.Context, in *AddOnecProjectAdminReq, opts ...grpc.CallOption) (*AddOnecProjectAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOnecProjectAdminResp)
+	err := c.cc.Invoke(ctx, OnecProjectAdminService_AddOnecProjectAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectAdminServiceClient) UpdateOnecProjectAdmin(ctx context.Context, in *UpdateOnecProjectAdminReq, opts ...grpc.CallOption) (*UpdateOnecProjectAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOnecProjectAdminResp)
+	err := c.cc.Invoke(ctx, OnecProjectAdminService_UpdateOnecProjectAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectAdminServiceClient) DelOnecProjectAdmin(ctx context.Context, in *DelOnecProjectAdminReq, opts ...grpc.CallOption) (*DelOnecProjectAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelOnecProjectAdminResp)
+	err := c.cc.Invoke(ctx, OnecProjectAdminService_DelOnecProjectAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectAdminServiceClient) GetOnecProjectAdminById(ctx context.Context, in *GetOnecProjectAdminByIdReq, opts ...grpc.CallOption) (*GetOnecProjectAdminByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOnecProjectAdminByIdResp)
+	err := c.cc.Invoke(ctx, OnecProjectAdminService_GetOnecProjectAdminById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectAdminServiceClient) SearchOnecProjectAdmin(ctx context.Context, in *SearchOnecProjectAdminReq, opts ...grpc.CallOption) (*SearchOnecProjectAdminResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecProjectAdminResp)
+	err := c.cc.Invoke(ctx, OnecProjectAdminService_SearchOnecProjectAdmin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OnecProjectAdminServiceServer is the server API for OnecProjectAdminService service.
+// All implementations must embed UnimplementedOnecProjectAdminServiceServer
+// for forward compatibility.
+type OnecProjectAdminServiceServer interface {
+	// -----------------------项目管理员表，关联项目与用户的多对多关系-----------------------
+	AddOnecProjectAdmin(context.Context, *AddOnecProjectAdminReq) (*AddOnecProjectAdminResp, error)
+	UpdateOnecProjectAdmin(context.Context, *UpdateOnecProjectAdminReq) (*UpdateOnecProjectAdminResp, error)
+	DelOnecProjectAdmin(context.Context, *DelOnecProjectAdminReq) (*DelOnecProjectAdminResp, error)
+	GetOnecProjectAdminById(context.Context, *GetOnecProjectAdminByIdReq) (*GetOnecProjectAdminByIdResp, error)
+	SearchOnecProjectAdmin(context.Context, *SearchOnecProjectAdminReq) (*SearchOnecProjectAdminResp, error)
+	mustEmbedUnimplementedOnecProjectAdminServiceServer()
+}
+
+// UnimplementedOnecProjectAdminServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOnecProjectAdminServiceServer struct{}
+
+func (UnimplementedOnecProjectAdminServiceServer) AddOnecProjectAdmin(context.Context, *AddOnecProjectAdminReq) (*AddOnecProjectAdminResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddOnecProjectAdmin not implemented")
+}
+func (UnimplementedOnecProjectAdminServiceServer) UpdateOnecProjectAdmin(context.Context, *UpdateOnecProjectAdminReq) (*UpdateOnecProjectAdminResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnecProjectAdmin not implemented")
+}
+func (UnimplementedOnecProjectAdminServiceServer) DelOnecProjectAdmin(context.Context, *DelOnecProjectAdminReq) (*DelOnecProjectAdminResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelOnecProjectAdmin not implemented")
+}
+func (UnimplementedOnecProjectAdminServiceServer) GetOnecProjectAdminById(context.Context, *GetOnecProjectAdminByIdReq) (*GetOnecProjectAdminByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectAdminById not implemented")
+}
+func (UnimplementedOnecProjectAdminServiceServer) SearchOnecProjectAdmin(context.Context, *SearchOnecProjectAdminReq) (*SearchOnecProjectAdminResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProjectAdmin not implemented")
+}
+func (UnimplementedOnecProjectAdminServiceServer) mustEmbedUnimplementedOnecProjectAdminServiceServer() {
+}
+func (UnimplementedOnecProjectAdminServiceServer) testEmbeddedByValue() {}
+
+// UnsafeOnecProjectAdminServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OnecProjectAdminServiceServer will
+// result in compilation errors.
+type UnsafeOnecProjectAdminServiceServer interface {
+	mustEmbedUnimplementedOnecProjectAdminServiceServer()
+}
+
+func RegisterOnecProjectAdminServiceServer(s grpc.ServiceRegistrar, srv OnecProjectAdminServiceServer) {
+	// If the following call pancis, it indicates UnimplementedOnecProjectAdminServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OnecProjectAdminService_ServiceDesc, srv)
+}
+
+func _OnecProjectAdminService_AddOnecProjectAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOnecProjectAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectAdminServiceServer).AddOnecProjectAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectAdminService_AddOnecProjectAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectAdminServiceServer).AddOnecProjectAdmin(ctx, req.(*AddOnecProjectAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectAdminService_UpdateOnecProjectAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnecProjectAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectAdminServiceServer).UpdateOnecProjectAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectAdminService_UpdateOnecProjectAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectAdminServiceServer).UpdateOnecProjectAdmin(ctx, req.(*UpdateOnecProjectAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectAdminService_DelOnecProjectAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelOnecProjectAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectAdminServiceServer).DelOnecProjectAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectAdminService_DelOnecProjectAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectAdminServiceServer).DelOnecProjectAdmin(ctx, req.(*DelOnecProjectAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectAdminService_GetOnecProjectAdminById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecProjectAdminByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectAdminServiceServer).GetOnecProjectAdminById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectAdminService_GetOnecProjectAdminById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectAdminServiceServer).GetOnecProjectAdminById(ctx, req.(*GetOnecProjectAdminByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectAdminService_SearchOnecProjectAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecProjectAdminReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectAdminServiceServer).SearchOnecProjectAdmin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectAdminService_SearchOnecProjectAdmin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectAdminServiceServer).SearchOnecProjectAdmin(ctx, req.(*SearchOnecProjectAdminReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OnecProjectAdminService_ServiceDesc is the grpc.ServiceDesc for OnecProjectAdminService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OnecProjectAdminService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.OnecProjectAdminService",
+	HandlerType: (*OnecProjectAdminServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddOnecProjectAdmin",
+			Handler:    _OnecProjectAdminService_AddOnecProjectAdmin_Handler,
+		},
+		{
+			MethodName: "UpdateOnecProjectAdmin",
+			Handler:    _OnecProjectAdminService_UpdateOnecProjectAdmin_Handler,
+		},
+		{
+			MethodName: "DelOnecProjectAdmin",
+			Handler:    _OnecProjectAdminService_DelOnecProjectAdmin_Handler,
+		},
+		{
+			MethodName: "GetOnecProjectAdminById",
+			Handler:    _OnecProjectAdminService_GetOnecProjectAdminById_Handler,
+		},
+		{
+			MethodName: "SearchOnecProjectAdmin",
+			Handler:    _OnecProjectAdminService_SearchOnecProjectAdmin_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "manager.proto",
+}
+
+const (
+	OnecProjectApplicationService_AddOnecProjectApplication_FullMethodName     = "/pb.OnecProjectApplicationService/AddOnecProjectApplication"
+	OnecProjectApplicationService_UpdateOnecProjectApplication_FullMethodName  = "/pb.OnecProjectApplicationService/UpdateOnecProjectApplication"
+	OnecProjectApplicationService_DelOnecProjectApplication_FullMethodName     = "/pb.OnecProjectApplicationService/DelOnecProjectApplication"
+	OnecProjectApplicationService_GetOnecProjectApplicationById_FullMethodName = "/pb.OnecProjectApplicationService/GetOnecProjectApplicationById"
+	OnecProjectApplicationService_SearchOnecProjectApplication_FullMethodName  = "/pb.OnecProjectApplicationService/SearchOnecProjectApplication"
+)
+
+// OnecProjectApplicationServiceClient is the client API for OnecProjectApplicationService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OnecProjectApplicationServiceClient interface {
+	// -----------------------应用表，-----------------------
+	AddOnecProjectApplication(ctx context.Context, in *AddOnecProjectApplicationReq, opts ...grpc.CallOption) (*AddOnecProjectApplicationResp, error)
+	UpdateOnecProjectApplication(ctx context.Context, in *UpdateOnecProjectApplicationReq, opts ...grpc.CallOption) (*UpdateOnecProjectApplicationResp, error)
+	DelOnecProjectApplication(ctx context.Context, in *DelOnecProjectApplicationReq, opts ...grpc.CallOption) (*DelOnecProjectApplicationResp, error)
+	GetOnecProjectApplicationById(ctx context.Context, in *GetOnecProjectApplicationByIdReq, opts ...grpc.CallOption) (*GetOnecProjectApplicationByIdResp, error)
+	SearchOnecProjectApplication(ctx context.Context, in *SearchOnecProjectApplicationReq, opts ...grpc.CallOption) (*SearchOnecProjectApplicationResp, error)
+}
+
+type onecProjectApplicationServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOnecProjectApplicationServiceClient(cc grpc.ClientConnInterface) OnecProjectApplicationServiceClient {
+	return &onecProjectApplicationServiceClient{cc}
+}
+
+func (c *onecProjectApplicationServiceClient) AddOnecProjectApplication(ctx context.Context, in *AddOnecProjectApplicationReq, opts ...grpc.CallOption) (*AddOnecProjectApplicationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddOnecProjectApplicationResp)
+	err := c.cc.Invoke(ctx, OnecProjectApplicationService_AddOnecProjectApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectApplicationServiceClient) UpdateOnecProjectApplication(ctx context.Context, in *UpdateOnecProjectApplicationReq, opts ...grpc.CallOption) (*UpdateOnecProjectApplicationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOnecProjectApplicationResp)
+	err := c.cc.Invoke(ctx, OnecProjectApplicationService_UpdateOnecProjectApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectApplicationServiceClient) DelOnecProjectApplication(ctx context.Context, in *DelOnecProjectApplicationReq, opts ...grpc.CallOption) (*DelOnecProjectApplicationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelOnecProjectApplicationResp)
+	err := c.cc.Invoke(ctx, OnecProjectApplicationService_DelOnecProjectApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectApplicationServiceClient) GetOnecProjectApplicationById(ctx context.Context, in *GetOnecProjectApplicationByIdReq, opts ...grpc.CallOption) (*GetOnecProjectApplicationByIdResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetOnecProjectApplicationByIdResp)
+	err := c.cc.Invoke(ctx, OnecProjectApplicationService_GetOnecProjectApplicationById_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecProjectApplicationServiceClient) SearchOnecProjectApplication(ctx context.Context, in *SearchOnecProjectApplicationReq, opts ...grpc.CallOption) (*SearchOnecProjectApplicationResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecProjectApplicationResp)
+	err := c.cc.Invoke(ctx, OnecProjectApplicationService_SearchOnecProjectApplication_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OnecProjectApplicationServiceServer is the server API for OnecProjectApplicationService service.
+// All implementations must embed UnimplementedOnecProjectApplicationServiceServer
+// for forward compatibility.
+type OnecProjectApplicationServiceServer interface {
+	// -----------------------应用表，-----------------------
+	AddOnecProjectApplication(context.Context, *AddOnecProjectApplicationReq) (*AddOnecProjectApplicationResp, error)
+	UpdateOnecProjectApplication(context.Context, *UpdateOnecProjectApplicationReq) (*UpdateOnecProjectApplicationResp, error)
+	DelOnecProjectApplication(context.Context, *DelOnecProjectApplicationReq) (*DelOnecProjectApplicationResp, error)
+	GetOnecProjectApplicationById(context.Context, *GetOnecProjectApplicationByIdReq) (*GetOnecProjectApplicationByIdResp, error)
+	SearchOnecProjectApplication(context.Context, *SearchOnecProjectApplicationReq) (*SearchOnecProjectApplicationResp, error)
+	mustEmbedUnimplementedOnecProjectApplicationServiceServer()
+}
+
+// UnimplementedOnecProjectApplicationServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedOnecProjectApplicationServiceServer struct{}
+
+func (UnimplementedOnecProjectApplicationServiceServer) AddOnecProjectApplication(context.Context, *AddOnecProjectApplicationReq) (*AddOnecProjectApplicationResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddOnecProjectApplication not implemented")
+}
+func (UnimplementedOnecProjectApplicationServiceServer) UpdateOnecProjectApplication(context.Context, *UpdateOnecProjectApplicationReq) (*UpdateOnecProjectApplicationResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOnecProjectApplication not implemented")
+}
+func (UnimplementedOnecProjectApplicationServiceServer) DelOnecProjectApplication(context.Context, *DelOnecProjectApplicationReq) (*DelOnecProjectApplicationResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DelOnecProjectApplication not implemented")
+}
+func (UnimplementedOnecProjectApplicationServiceServer) GetOnecProjectApplicationById(context.Context, *GetOnecProjectApplicationByIdReq) (*GetOnecProjectApplicationByIdResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectApplicationById not implemented")
+}
+func (UnimplementedOnecProjectApplicationServiceServer) SearchOnecProjectApplication(context.Context, *SearchOnecProjectApplicationReq) (*SearchOnecProjectApplicationResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProjectApplication not implemented")
+}
+func (UnimplementedOnecProjectApplicationServiceServer) mustEmbedUnimplementedOnecProjectApplicationServiceServer() {
+}
+func (UnimplementedOnecProjectApplicationServiceServer) testEmbeddedByValue() {}
+
+// UnsafeOnecProjectApplicationServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OnecProjectApplicationServiceServer will
+// result in compilation errors.
+type UnsafeOnecProjectApplicationServiceServer interface {
+	mustEmbedUnimplementedOnecProjectApplicationServiceServer()
+}
+
+func RegisterOnecProjectApplicationServiceServer(s grpc.ServiceRegistrar, srv OnecProjectApplicationServiceServer) {
+	// If the following call pancis, it indicates UnimplementedOnecProjectApplicationServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&OnecProjectApplicationService_ServiceDesc, srv)
+}
+
+func _OnecProjectApplicationService_AddOnecProjectApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddOnecProjectApplicationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectApplicationServiceServer).AddOnecProjectApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectApplicationService_AddOnecProjectApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectApplicationServiceServer).AddOnecProjectApplication(ctx, req.(*AddOnecProjectApplicationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectApplicationService_UpdateOnecProjectApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOnecProjectApplicationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectApplicationServiceServer).UpdateOnecProjectApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectApplicationService_UpdateOnecProjectApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectApplicationServiceServer).UpdateOnecProjectApplication(ctx, req.(*UpdateOnecProjectApplicationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectApplicationService_DelOnecProjectApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelOnecProjectApplicationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectApplicationServiceServer).DelOnecProjectApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectApplicationService_DelOnecProjectApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectApplicationServiceServer).DelOnecProjectApplication(ctx, req.(*DelOnecProjectApplicationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectApplicationService_GetOnecProjectApplicationById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecProjectApplicationByIdReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectApplicationServiceServer).GetOnecProjectApplicationById(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectApplicationService_GetOnecProjectApplicationById_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectApplicationServiceServer).GetOnecProjectApplicationById(ctx, req.(*GetOnecProjectApplicationByIdReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecProjectApplicationService_SearchOnecProjectApplication_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecProjectApplicationReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectApplicationServiceServer).SearchOnecProjectApplication(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectApplicationService_SearchOnecProjectApplication_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectApplicationServiceServer).SearchOnecProjectApplication(ctx, req.(*SearchOnecProjectApplicationReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// OnecProjectApplicationService_ServiceDesc is the grpc.ServiceDesc for OnecProjectApplicationService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var OnecProjectApplicationService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.OnecProjectApplicationService",
+	HandlerType: (*OnecProjectApplicationServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "AddOnecProjectApplication",
+			Handler:    _OnecProjectApplicationService_AddOnecProjectApplication_Handler,
+		},
+		{
+			MethodName: "UpdateOnecProjectApplication",
+			Handler:    _OnecProjectApplicationService_UpdateOnecProjectApplication_Handler,
+		},
+		{
+			MethodName: "DelOnecProjectApplication",
+			Handler:    _OnecProjectApplicationService_DelOnecProjectApplication_Handler,
+		},
+		{
+			MethodName: "GetOnecProjectApplicationById",
+			Handler:    _OnecProjectApplicationService_GetOnecProjectApplicationById_Handler,
+		},
+		{
+			MethodName: "SearchOnecProjectApplication",
+			Handler:    _OnecProjectApplicationService_SearchOnecProjectApplication_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

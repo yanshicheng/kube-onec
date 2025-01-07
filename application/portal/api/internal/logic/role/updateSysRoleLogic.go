@@ -33,7 +33,7 @@ func (l *UpdateSysRoleLogic) UpdateSysRole(req *types.UpdateSysRoleRequest) (res
 		Id:          req.Id,
 		RoleName:    req.RoleName,
 		Description: req.Description,
-		UpdateBy:    by,
+		UpdatedBy:    by,
 	})
 	if err != nil {
 		// 错误日志，明确上下文

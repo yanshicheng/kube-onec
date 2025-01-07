@@ -31,8 +31,8 @@ func (l *AddSysDictLogic) AddSysDict(in *pb.AddSysDictReq) (*pb.AddSysDictResp, 
 		DictCode:    in.DictCode,
 		DictName:    in.DictName,
 		Description: in.Description,
-		CreateBy:    in.CreateBy,
-		UpdateBy:    in.UpdateBy,
+		CreatedBy:    in.CreatedBy,
+		UpdatedBy:    in.UpdatedBy,
 	})
 	if err != nil {
 		l.Logger.Errorf("添加字典失败: %v", err)

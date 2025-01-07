@@ -36,9 +36,9 @@ func (l *SearchOnecClusterLogic) SearchOnecCluster(in *pb.SearchOnecClusterReq) 
 		queryStr.WriteString(" AND host = ? ")
 		params = append(params, "%"+in.Host+"%")
 	}
-	if in.EnvTag != 0 {
+	if in.EnvCode != "" {
 		queryStr.WriteString(" AND env_tag = ? ")
-		params = append(params, in.EnvTag)
+		params = append(params, in.EnvCode)
 	}
 	if in.Version != "" {
 		queryStr.WriteString(" AND version = ? ")
@@ -52,18 +52,18 @@ func (l *SearchOnecClusterLogic) SearchOnecCluster(in *pb.SearchOnecClusterReq) 
 		queryStr.WriteString(" AND version = ? ")
 		params = append(params, in.Version)
 	}
-	if in.UpdateBy != "" {
+	if in.UpdatedBy != "" {
 		queryStr.WriteString(" AND update_by = ? ")
-		params = append(params, "%"+in.UpdateBy+"%")
+		params = append(params, "%"+in.UpdatedBy+"%")
 	}
-	if in.CreateBy != "" {
+	if in.CreatedBy != "" {
 		queryStr.WriteString(" AND create_by = ? ")
-		params = append(params, "%"+in.CreateBy+"%")
+		params = append(params, "%"+in.CreatedBy+"%")
 	}
-	if in.ConnType != 0 {
-		queryStr.WriteString(" AND conn_type = ? ")
-		params = append(params, pb.OnecClusterConnType_name[int32(in.ConnType)])
-	}
+	//if in.ConnType != 0 {
+	//	queryStr.WriteString(" AND conn_type = ? ")
+	//	params = append(params, pb.OnecClusterConnType_name[int32(in.ConnType)])
+	//}
 	query := queryStr.String()
 	if len(query) > 0 {
 		query = query[:len(query)-5] // 去掉 " AND "

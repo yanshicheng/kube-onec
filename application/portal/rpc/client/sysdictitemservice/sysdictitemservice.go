@@ -38,6 +38,8 @@ type (
 	BindRoleResp                = pb.BindRoleResp
 	ChangePasswordReq           = pb.ChangePasswordReq
 	ChangePasswordResp          = pb.ChangePasswordResp
+	CheckDictItemCodeReq        = pb.CheckDictItemCodeReq
+	CheckDictItemCodeResp       = pb.CheckDictItemCodeResp
 	DelSysDictItemReq           = pb.DelSysDictItemReq
 	DelSysDictItemResp          = pb.DelSysDictItemResp
 	DelSysDictReq               = pb.DelSysDictReq
@@ -56,6 +58,8 @@ type (
 	DelSysUserResp              = pb.DelSysUserResp
 	FrozenAccountsReq           = pb.FrozenAccountsReq
 	FrozenAccountsResp          = pb.FrozenAccountsResp
+	GetDictItemNameReq          = pb.GetDictItemNameReq
+	GetDictItemTextResp         = pb.GetDictItemTextResp
 	GetMenuTreeReq              = pb.GetMenuTreeReq
 	GetMenuTreeResp             = pb.GetMenuTreeResp
 	GetOrganizationTreeReq      = pb.GetOrganizationTreeReq
@@ -160,6 +164,8 @@ type (
 		DelSysDictItem(ctx context.Context, in *DelSysDictItemReq, opts ...grpc.CallOption) (*DelSysDictItemResp, error)
 		GetSysDictItemById(ctx context.Context, in *GetSysDictItemByIdReq, opts ...grpc.CallOption) (*GetSysDictItemByIdResp, error)
 		SearchSysDictItem(ctx context.Context, in *SearchSysDictItemReq, opts ...grpc.CallOption) (*SearchSysDictItemResp, error)
+		CheckDictItemCode(ctx context.Context, in *CheckDictItemCodeReq, opts ...grpc.CallOption) (*CheckDictItemCodeResp, error)
+		GetDictItemText(ctx context.Context, in *GetDictItemNameReq, opts ...grpc.CallOption) (*GetDictItemTextResp, error)
 	}
 
 	defaultSysDictItemService struct {
@@ -197,4 +203,14 @@ func (m *defaultSysDictItemService) GetSysDictItemById(ctx context.Context, in *
 func (m *defaultSysDictItemService) SearchSysDictItem(ctx context.Context, in *SearchSysDictItemReq, opts ...grpc.CallOption) (*SearchSysDictItemResp, error) {
 	client := pb.NewSysDictItemServiceClient(m.cli.Conn())
 	return client.SearchSysDictItem(ctx, in, opts...)
+}
+
+func (m *defaultSysDictItemService) CheckDictItemCode(ctx context.Context, in *CheckDictItemCodeReq, opts ...grpc.CallOption) (*CheckDictItemCodeResp, error) {
+	client := pb.NewSysDictItemServiceClient(m.cli.Conn())
+	return client.CheckDictItemCode(ctx, in, opts...)
+}
+
+func (m *defaultSysDictItemService) GetDictItemText(ctx context.Context, in *GetDictItemNameReq, opts ...grpc.CallOption) (*GetDictItemTextResp, error) {
+	client := pb.NewSysDictItemServiceClient(m.cli.Conn())
+	return client.GetDictItemText(ctx, in, opts...)
 }

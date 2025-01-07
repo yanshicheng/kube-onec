@@ -15,10 +15,10 @@ type (
         DictName string `json:"dictName"`      // 字典名称
         DictCode string `json:"dictCode"`      // 字典编码
         Description string `json:"description"`// 描述
-        CreateBy string `json:"createBy"`      // 创建人
-        UpdateBy string `json:"updateBy"`      // 更新人
-        CreateTime int64 `json:"createTime"`   // 创建时间
-        UpdateTime int64 `json:"updateTime"`   // 最后修改时间
+        CreatedBy string `json:"createdBy"`      // 创建人
+        UpdatedBy string `json:"updatedBy"`      // 更新人
+        CreatedAt int64 `json:"createdAt"`   // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`   // 最后修改时间
     }
 
     AddSysDictRequest {
@@ -43,11 +43,11 @@ type (
         DictName string `form:"dictName,optional" validate:"omitempty,max=50"` // 字典名称，可选
         DictCode string `form:"dictCode,optional" validate:"omitempty,max=50"` // 字典编码，可选
         Description string `form:"description,optional" validate:"omitempty,max=255"` // 描述，可选
-        CreateBy string `form:"createBy,optional" validate:"omitempty,max=50"` // 创建人，可选
-        UpdateBy string `form:"updateBy,optional" validate:"omitempty,max=50"` // 更新人，可选
+        CreatedBy string `form:"createdBy,optional" validate:"omitempty,max=50"` // 创建人，可选
+        UpdatedBy string `form:"updatedBy,optional" validate:"omitempty,max=50"` // 更新人，可选
     }
     SearchSysDictResponse {
-        Items []SysDict `json:"data"` // 字典数据列表
+        Items []SysDict `json:"items"` // 字典数据列表
         Total uint64 `json:"total"`  // 总条数
     }
 )

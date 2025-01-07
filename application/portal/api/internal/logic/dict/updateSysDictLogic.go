@@ -34,7 +34,7 @@ func (l *UpdateSysDictLogic) UpdateSysDict(req *types.UpdateSysDictRequest) (res
 		Id:          req.Id,
 		DictName:    req.DictName,
 		Description: req.Description,
-		UpdateBy:    account,
+		UpdatedBy:    account,
 	})
 	if err != nil {
 		l.Logger.Errorf("数据字典更新失败: %v", err)

@@ -48,8 +48,8 @@ func (l *GetSysUserByIdLogic) GetSysUserById(req *types.DefaultIdRequest) (resp 
 		PositionId:      res.Data.PositionId,
 		OrganizationId:  res.Data.OrganizationId,
 		LastLoginTime:   res.Data.LastLoginTime,
-		CreateTime:      res.Data.CreateTime,
-		UpdateTime:      res.Data.UpdateTime,
+		CreatedAt:       res.Data.CreatedAt,
+		UpdatedAt:       res.Data.UpdatedAt,
 	}
 	return resp, nil
 }

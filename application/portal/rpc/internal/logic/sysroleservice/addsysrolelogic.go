@@ -30,11 +30,11 @@ func (l *AddSysRoleLogic) AddSysRole(in *pb.AddSysRoleReq) (*pb.AddSysRoleResp, 
 	// todo: add your logic here and delete this line
 	// 通过 token 获取用户名
 	_, err := l.svcCtx.SysRole.Insert(l.ctx, &model.SysRole{
-		CreateBy:    in.CreateBy,
+		CreatedBy:    in.CreatedBy,
 		RoleCode:    in.RoleCode,
 		Description: in.Description,
 		RoleName:    in.RoleName,
-		UpdateBy:    in.UpdateBy,
+		UpdatedBy:    in.UpdatedBy,
 	})
 	if err != nil {
 		l.Logger.Errorf("添加角色失败: %v", err)

@@ -52,17 +52,17 @@ type (
 	}
 
 	SysDictItem struct {
-		Id          uint64       `db:"id"`          // 自增主键
-		DictCode    string       `db:"dict_code"`   // 字典code，
-		ItemText    string       `db:"item_text"`   // 字典项文本
-		ItemCode    string       `db:"item_code"`   // 字典项值
-		Description string       `db:"description"` // 描述
-		SortOrder   int64        `db:"sort_order"`  // 排序
-		CreateBy    string       `db:"create_by"`   // 创建人
-		UpdateBy    string       `db:"update_by"`   // 更新人
-		CreateTime  time.Time    `db:"create_time"` // 创建时间
-		UpdateTime  time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime  sql.NullTime `db:"delete_time"` // 记录删除时间（NULL表示未删除）
+		Id          uint64    `db:"id"`          // 自增主键
+		DictCode    string    `db:"dict_code"`   // 字典code，
+		ItemText    string    `db:"item_text"`   // 字典项文本
+		ItemCode    string    `db:"item_code"`   // 字典项值
+		Description string    `db:"description"` // 描述
+		SortOrder   int64     `db:"sort_order"`  // 排序
+		CreatedBy   string    `db:"created_by"`  // 创建者
+		UpdatedBy   string    `db:"updated_by"`  // 更新者
+		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -95,14 +95,14 @@ func (m *defaultSysDictItemModel) DeleteSoft(ctx context.Context, id uint64) err
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysDictItemDictCodeItemCodeKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysDictItemDictCodeItemCodePrefix, data.DictCode, data.ItemCode)
 	kubeOnecSysDictItemIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemIdPrefix, id)
 	kubeOnecSysDictItemItemCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemItemCodePrefix, data.ItemCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysDictItemDictCodeItemCodeKey, kubeOnecSysDictItemIdKey, kubeOnecSysDictItemItemCodeKey)
 	return err
@@ -173,7 +173,7 @@ func (m *defaultSysDictItemModel) FindOne(ctx context.Context, id uint64) (*SysD
 	kubeOnecSysDictItemIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemIdPrefix, id)
 	var resp SysDictItem
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysDictItemIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysDictItemRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysDictItemRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -196,11 +196,11 @@ func (m *defaultSysDictItemModel) Search(ctx context.Context, orderStr string, i
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -245,9 +245,9 @@ func (m *defaultSysDictItemModel) Search(ctx context.Context, orderStr string, i
 
 func (m *defaultSysDictItemModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysDictItem, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -281,7 +281,7 @@ func (m *defaultSysDictItemModel) FindOneByDictCodeItemCode(ctx context.Context,
 	kubeOnecSysDictItemDictCodeItemCodeKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecSysDictItemDictCodeItemCodePrefix, dictCode, itemCode)
 	var resp SysDictItem
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysDictItemDictCodeItemCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `dict_code` = ? and `item_code` = ? AND `delete_time` IS NULL limit 1", sysDictItemRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `dict_code` = ? and `item_code` = ? AND `is_deleted` = 0  limit 1", sysDictItemRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, dictCode, itemCode); err != nil {
 			return nil, err
 		}
@@ -301,7 +301,7 @@ func (m *defaultSysDictItemModel) FindOneByItemCode(ctx context.Context, itemCod
 	kubeOnecSysDictItemItemCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemItemCodePrefix, itemCode)
 	var resp SysDictItem
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysDictItemItemCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `item_code` = ? AND `delete_time` IS NULL limit 1", sysDictItemRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `item_code` = ? AND `is_deleted` = 0  limit 1", sysDictItemRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, itemCode); err != nil {
 			return nil, err
 		}
@@ -323,7 +323,7 @@ func (m *defaultSysDictItemModel) Insert(ctx context.Context, data *SysDictItem)
 	kubeOnecSysDictItemItemCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemItemCodePrefix, data.ItemCode)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDictItemRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.DictCode, data.ItemText, data.ItemCode, data.Description, data.SortOrder, data.CreateBy, data.UpdateBy, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.DictCode, data.ItemText, data.ItemCode, data.Description, data.SortOrder, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
 	}, kubeOnecSysDictItemDictCodeItemCodeKey, kubeOnecSysDictItemIdKey, kubeOnecSysDictItemItemCodeKey)
 	return ret, err
 }
@@ -339,7 +339,7 @@ func (m *defaultSysDictItemModel) Update(ctx context.Context, newData *SysDictIt
 	kubeOnecSysDictItemItemCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysDictItemItemCodePrefix, data.ItemCode)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysDictItemRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.DictCode, newData.ItemText, newData.ItemCode, newData.Description, newData.SortOrder, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.DictCode, newData.ItemText, newData.ItemCode, newData.Description, newData.SortOrder, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysDictItemDictCodeItemCodeKey, kubeOnecSysDictItemIdKey, kubeOnecSysDictItemItemCodeKey)
 	return err
 }
@@ -349,7 +349,7 @@ func (m *defaultSysDictItemModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysDictItemModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysDictItemRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysDictItemRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

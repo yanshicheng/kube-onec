@@ -52,15 +52,15 @@ type (
 	}
 
 	SysRole struct {
-		Id          uint64       `db:"id"`          // 自增主键
-		RoleName    string       `db:"role_name"`   // 角色名称
-		RoleCode    string       `db:"role_code"`   // 角色编码
-		Description string       `db:"description"` // 描述
-		CreateBy    string       `db:"create_by"`   // 创建人
-		UpdateBy    string       `db:"update_by"`   // 更新人
-		CreateTime  time.Time    `db:"create_time"` // 创建时间
-		UpdateTime  time.Time    `db:"update_time"` // 最后修改时间
-		DeleteTime  sql.NullTime `db:"delete_time"` // 记录删除时间（为 NULL 表示未删除）
+		Id          uint64    `db:"id"`          // 自增主键
+		RoleName    string    `db:"role_name"`   // 角色名称
+		RoleCode    string    `db:"role_code"`   // 角色编码
+		Description string    `db:"description"` // 描述
+		CreatedBy   string    `db:"created_by"`  // 创建者
+		UpdatedBy   string    `db:"updated_by"`  // 更新者
+		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
+		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
 	}
 )
 
@@ -93,14 +93,14 @@ func (m *defaultSysRoleModel) DeleteSoft(ctx context.Context, id uint64) error {
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysRoleIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleIdPrefix, id)
 	kubeOnecSysRoleRoleCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleCodePrefix, data.RoleCode)
 	kubeOnecSysRoleRoleNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleNamePrefix, data.RoleName)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysRoleIdKey, kubeOnecSysRoleRoleCodeKey, kubeOnecSysRoleRoleNameKey)
 	return err
@@ -171,7 +171,7 @@ func (m *defaultSysRoleModel) FindOne(ctx context.Context, id uint64) (*SysRole,
 	kubeOnecSysRoleIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleIdPrefix, id)
 	var resp SysRole
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysRoleIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysRoleRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysRoleRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -194,11 +194,11 @@ func (m *defaultSysRoleModel) Search(ctx context.Context, orderStr string, isAsc
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -243,9 +243,9 @@ func (m *defaultSysRoleModel) Search(ctx context.Context, orderStr string, isAsc
 
 func (m *defaultSysRoleModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysRole, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -279,7 +279,7 @@ func (m *defaultSysRoleModel) FindOneByRoleCode(ctx context.Context, roleCode st
 	kubeOnecSysRoleRoleCodeKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleCodePrefix, roleCode)
 	var resp SysRole
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysRoleRoleCodeKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `role_code` = ? AND `delete_time` IS NULL limit 1", sysRoleRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `role_code` = ? AND `is_deleted` = 0  limit 1", sysRoleRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, roleCode); err != nil {
 			return nil, err
 		}
@@ -299,7 +299,7 @@ func (m *defaultSysRoleModel) FindOneByRoleName(ctx context.Context, roleName st
 	kubeOnecSysRoleRoleNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleNamePrefix, roleName)
 	var resp SysRole
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysRoleRoleNameKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `role_name` = ? AND `delete_time` IS NULL limit 1", sysRoleRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `role_name` = ? AND `is_deleted` = 0  limit 1", sysRoleRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, roleName); err != nil {
 			return nil, err
 		}
@@ -321,7 +321,7 @@ func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Re
 	kubeOnecSysRoleRoleNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleNamePrefix, data.RoleName)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.RoleName, data.RoleCode, data.Description, data.CreateBy, data.UpdateBy, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.RoleName, data.RoleCode, data.Description, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
 	}, kubeOnecSysRoleIdKey, kubeOnecSysRoleRoleCodeKey, kubeOnecSysRoleRoleNameKey)
 	return ret, err
 }
@@ -337,7 +337,7 @@ func (m *defaultSysRoleModel) Update(ctx context.Context, newData *SysRole) erro
 	kubeOnecSysRoleRoleNameKey := fmt.Sprintf("%s%v", cacheKubeOnecSysRoleRoleNamePrefix, data.RoleName)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.RoleName, newData.RoleCode, newData.Description, newData.CreateBy, newData.UpdateBy, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.RoleName, newData.RoleCode, newData.Description, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysRoleIdKey, kubeOnecSysRoleRoleCodeKey, kubeOnecSysRoleRoleNameKey)
 	return err
 }
@@ -347,7 +347,7 @@ func (m *defaultSysRoleModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysRoleModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysRoleRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysRoleRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

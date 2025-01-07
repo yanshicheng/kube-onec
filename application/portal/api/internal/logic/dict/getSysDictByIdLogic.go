@@ -34,14 +34,14 @@ func (l *GetSysDictByIdLogic) GetSysDictById(req *types.DefaultIdRequest) (resp 
 		return nil, errorx.DatabaseQueryErr
 	}
 	resp = &types.SysDict{
-		CreateBy:    res.Data.CreateBy,
-		CreateTime:  res.Data.CreateTime,
+		CreatedBy:   res.Data.CreatedBy,
+		CreatedAt:   res.Data.CreatedAt,
 		Description: res.Data.Description,
 		DictCode:    res.Data.DictCode,
 		DictName:    res.Data.DictName,
 		Id:          res.Data.Id,
-		UpdateBy:    res.Data.UpdateBy,
-		UpdateTime:  res.Data.UpdateTime,
+		UpdatedBy:   res.Data.UpdatedBy,
+		UpdatedAt:   res.Data.UpdatedAt,
 	}
 	return
 }

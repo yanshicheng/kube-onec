@@ -5,14 +5,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/yanshicheng/kube-onec/application/portal/api/internal/config"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/client/sysauthservice"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 )
 
 // JWTAuthMiddleware 处理JWT鉴权中间件
 type JWTAuthMiddleware struct {
-	conf config.Config
 	auth sysauthservice.SysAuthService
 }
 
@@ -24,9 +22,8 @@ type Response struct {
 }
 
 // NewJWTAuthMiddleware 创建一个JWTAuthMiddleware实例
-func NewJWTAuthMiddleware(config config.Config, auth sysauthservice.SysAuthService) *JWTAuthMiddleware {
+func NewJWTAuthMiddleware(auth sysauthservice.SysAuthService) *JWTAuthMiddleware {
 	return &JWTAuthMiddleware{
-		conf: config,
 		auth: auth,
 	}
 }

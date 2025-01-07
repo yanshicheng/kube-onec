@@ -116,8 +116,8 @@ func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchS
 			PositionId:      user.PositionId,
 			OrganizationId:  user.OrganizationId,
 			LastLoginTime:   user.LastLoginTime.Unix(),
-			CreateTime:      user.CreateTime.Unix(),
-			UpdateTime:      user.UpdateTime.Unix(),
+			CreatedAt:       user.CreatedAt.Unix(),
+			UpdatedAt:       user.UpdatedAt.Unix(),
 		}
 	}
 	return &pb.SearchSysUserResp{

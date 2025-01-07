@@ -34,8 +34,8 @@ func (l *UpdateSysDictItemLogic) UpdateSysDictItem(in *pb.UpdateSysDictItemReq) 
 		l.Logger.Errorf("根据ID: %d查询数据失败: %v", in.Id, err)
 		return nil, err
 	}
-	if in.UpdateBy != "" {
-		res.UpdateBy = in.UpdateBy
+	if in.UpdatedBy != "" {
+		res.UpdatedBy = in.UpdatedBy
 	}
 	if in.Description != "" {
 		res.Description = in.Description

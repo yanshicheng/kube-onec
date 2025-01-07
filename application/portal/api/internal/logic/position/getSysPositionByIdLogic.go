@@ -34,10 +34,10 @@ func (l *GetSysPositionByIdLogic) GetSysPositionById(req *types.DefaultIdRequest
 		return nil, errorx.DatabaseQueryErr
 	}
 	resp = &types.SysPosition{
-		CreateTime: res.Data.CreateTime,
-		Id:         res.Data.Id,
-		Name:       res.Data.Name,
-		UpdateTime: res.Data.UpdateTime,
+		CreatedAt: res.Data.CreatedAt,
+		Id:        res.Data.Id,
+		Name:      res.Data.Name,
+		UpdatedAt: res.Data.UpdatedAt,
 	}
 	return
 }

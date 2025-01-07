@@ -31,7 +31,7 @@ func (l *DeleteSysDictLogic) DeleteSysDict(req *types.DefaultIdRequest) (resp st
 	}
 	_, err = l.svcCtx.SysDictRpc.DelSysDict(l.ctx, &pb.DelSysDictReq{
 		Id:       req.Id,
-		UpdateBy: account,
+		UpdatedBy: account,
 	})
 	if err != nil {
 		// 错误日志，明确上下文

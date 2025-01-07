@@ -33,14 +33,14 @@ func (l *GetSysPermissionByIdLogic) GetSysPermissionById(req *types.DefaultIdReq
 		return
 	}
 	resp = &types.SysPermission{
-		Action:     res.Data.Action,
-		CreateTime: res.Data.CreateTime,
-		Id:         res.Data.Id,
-		Level:      res.Data.Level,
-		Name:       res.Data.Name,
-		ParentId:   res.Data.ParentId,
-		UpdateTime: res.Data.UpdateTime,
-		Uri:        res.Data.Uri,
+		Action:    res.Data.Action,
+		CreatedAt: res.Data.CreatedAt,
+		Id:        res.Data.Id,
+		Level:     res.Data.Level,
+		Name:      res.Data.Name,
+		ParentId:  res.Data.ParentId,
+		UpdatedAt: res.Data.UpdatedAt,
+		Uri:       res.Data.Uri,
 	}
 	return
 }

@@ -16,8 +16,8 @@ type (
         Uri string `json:"uri"`              // 权限对应的资源 URI 或路径
         Action string `json:"action"`        // 对资源执行的操作
         Level uint64 `json:"level"`          // 权限级别
-        CreateTime int64 `json:"createTime"` // 创建时间
-        UpdateTime int64 `json:"updateTime"` // 最后修改时间
+        CreatedAt int64 `json:"createdAt"` // 创建时间
+        UpdatedAt int64 `json:"updatedAt"` // 最后修改时间
     }
 
         // 添加权限请求
@@ -52,7 +52,7 @@ type (
 
         // 搜索权限响应
     SearchSysPermissionResponse {
-        Items []SysPermission `json:"data"`  // 权限数据列表
+        Items []SysPermission `json:"items"`  // 权限数据列表
         Total uint64 `json:"total"`          // 总条数
     }
         // 权限树节点

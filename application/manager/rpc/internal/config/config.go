@@ -15,6 +15,7 @@ type Config struct {
 		MaxIdleConns    int           // 最大空闲连接数
 		ConnMaxLifetime time.Duration // 连接的最大生命周期
 	}
-	DBCache cache.CacheConf
-	Cache   redis.RedisConf
+	DBCache   cache.CacheConf
+	Cache     redis.RedisConf
+	PortalRPC zrpc.RpcClientConf
 }

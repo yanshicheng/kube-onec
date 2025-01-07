@@ -37,14 +37,14 @@ func (l *GetSysPermissionByIdLogic) GetSysPermissionById(in *pb.GetSysPermission
 	}
 	return &pb.GetSysPermissionByIdResp{
 		Data: &pb.SysPermission{
-			Id:         resp.Id,
-			ParentId:   resp.ParentId,
-			Name:       resp.Name,
-			Uri:        resp.Uri,
-			Action:     resp.Action,
-			Level:      resp.Level,
-			CreateTime: resp.CreateTime.Unix(), // 将 time.Time 转换为 Unix 时间戳
-			UpdateTime: resp.UpdateTime.Unix(), // 将 time.Time 转换为 Unix 时间戳
+			Id:        resp.Id,
+			ParentId:  resp.ParentId,
+			Name:      resp.Name,
+			Uri:       resp.Uri,
+			Action:    resp.Action,
+			Level:     resp.Level,
+			CreatedAt: resp.CreatedAt.Unix(), // 将 time.Time 转换为 Unix 时间戳
+			UpdatedAt: resp.UpdatedAt.Unix(), // 将 time.Time 转换为 Unix 时间戳
 		},
 	}, nil
 }

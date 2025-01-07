@@ -56,24 +56,24 @@ type (
 	}
 
 	SysUser struct {
-		Id              uint64       `db:"id"`                // 自增主键
-		UserName        string       `db:"user_name"`         // 用户姓名
-		Account         string       `db:"account"`           // 用户账号，唯一标识
-		Password        string       `db:"password"`          // 用户密码，需加密存储
-		Icon            string       `db:"icon"`              // 用户头像URL
-		Mobile          string       `db:"mobile"`            // 用户手机号
-		Email           string       `db:"email"`             // 用户邮箱地址
-		WorkNumber      string       `db:"work_number"`       // 用户工号
-		HireDate        time.Time    `db:"hire_date"`         // 入职日期
-		IsResetPassword int64        `db:"Is_reset_password"` // 是否需要重置密码,false否true是
-		IsDisabled      int64        `db:"is_disabled"`       // 是否禁用,false否true是
-		IsLeave         int64        `db:"is_leave"`          // 是否离职,false否true是
-		PositionId      uint64       `db:"position_id"`       // 职位ID，关联职位表
-		OrganizationId  uint64       `db:"organization_id"`   // 组织ID，关联组织表
-		LastLoginTime   time.Time    `db:"last_login_time"`   // 上次登录时间
-		CreateTime      time.Time    `db:"create_time"`       // 创建时间
-		UpdateTime      time.Time    `db:"update_time"`       // 最后修改时间
-		DeleteTime      sql.NullTime `db:"delete_time"`       // 记录删除时间（NULL表示未删除）
+		Id              uint64    `db:"id"`                // 自增主键
+		UserName        string    `db:"user_name"`         // 用户姓名
+		Account         string    `db:"account"`           // 用户账号，唯一标识
+		Password        string    `db:"password"`          // 用户密码，需加密存储
+		Icon            string    `db:"icon"`              // 用户头像URL
+		Mobile          string    `db:"mobile"`            // 用户手机号
+		Email           string    `db:"email"`             // 用户邮箱地址
+		WorkNumber      string    `db:"work_number"`       // 用户工号
+		HireDate        time.Time `db:"hire_date"`         // 入职日期
+		IsResetPassword int64     `db:"Is_reset_password"` // 是否需要重置密码,false否true是
+		IsDisabled      int64     `db:"is_disabled"`       // 是否禁用,false否true是
+		IsLeave         int64     `db:"is_leave"`          // 是否离职,false否true是
+		PositionId      uint64    `db:"position_id"`       // 职位ID，关联职位表
+		OrganizationId  uint64    `db:"organization_id"`   // 组织ID，关联组织表
+		LastLoginTime   time.Time `db:"last_login_time"`   // 上次登录时间
+		CreatedAt       time.Time `db:"created_at"`        // 记录创建时间
+		UpdatedAt       time.Time `db:"updated_at"`        // 记录更新时间
+		IsDeleted       int64     `db:"is_deleted"`        // 是否删除
 	}
 )
 
@@ -108,7 +108,7 @@ func (m *defaultSysUserModel) DeleteSoft(ctx context.Context, id uint64) error {
 		return err
 	}
 	// 如果记录已软删除，无需再次删除
-	if data.DeleteTime.Valid {
+	if data.IsDeleted == 1 {
 		return nil
 	}
 	kubeOnecSysUserAccountKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserAccountPrefix, data.Account)
@@ -117,7 +117,7 @@ func (m *defaultSysUserModel) DeleteSoft(ctx context.Context, id uint64) error {
 	kubeOnecSysUserMobileKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserMobilePrefix, data.Mobile)
 	kubeOnecSysUserWorkNumberKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserWorkNumberPrefix, data.WorkNumber)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("update %s set delete_time = NOW() where `id` = ?", m.table)
+		query := fmt.Sprintf("update %s set `is_deleted` = 1 where `id` = ?", m.table)
 		return conn.ExecCtx(ctx, query, id)
 	}, kubeOnecSysUserAccountKey, kubeOnecSysUserEmailKey, kubeOnecSysUserIdKey, kubeOnecSysUserMobileKey, kubeOnecSysUserWorkNumberKey)
 	return err
@@ -192,7 +192,7 @@ func (m *defaultSysUserModel) FindOne(ctx context.Context, id uint64) (*SysUser,
 	kubeOnecSysUserIdKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserIdPrefix, id)
 	var resp SysUser
 	err := m.QueryRowCtx(ctx, &resp, kubeOnecSysUserIdKey, func(ctx context.Context, conn sqlx.SqlConn, v any) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysUserRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -215,11 +215,11 @@ func (m *defaultSysUserModel) Search(ctx context.Context, orderStr string, isAsc
 	}
 
 	// 构造查询条件
-	// 添加 delete_time IS NULL 条件，保证只查询未软删除数据
+	// 添加 `is_deleted` = 0 条件，保证只查询未软删除数据
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -264,9 +264,9 @@ func (m *defaultSysUserModel) Search(ctx context.Context, orderStr string, isAsc
 
 func (m *defaultSysUserModel) SearchNoPage(ctx context.Context, orderStr string, isAsc bool, queryStr string, args ...any) ([]*SysUser, error) {
 	// 初始化 WHERE 子句
-	where := "WHERE delete_time IS NULL"
+	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		where = fmt.Sprintf("WHERE %s AND delete_time IS NULL", queryStr)
+		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
 	// 根据 isAsc 参数确定排序方式
@@ -300,7 +300,7 @@ func (m *defaultSysUserModel) FindOneByAccount(ctx context.Context, account stri
 	kubeOnecSysUserAccountKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserAccountPrefix, account)
 	var resp SysUser
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysUserAccountKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `account` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `account` = ? AND `is_deleted` = 0  limit 1", sysUserRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, account); err != nil {
 			return nil, err
 		}
@@ -320,7 +320,7 @@ func (m *defaultSysUserModel) FindOneByEmail(ctx context.Context, email string) 
 	kubeOnecSysUserEmailKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserEmailPrefix, email)
 	var resp SysUser
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysUserEmailKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `email` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `email` = ? AND `is_deleted` = 0  limit 1", sysUserRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, email); err != nil {
 			return nil, err
 		}
@@ -340,7 +340,7 @@ func (m *defaultSysUserModel) FindOneByMobile(ctx context.Context, mobile string
 	kubeOnecSysUserMobileKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserMobilePrefix, mobile)
 	var resp SysUser
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysUserMobileKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `mobile` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `mobile` = ? AND `is_deleted` = 0  limit 1", sysUserRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, mobile); err != nil {
 			return nil, err
 		}
@@ -360,7 +360,7 @@ func (m *defaultSysUserModel) FindOneByWorkNumber(ctx context.Context, workNumbe
 	kubeOnecSysUserWorkNumberKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserWorkNumberPrefix, workNumber)
 	var resp SysUser
 	err := m.QueryRowIndexCtx(ctx, &resp, kubeOnecSysUserWorkNumberKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v any) (i any, e error) {
-		query := fmt.Sprintf("select %s from %s where `work_number` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `work_number` = ? AND `is_deleted` = 0  limit 1", sysUserRows, m.table)
 		if err := conn.QueryRowCtx(ctx, &resp, query, workNumber); err != nil {
 			return nil, err
 		}
@@ -384,7 +384,7 @@ func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Re
 	kubeOnecSysUserWorkNumberKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserWorkNumberPrefix, data.WorkNumber)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.UserName, data.Account, data.Password, data.Icon, data.Mobile, data.Email, data.WorkNumber, data.HireDate, data.IsResetPassword, data.IsDisabled, data.IsLeave, data.PositionId, data.OrganizationId, data.LastLoginTime, data.DeleteTime)
+		return conn.ExecCtx(ctx, query, data.UserName, data.Account, data.Password, data.Icon, data.Mobile, data.Email, data.WorkNumber, data.HireDate, data.IsResetPassword, data.IsDisabled, data.IsLeave, data.PositionId, data.OrganizationId, data.LastLoginTime, data.IsDeleted)
 	}, kubeOnecSysUserAccountKey, kubeOnecSysUserEmailKey, kubeOnecSysUserIdKey, kubeOnecSysUserMobileKey, kubeOnecSysUserWorkNumberKey)
 	return ret, err
 }
@@ -402,7 +402,7 @@ func (m *defaultSysUserModel) Update(ctx context.Context, newData *SysUser) erro
 	kubeOnecSysUserWorkNumberKey := fmt.Sprintf("%s%v", cacheKubeOnecSysUserWorkNumberPrefix, data.WorkNumber)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysUserRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.UserName, newData.Account, newData.Password, newData.Icon, newData.Mobile, newData.Email, newData.WorkNumber, newData.HireDate, newData.IsResetPassword, newData.IsDisabled, newData.IsLeave, newData.PositionId, newData.OrganizationId, newData.LastLoginTime, newData.DeleteTime, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.UserName, newData.Account, newData.Password, newData.Icon, newData.Mobile, newData.Email, newData.WorkNumber, newData.HireDate, newData.IsResetPassword, newData.IsDisabled, newData.IsLeave, newData.PositionId, newData.OrganizationId, newData.LastLoginTime, newData.IsDeleted, newData.Id)
 	}, kubeOnecSysUserAccountKey, kubeOnecSysUserEmailKey, kubeOnecSysUserIdKey, kubeOnecSysUserMobileKey, kubeOnecSysUserWorkNumberKey)
 	return err
 }
@@ -412,7 +412,7 @@ func (m *defaultSysUserModel) formatPrimary(primary any) string {
 }
 
 func (m *defaultSysUserModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary any) error {
-	query := fmt.Sprintf("select %s from %s where `id` = ? AND `delete_time` IS NULL limit 1", sysUserRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `id` = ? AND `is_deleted` = 0 limit 1", sysUserRows, m.table)
 	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 

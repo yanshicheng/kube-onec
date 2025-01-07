@@ -1,0 +1,13 @@
+syntax = "v1"
+
+info (
+	title:   "入口 api 文件"
+	desc:    "入口文件"
+	author:  "Yan Shicheng"
+	email:   "ikubeops@gmail.com"
+	version: "1.0"
+)
+
+import "api/cluster.api"
+import "api/conn_info.api"
+import "api/node.api"

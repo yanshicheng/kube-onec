@@ -1,0 +1,106 @@
+syntax = "v1"
+
+info(
+    title: "OnecClusterConnInfo Service API"
+    desc: "API 服务用于管理通用的服务连接信息，支持动态配置多个服务"
+    author: "Yan Shicheng"
+    email: "ikubeops@gmail.com"
+    version: "1.0"
+)
+
+import "./base.api"
+
+type (
+    // 服务连接信息结构
+    OnecClusterConnInfo {
+        Id uint64 `json:"id"`                              // 自增主键
+        ClusterUuid string `json:"clusterUuid"`            // 关联集群 ID
+        ServiceCode string `json:"serviceCode"`            // 服务名称
+        ServiceUrl string `json:"serviceUrl"`              // 服务的 URL
+        Username string `json:"username"`                  // 用户名（如果使用基本认证）
+        Password string `json:"password"`                  // 密码（如果使用基本认证）
+        Token string `json:"token"`                        // 令牌（如果使用 Token 认证）
+        SkipInsecure int64 `json:"skipInsecure"`           // 是否忽略自签名证书验证
+        CaCert string `json:"caCert"`                      // CA 证书内容（以 PEM 格式存储）
+        ClientCert string `json:"clientCert"`              // 客户端证书内容（以 PEM 格式存储）
+        ClientKey string `json:"clientKey"`                // 客户端私钥内容（以 PEM 格式存储，仅客户端证书需要）
+        CreatedBy string `json:"createdBy"`                  // 记录创建人
+        UpdatedBy string `json:"updatedBy"`                  // 记录更新人
+        createdAt int64 `json:"createdAt"`               // 记录创建时间
+        UpdatedAt int64 `json:"updatedAt"`               // 记录更新时间
+    }
+
+        // 添加服务连接信息请求
+    AddOnecClusterConnInfoRequest {
+        ClusterUuid string `json:"clusterUuid" validate:"required"`      // 关联集群 ID，必填
+        ServiceCode string `json:"serviceCode" validate:"required,max=100"` // 服务名称，必填，最长 100 字符
+        ServiceUrl string `json:"serviceUrl" validate:"required,url"`    // 服务的 URL，必填，必须是有效 URL
+        Username string `json:"username,optional" validate:"omitempty,max=100"` // 用户名，可选
+        Password string `json:"password,optional" validate:"omitempty,max=100"` // 密码，可选
+        Token string `json:"token,optional" validate:"omitempty"`         // 令牌，可选
+        SkipInsecure int64 `json:"skipInsecure,optional" validate:"oneof=0 1"` // 是否忽略自签名证书验证，可选
+        CaCert string `json:"caCert,optional" validate:"omitempty"`       // CA 证书内容，可选
+        ClientCert string `json:"clientCert,optional" validate:"omitempty"` // 客户端证书内容，可选
+        ClientKey string `json:"clientKey,optional" validate:"omitempty"` // 客户端私钥内容，可选
+    }
+
+        // 更新服务连接信息请求
+    UpdateOnecClusterConnInfoRequest {
+        Id uint64 `path:"id" validate:"required"`                         // 自增主键，必填
+        ClusterUuid string `json:"clusterUuid" validate:"required"`       // 关联集群 ID，必填
+        ServiceCode string `json:"serviceCode" validate:"required,max=100"` // 服务名称，必填，最长 100 字符
+        ServiceUrl string `json:"serviceUrl" validate:"required,url"`     // 服务的 URL，必填，必须是有效 URL
+        Username string `json:"username,optional" validate:"omitempty,max=100"` // 用户名，可选
+        Password string `json:"password,optional" validate:"omitempty,max=100"` // 密码，可选
+        Token string `json:"token,optional" validate:"omitempty"`          // 令牌，可选
+        SkipInsecure int64 `json:"skipInsecure,optional" validate:"oneof=0 1"` // 是否忽略自签名证书验证，可选
+        CaCert string `json:"caCert,optional" validate:"omitempty"`        // CA 证书内容，可选
+        ClientCert string `json:"clientCert,optional" validate:"omitempty"` // 客户端证书内容，可选
+        ClientKey string `json:"clientKey,optional" validate:"omitempty"`  // 客户端私钥内容，可选
+    }
+
+        // 搜索服务连接信息请求
+    SearchOnecClusterConnInfoRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`           // 当前页，必填，最小值 1
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数，必填，范围 1-200
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`     // 排序字段，默认 "id"
+        IsAsc bool `form:"isAsc,optional" default:"false"`                                    // 是否升序，默认 false
+        ClusterUuid string `form:"clusterUuid,optional" validate:"omitempty,max=50"`            // 关联集群 ID，可选
+        ServiceCode string `form:"serviceCode,optional" validate:"omitempty,max=50"`            // 服务名称，可选
+    }
+
+        // 搜索服务连接信息响应
+    SearchOnecClusterConnInfoResponse {
+        Items []OnecClusterConnInfo `json:"items"` // 服务连接信息数据列表
+        Total uint64 `json:"total"`               // 总条数
+    }
+)
+
+@server(
+    middleware: JWTAuthMiddleware
+    group: cluster
+    prefix: /v1/onec/manager/cluster/conn-info
+)
+service manager-api {
+    // ---------------------- 服务连接信息管理 ----------------------
+
+    // 添加服务连接信息
+    @handler AddOnecClusterConnInfoHandler
+    post / (AddOnecClusterConnInfoRequest) returns (string)
+
+    // 更新服务连接信息
+    @handler UpdateOnecClusterConnInfoHandler
+    put /:id (UpdateOnecClusterConnInfoRequest) returns (string)
+
+    // 删除服务连接信息
+    @handler DelOnecClusterConnInfoHandler
+    delete /:id (DefaultIdRequest) returns (string)
+
+    // 获取服务连接信息详情
+    @handler GetOnecClusterConnInfoByIdHandler
+    get /:id (DefaultIdRequest) returns (OnecClusterConnInfo)
+
+    // 搜索服务连接信息
+    @handler SearchOnecClusterConnInfoHandler
+    get / (SearchOnecClusterConnInfoRequest) returns (SearchOnecClusterConnInfoResponse)
+}

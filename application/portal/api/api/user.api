@@ -23,8 +23,8 @@ type (
         PositionId uint64 `json:"positionId"`            // 职位 Id
         OrganizationId uint64 `json:"organizationId"`    // 组织 Id
         LastLoginTime int64 `json:"lastLoginTime"`       // 上次登录时间
-        CreateTime int64 `json:"createTime"`             // 创建时间
-        UpdateTime int64 `json:"updateTime"`             // 最后修改时间
+        createdAt int64 `json:"createdAt"`             // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`             // 最后修改时间
     }
         // 用户详情返回
     SysUserInfoResponse {
@@ -40,8 +40,8 @@ type (
         OrganizationName string `json:"organizationName"`  // 组织名称
         RoleNames []string `json:"roleNames"`              // 角色名称列表
         LastLoginTime int64 `json:"lastLoginTime"`         // 上次登录时间
-        CreateTime int64 `json:"createTime"`               // 创建时间
-        UpdateTime int64 `json:"updateTime"`               // 最后修改时间
+        createdAt int64 `json:"createdAt"`               // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`               // 最后修改时间
     }
         // 添加用户请求
     AddSysUserRequest {
@@ -94,7 +94,7 @@ type (
 
         // 搜索用户响应
     SearchSysUserResponse {
-        Items []SysUser `json:"data"` // 用户列表
+        Items []SysUser `json:"items"` // 用户列表
         Total uint64 `json:"total"`   // 总条数
     }
 
