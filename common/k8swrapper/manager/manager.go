@@ -3,6 +3,7 @@ package manager
 import (
 	"context"
 	"fmt"
+	"github.com/yanshicheng/kube-onec/common/k8swrapper/namespace"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sync"
 
@@ -20,6 +21,7 @@ type OnecK8sClient struct {
 	clientset *kubernetes.Clientset
 	cluster   core.ClusterInterface
 	nodes     core.NodesInterface
+	namespace core.NamespacesInterface
 	Logger    logx.Logger
 	ctx       context.Context
 }
@@ -62,6 +64,12 @@ func (k *OnecK8sClient) GetClusterClient() core.ClusterInterface {
 func (k *OnecK8sClient) GetNodeClient() core.NodesInterface {
 	k.nodes = nodes.NewNodes(k.ctx, k)
 	return k.nodes
+}
+
+// GetNamespace 返回命名空间模块
+func (k *OnecK8sClient) GetNamespaceClient() core.NamespacesInterface {
+	k.namespace = namespace.NewNamespace(k.ctx, k)
+	return k.namespace
 }
 
 // GetClientset 返回 Kubernetes Clientset

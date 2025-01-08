@@ -22,6 +22,9 @@ type ServiceContext struct {
 	LabelsResourceModel      model.OnecResourceLabelsModel
 	TaintsResourceModel      model.OnecResourceTaintsModel
 	AnnotationsResourceModel model.OnecResourceAnnotationsModel
+	ProjectModel             model.OnecProjectModel
+	ProjectAdminModel        model.OnecProjectAdminModel
+	ProjectApplicationModel  model.OnecProjectApplicationModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -47,6 +50,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		LabelsResourceModel:      model.NewOnecResourceLabelsModel(sqlConn, c.DBCache),
 		TaintsResourceModel:      model.NewOnecResourceTaintsModel(sqlConn, c.DBCache),
 		AnnotationsResourceModel: model.NewOnecResourceAnnotationsModel(sqlConn, c.DBCache),
+		ProjectModel:             model.NewOnecProjectModel(sqlConn, c.DBCache),
+		ProjectAdminModel:        model.NewOnecProjectAdminModel(sqlConn, c.DBCache),
+		ProjectApplicationModel:  model.NewOnecProjectApplicationModel(sqlConn, c.DBCache),
 		// BookModel: models.NewBooksModel(sqlx.NewMysql(c.Mysql.DataSource), c.DBCache),
 	}
 }

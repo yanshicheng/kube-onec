@@ -48,4 +48,10 @@ var (
 
 	NodeIdEmptyErr  = errorx.New(102036, "节点ID 不能 为空!")
 	EvictNodePodErr = errorx.New(102037, "驱逐节点Pod失败!")
+
+	// 项目相关 1021**
+	CreateProjectErr = errorx.New(102101, "项目创建失败!")
+	DeleteProjectErr = errorx.New(102102, "项目删除失败!")
+	UpdateProjectErr = errorx.New(102103, "项目更新失败!")
+	GetProjectErr    = errorx.New(102104, "项目查询失败!")
 )

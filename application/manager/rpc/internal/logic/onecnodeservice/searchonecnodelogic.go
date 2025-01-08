@@ -112,7 +112,7 @@ func (l *SearchOnecNodeLogic) SearchOnecNode(in *pb.SearchOnecNodeReq) (*pb.Sear
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			l.Logger.Errorf("未找到节点信息: %v", err)
-			return &pb.SearchOnecNodeResp{}, code.NodeNotExistErr
+			return &pb.SearchOnecNodeResp{}, nil
 		}
 		l.Logger.Errorf("查询节点失败: %v", err)
 		return nil, code.QueryNodeErr

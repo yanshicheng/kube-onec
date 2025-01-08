@@ -59,6 +59,7 @@ type (
 		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
 		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
 		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
+		IsDefault   int64     `db:"is_default"`
 	}
 )
 
