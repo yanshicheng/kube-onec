@@ -3,6 +3,7 @@ package sysdictitemservicelogic
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
@@ -31,35 +32,32 @@ func (l *SearchSysDictItemLogic) SearchSysDictItem(in *pb.SearchSysDictItemReq) 
 	var queryStr strings.Builder
 	var params []interface{}
 	if in.DictCode != "" {
-		queryStr.WriteString("dict_id = ? AND ")
+		queryStr.WriteString("dict_id = ? AND")
 		params = append(params, in.DictCode)
 	}
 	if in.ItemText != "" {
-		queryStr.WriteString("item_text LIKE ? AND ")
+		queryStr.WriteString("item_text LIKE ? AND")
 		params = append(params, "%"+in.ItemText+"%")
 	}
 	if in.ItemCode != "" {
-		queryStr.WriteString("item_value LIKE ? AND ")
+		queryStr.WriteString("item_value LIKE ? AND")
 		params = append(params, "%"+in.ItemCode+"%")
 	}
 	if in.Description != "" {
-		queryStr.WriteString("description LIKE ? AND ")
+		queryStr.WriteString("description LIKE ? AND")
 		params = append(params, "%"+in.Description+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString("create_by LIKE ? AND ")
+		queryStr.WriteString("create_by LIKE ? AND")
 		params = append(params, "%"+in.CreatedBy+"%")
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString("update_by LIKE ? AND ")
+		queryStr.WriteString("update_by LIKE ? AND")
 		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 	res, total, err := l.svcCtx.SysDictItem.Search(
 		l.ctx,
 		in.OrderStr, // 使用请求中的 orderStr

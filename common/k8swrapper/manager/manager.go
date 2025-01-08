@@ -54,12 +54,12 @@ func (k *OnecK8sClient) GetContext() context.Context {
 }
 
 // GetCluster 返回集群模块
-func (k *OnecK8sClient) GetCluster() core.ClusterInterface {
+func (k *OnecK8sClient) GetClusterClient() core.ClusterInterface {
 	return cluster.NewCluster(k.ctx, k)
 }
 
 // GetNodes 返回节点模块
-func (k *OnecK8sClient) GetNodes() core.NodesInterface {
+func (k *OnecK8sClient) GetNodeClient() core.NodesInterface {
 	k.nodes = nodes.NewNodes(k.ctx, k)
 	return k.nodes
 }

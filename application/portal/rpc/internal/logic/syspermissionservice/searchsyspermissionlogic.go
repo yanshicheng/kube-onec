@@ -7,6 +7,7 @@ import (
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/utils"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -48,10 +49,7 @@ func (l *SearchSysPermissionLogic) SearchSysPermission(in *pb.SearchSysPermissio
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 	permissions, total, err := l.svcCtx.SysPermission.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {

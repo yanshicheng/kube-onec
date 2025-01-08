@@ -34,8 +34,6 @@ type (
 	AddOnecProjectQuotaResp           = pb.AddOnecProjectQuotaResp
 	AddOnecProjectReq                 = pb.AddOnecProjectReq
 	AddOnecProjectResp                = pb.AddOnecProjectResp
-	CancelForbidOnecNodeReq           = pb.CancelForbidOnecNodeReq
-	CancelForbidOnecNodeResp          = pb.CancelForbidOnecNodeResp
 	DelOnecClusterConnInfoReq         = pb.DelOnecClusterConnInfoReq
 	DelOnecClusterConnInfoResp        = pb.DelOnecClusterConnInfoResp
 	DelOnecClusterReq                 = pb.DelOnecClusterReq
@@ -56,8 +54,12 @@ type (
 	DelOnecProjectQuotaResp           = pb.DelOnecProjectQuotaResp
 	DelOnecProjectReq                 = pb.DelOnecProjectReq
 	DelOnecProjectResp                = pb.DelOnecProjectResp
-	ForbidOnecNodeReq                 = pb.ForbidOnecNodeReq
-	ForbidOnecNodeResp                = pb.ForbidOnecNodeResp
+	EnableScheduledNodeReq            = pb.EnableScheduledNodeReq
+	EnableScheduledNodeResp           = pb.EnableScheduledNodeResp
+	EvictNodePodReq                   = pb.EvictNodePodReq
+	EvictNodePodResp                  = pb.EvictNodePodResp
+	ForbidScheduledReq                = pb.ForbidScheduledReq
+	ForbidScheduledResp               = pb.ForbidScheduledResp
 	GetOnecClusterByIdReq             = pb.GetOnecClusterByIdReq
 	GetOnecClusterByIdResp            = pb.GetOnecClusterByIdResp
 	GetOnecClusterConnInfoByIdReq     = pb.GetOnecClusterConnInfoByIdReq
@@ -72,6 +74,9 @@ type (
 	GetOnecProjectByIdResp            = pb.GetOnecProjectByIdResp
 	GetOnecProjectQuotaByIdReq        = pb.GetOnecProjectQuotaByIdReq
 	GetOnecProjectQuotaByIdResp       = pb.GetOnecProjectQuotaByIdResp
+	NodeAnnotations                   = pb.NodeAnnotations
+	NodeLabels                        = pb.NodeLabels
+	NodeTaints                        = pb.NodeTaints
 	OnecCluster                       = pb.OnecCluster
 	OnecClusterConnInfo               = pb.OnecClusterConnInfo
 	OnecNode                          = pb.OnecNode
@@ -83,8 +88,14 @@ type (
 	SearchOnecClusterConnInfoResp     = pb.SearchOnecClusterConnInfoResp
 	SearchOnecClusterReq              = pb.SearchOnecClusterReq
 	SearchOnecClusterResp             = pb.SearchOnecClusterResp
+	SearchOnecNodeAnnotationListReq   = pb.SearchOnecNodeAnnotationListReq
+	SearchOnecNodeAnnotationListResp  = pb.SearchOnecNodeAnnotationListResp
+	SearchOnecNodeLabelListReq        = pb.SearchOnecNodeLabelListReq
+	SearchOnecNodeLabelListResp       = pb.SearchOnecNodeLabelListResp
 	SearchOnecNodeReq                 = pb.SearchOnecNodeReq
 	SearchOnecNodeResp                = pb.SearchOnecNodeResp
+	SearchOnecNodeTaintListReq        = pb.SearchOnecNodeTaintListReq
+	SearchOnecNodeTaintListResp       = pb.SearchOnecNodeTaintListResp
 	SearchOnecProjectAdminReq         = pb.SearchOnecProjectAdminReq
 	SearchOnecProjectAdminResp        = pb.SearchOnecProjectAdminResp
 	SearchOnecProjectApplicationReq   = pb.SearchOnecProjectApplicationReq
@@ -124,15 +135,20 @@ type (
 		// 节点删除注解
 		DelOnecNodeAnnotation(ctx context.Context, in *DelOnecNodeAnnotationReq, opts ...grpc.CallOption) (*DelOnecNodeAnnotationResp, error)
 		// 禁止调度
-		ForbidOnecNode(ctx context.Context, in *ForbidOnecNodeReq, opts ...grpc.CallOption) (*ForbidOnecNodeResp, error)
+		ForbidScheduled(ctx context.Context, in *ForbidScheduledReq, opts ...grpc.CallOption) (*ForbidScheduledResp, error)
 		// 取消禁止调度
-		CancelForbidOnecNode(ctx context.Context, in *CancelForbidOnecNodeReq, opts ...grpc.CallOption) (*CancelForbidOnecNodeResp, error)
+		EnableScheduledNode(ctx context.Context, in *EnableScheduledNodeReq, opts ...grpc.CallOption) (*EnableScheduledNodeResp, error)
 		// 添加污点
 		AddOnecNodeTaint(ctx context.Context, in *AddOnecNodeTaintReq, opts ...grpc.CallOption) (*AddOnecNodeTaintResp, error)
 		// 删除污点
 		DelOnecNodeTaint(ctx context.Context, in *DelOnecNodeTaintReq, opts ...grpc.CallOption) (*DelOnecNodeTaintResp, error)
 		// 同步节点信息
 		SyncOnecNode(ctx context.Context, in *SyncOnecNodeReq, opts ...grpc.CallOption) (*SyncOnecNodeResp, error)
+		// 驱逐节点pod
+		EvictNodePod(ctx context.Context, in *EvictNodePodReq, opts ...grpc.CallOption) (*EvictNodePodResp, error)
+		SearchOnecNodeLabelList(ctx context.Context, in *SearchOnecNodeLabelListReq, opts ...grpc.CallOption) (*SearchOnecNodeLabelListResp, error)
+		SearchOnecNodeAnnotationList(ctx context.Context, in *SearchOnecNodeAnnotationListReq, opts ...grpc.CallOption) (*SearchOnecNodeAnnotationListResp, error)
+		SearchOnecNodeTaintList(ctx context.Context, in *SearchOnecNodeTaintListReq, opts ...grpc.CallOption) (*SearchOnecNodeTaintListResp, error)
 	}
 
 	defaultOnecNodeService struct {
@@ -187,15 +203,15 @@ func (m *defaultOnecNodeService) DelOnecNodeAnnotation(ctx context.Context, in *
 }
 
 // 禁止调度
-func (m *defaultOnecNodeService) ForbidOnecNode(ctx context.Context, in *ForbidOnecNodeReq, opts ...grpc.CallOption) (*ForbidOnecNodeResp, error) {
+func (m *defaultOnecNodeService) ForbidScheduled(ctx context.Context, in *ForbidScheduledReq, opts ...grpc.CallOption) (*ForbidScheduledResp, error) {
 	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
-	return client.ForbidOnecNode(ctx, in, opts...)
+	return client.ForbidScheduled(ctx, in, opts...)
 }
 
 // 取消禁止调度
-func (m *defaultOnecNodeService) CancelForbidOnecNode(ctx context.Context, in *CancelForbidOnecNodeReq, opts ...grpc.CallOption) (*CancelForbidOnecNodeResp, error) {
+func (m *defaultOnecNodeService) EnableScheduledNode(ctx context.Context, in *EnableScheduledNodeReq, opts ...grpc.CallOption) (*EnableScheduledNodeResp, error) {
 	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
-	return client.CancelForbidOnecNode(ctx, in, opts...)
+	return client.EnableScheduledNode(ctx, in, opts...)
 }
 
 // 添加污点
@@ -214,4 +230,25 @@ func (m *defaultOnecNodeService) DelOnecNodeTaint(ctx context.Context, in *DelOn
 func (m *defaultOnecNodeService) SyncOnecNode(ctx context.Context, in *SyncOnecNodeReq, opts ...grpc.CallOption) (*SyncOnecNodeResp, error) {
 	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
 	return client.SyncOnecNode(ctx, in, opts...)
+}
+
+// 驱逐节点pod
+func (m *defaultOnecNodeService) EvictNodePod(ctx context.Context, in *EvictNodePodReq, opts ...grpc.CallOption) (*EvictNodePodResp, error) {
+	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
+	return client.EvictNodePod(ctx, in, opts...)
+}
+
+func (m *defaultOnecNodeService) SearchOnecNodeLabelList(ctx context.Context, in *SearchOnecNodeLabelListReq, opts ...grpc.CallOption) (*SearchOnecNodeLabelListResp, error) {
+	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
+	return client.SearchOnecNodeLabelList(ctx, in, opts...)
+}
+
+func (m *defaultOnecNodeService) SearchOnecNodeAnnotationList(ctx context.Context, in *SearchOnecNodeAnnotationListReq, opts ...grpc.CallOption) (*SearchOnecNodeAnnotationListResp, error) {
+	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
+	return client.SearchOnecNodeAnnotationList(ctx, in, opts...)
+}
+
+func (m *defaultOnecNodeService) SearchOnecNodeTaintList(ctx context.Context, in *SearchOnecNodeTaintListReq, opts ...grpc.CallOption) (*SearchOnecNodeTaintListResp, error) {
+	client := pb.NewOnecNodeServiceClient(m.cli.Conn())
+	return client.SearchOnecNodeTaintList(ctx, in, opts...)
 }

@@ -33,16 +33,23 @@ func NewSyncOnecNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sync
 
 // 同步节点信息
 func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNodeResp, error) {
+	// 查询节点数据
+	node, err := l.svcCtx.NodeModel.FindOne(l.ctx, in.NodeId)
+	if err != nil {
+		l.Logger.Errorf("获取节点信息失败: %v, nodes: %v", err, in.NodeId)
+		return nil, code.GetNodeInfoErr
+	}
+
 	// 获取客户端
-	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterUuid, nil)
+	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, node.ClusterUuid, nil)
 	if err != nil {
 		l.Logger.Infof("获取集群客户端失败: %v", err)
-		cluster, err := l.svcCtx.ClusterModel.FindOneByUuid(l.ctx, in.ClusterUuid)
+		cluster, err := l.svcCtx.ClusterModel.FindOneByUuid(l.ctx, node.ClusterUuid)
 		if err != nil {
 			l.Logger.Errorf("获取集群信息失败: %v", err)
 			return nil, code.GetClusterInfoErr
 		}
-		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, in.ClusterUuid, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
+		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, node.ClusterUuid, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
 		if err != nil {
 			l.Logger.Infof("获取集群客户端失败: %v", err)
 			return nil, code.GetClusterClientErr
@@ -50,22 +57,16 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	}
 
 	if err := client.Ping(); err != nil {
-		l.Logger.Infof("集群: %v, 连接失败: %v", in.ClusterUuid, err)
+		l.Logger.Infof("集群: %v, 连接失败: %v", node.ClusterUuid, err)
 		return nil, code.ClusterConnectErr
 	}
 
-	// 查询节点数据
-	node, err := l.svcCtx.NodeModel.FindOne(l.ctx, in.Id)
-	if err != nil {
-		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, in.Id)
-		return nil, code.GetNodeInfoErr
-	}
-	l.Logger.Infof("集群Id: %v, nodes: %v 正在更新", in.ClusterUuid, node.NodeName)
+	l.Logger.Infof("集群Id: %v, nodes: %v 正在更新", node.ClusterUuid, node.NodeName)
 
 	// 获取节点信息
-	nodeInfo, err := client.GetNodes().GetNodeInfo(node.NodeName)
+	nodeInfo, err := client.GetNodeClient().GetNodeInfo(node.NodeName)
 	if err != nil {
-		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, node.NodeName)
+		l.Logger.Errorf("获取节点信息失败: %v, 集群: %v nodes: %v", err, node.ClusterUuid, node.NodeName)
 		return nil, code.GetNodeInfoErr
 	}
 
@@ -73,7 +74,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	if ok {
 		node.UpdatedBy = in.UpdatedBy
 		if err := l.svcCtx.NodeModel.Update(l.ctx, node); err != nil {
-			l.Logger.Errorf("集群: %v , 更新节点: %v, 信息失败: %v", in.ClusterUuid, node.NodeName, err)
+			l.Logger.Errorf("集群: %v , 更新节点: %v, 信息失败: %v", node.ClusterUuid, node.NodeName, err)
 			return nil, code.SyncNodeInfoErr
 		}
 	}
@@ -87,7 +88,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	go func() {
 		defer wg.Done()
 		if err := l.updateNodeLabels(nodeInfo.Labels, node); err != nil {
-			l.Logger.Errorf("更新节点标签失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, node.NodeName)
+			l.Logger.Errorf("更新节点标签失败: %v, 集群: %v nodes: %v", err, node.ClusterUuid, node.NodeName)
 			errChan <- code.SyncNodeLabelErr
 		}
 	}()
@@ -97,7 +98,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	go func() {
 		defer wg.Done()
 		if err := l.updateNodeAnnotations(nodeInfo.Annotations, node); err != nil {
-			l.Logger.Errorf("更新节点注解失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, node.NodeName)
+			l.Logger.Errorf("更新节点注解失败: %v, 集群: %v nodes: %v", err, node.ClusterUuid, node.NodeName)
 			errChan <- code.SyncNodeAnnotationsErr
 		}
 	}()
@@ -107,7 +108,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	go func() {
 		defer wg.Done()
 		if err := l.updateNodeTaints(nodeInfo.Taints, node); err != nil {
-			l.Logger.Errorf("更新节点污点失败: %v, 集群: %v nodes: %v", err, in.ClusterUuid, node.NodeName)
+			l.Logger.Errorf("更新节点污点失败: %v, 集群: %v nodes: %v", err, node.ClusterUuid, node.NodeName)
 			errChan <- code.SyncNodeTaintErr
 		}
 	}()
@@ -115,7 +116,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 	// 等待所有并行任务完成
 	wg.Wait()
 	close(errChan)
-	cluster, err := l.svcCtx.ClusterModel.FindOneByUuid(l.ctx, in.ClusterUuid)
+	cluster, err := l.svcCtx.ClusterModel.FindOneByUuid(l.ctx, node.ClusterUuid)
 
 	// 检查错误
 	if len(errChan) > 0 {

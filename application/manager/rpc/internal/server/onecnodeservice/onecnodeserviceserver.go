@@ -64,15 +64,15 @@ func (s *OnecNodeServiceServer) DelOnecNodeAnnotation(ctx context.Context, in *p
 }
 
 // 禁止调度
-func (s *OnecNodeServiceServer) ForbidOnecNode(ctx context.Context, in *pb.ForbidOnecNodeReq) (*pb.ForbidOnecNodeResp, error) {
-	l := onecnodeservicelogic.NewForbidOnecNodeLogic(ctx, s.svcCtx)
-	return l.ForbidOnecNode(in)
+func (s *OnecNodeServiceServer) ForbidScheduled(ctx context.Context, in *pb.ForbidScheduledReq) (*pb.ForbidScheduledResp, error) {
+	l := onecnodeservicelogic.NewForbidScheduledLogic(ctx, s.svcCtx)
+	return l.ForbidScheduled(in)
 }
 
 // 取消禁止调度
-func (s *OnecNodeServiceServer) CancelForbidOnecNode(ctx context.Context, in *pb.CancelForbidOnecNodeReq) (*pb.CancelForbidOnecNodeResp, error) {
-	l := onecnodeservicelogic.NewCancelForbidOnecNodeLogic(ctx, s.svcCtx)
-	return l.CancelForbidOnecNode(in)
+func (s *OnecNodeServiceServer) EnableScheduledNode(ctx context.Context, in *pb.EnableScheduledNodeReq) (*pb.EnableScheduledNodeResp, error) {
+	l := onecnodeservicelogic.NewEnableScheduledNodeLogic(ctx, s.svcCtx)
+	return l.EnableScheduledNode(in)
 }
 
 // 添加污点
@@ -91,4 +91,25 @@ func (s *OnecNodeServiceServer) DelOnecNodeTaint(ctx context.Context, in *pb.Del
 func (s *OnecNodeServiceServer) SyncOnecNode(ctx context.Context, in *pb.SyncOnecNodeReq) (*pb.SyncOnecNodeResp, error) {
 	l := onecnodeservicelogic.NewSyncOnecNodeLogic(ctx, s.svcCtx)
 	return l.SyncOnecNode(in)
+}
+
+// 驱逐节点pod
+func (s *OnecNodeServiceServer) EvictNodePod(ctx context.Context, in *pb.EvictNodePodReq) (*pb.EvictNodePodResp, error) {
+	l := onecnodeservicelogic.NewEvictNodePodLogic(ctx, s.svcCtx)
+	return l.EvictNodePod(in)
+}
+
+func (s *OnecNodeServiceServer) SearchOnecNodeLabelList(ctx context.Context, in *pb.SearchOnecNodeLabelListReq) (*pb.SearchOnecNodeLabelListResp, error) {
+	l := onecnodeservicelogic.NewSearchOnecNodeLabelListLogic(ctx, s.svcCtx)
+	return l.SearchOnecNodeLabelList(in)
+}
+
+func (s *OnecNodeServiceServer) SearchOnecNodeAnnotationList(ctx context.Context, in *pb.SearchOnecNodeAnnotationListReq) (*pb.SearchOnecNodeAnnotationListResp, error) {
+	l := onecnodeservicelogic.NewSearchOnecNodeAnnotationListLogic(ctx, s.svcCtx)
+	return l.SearchOnecNodeAnnotationList(in)
+}
+
+func (s *OnecNodeServiceServer) SearchOnecNodeTaintList(ctx context.Context, in *pb.SearchOnecNodeTaintListReq) (*pb.SearchOnecNodeTaintListResp, error) {
+	l := onecnodeservicelogic.NewSearchOnecNodeTaintListLogic(ctx, s.svcCtx)
+	return l.SearchOnecNodeTaintList(in)
 }

@@ -81,10 +81,7 @@ func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchS
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 
 	matchedUsers, total, err := l.svcCtx.SysUser.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {

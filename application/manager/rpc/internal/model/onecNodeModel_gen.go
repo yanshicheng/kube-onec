@@ -61,6 +61,7 @@ type (
 		IsGpu            int64     `db:"is_gpu"`            // 节点是否包含GPU
 		NodeUid          string    `db:"node_uid"`          // 节点UID，唯一标识
 		Status           string    `db:"status"`            // 节点状态
+		SyncStatus       int64     `db:"sync_status"`       // 节点同步状态
 		Roles            string    `db:"roles"`             // 节点角色列表
 		JoinAt           time.Time `db:"join_at"`           // 节点加入集群时间
 		PodCidr          string    `db:"pod_cidr"`          // Pod CIDR
@@ -215,6 +216,8 @@ func (m *defaultOnecNodeModel) Search(ctx context.Context, orderStr string, isAs
 	// 初始化 WHERE 子句
 	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
+		fmt.Println(queryStr)
+		fmt.Println(args...)
 		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
@@ -337,8 +340,8 @@ func (m *defaultOnecNodeModel) Insert(ctx context.Context, data *OnecNode) (sql.
 	kubeOnecOnecNodeIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeIdPrefix, data.Id)
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecNodeRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.NodeName, data.Cpu, data.Memory, data.MaxPods, data.IsGpu, data.NodeUid, data.Status, data.Roles, data.JoinAt, data.PodCidr, data.Unschedulable, data.NodeIp, data.Os, data.KernelVersion, data.ContainerRuntime, data.KubeletVersion, data.KubeletPort, data.OperatingSystem, data.Architecture, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecNodeRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.NodeName, data.Cpu, data.Memory, data.MaxPods, data.IsGpu, data.NodeUid, data.Status, data.SyncStatus, data.Roles, data.JoinAt, data.PodCidr, data.Unschedulable, data.NodeIp, data.Os, data.KernelVersion, data.ContainerRuntime, data.KubeletVersion, data.KubeletPort, data.OperatingSystem, data.Architecture, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
 	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return ret, err
 }
@@ -354,7 +357,7 @@ func (m *defaultOnecNodeModel) Update(ctx context.Context, newData *OnecNode) er
 	kubeOnecOnecNodeNodeUidKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecNodeNodeUidPrefix, data.NodeUid)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecNodeRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.NodeName, newData.Cpu, newData.Memory, newData.MaxPods, newData.IsGpu, newData.NodeUid, newData.Status, newData.Roles, newData.JoinAt, newData.PodCidr, newData.Unschedulable, newData.NodeIp, newData.Os, newData.KernelVersion, newData.ContainerRuntime, newData.KubeletVersion, newData.KubeletPort, newData.OperatingSystem, newData.Architecture, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.NodeName, newData.Cpu, newData.Memory, newData.MaxPods, newData.IsGpu, newData.NodeUid, newData.Status, newData.SyncStatus, newData.Roles, newData.JoinAt, newData.PodCidr, newData.Unschedulable, newData.NodeIp, newData.Os, newData.KernelVersion, newData.ContainerRuntime, newData.KubeletVersion, newData.KubeletPort, newData.OperatingSystem, newData.Architecture, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
 	}, kubeOnecOnecNodeClusterUuidNodeNameKey, kubeOnecOnecNodeIdKey, kubeOnecOnecNodeNodeUidKey)
 	return err
 }

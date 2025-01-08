@@ -6,7 +6,7 @@ import (
 
 // K8sClientInterface 定义一个接口，用于统一管理 Kubernetes 客户端的子模块
 type K8sClientInterface interface {
-	GetCluster() ClusterInterface
-	GetNodes() NodesInterface
+	GetClusterClient() ClusterInterface
+	GetNodeClient() NodesInterface
 	GetClientset() *kubernetes.Clientset
 }

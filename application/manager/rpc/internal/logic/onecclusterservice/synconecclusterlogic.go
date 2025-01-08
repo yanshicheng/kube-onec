@@ -48,7 +48,7 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 	}
 
 	// 同步集群信息
-	clusterInfo, err := client.GetCluster().GetClusterInfo()
+	clusterInfo, err := client.GetClusterClient().GetClusterInfo()
 	if err != nil {
 		l.Logger.Errorf("获取集群信息失败: %v", err)
 		return nil, code.GetClusterInfoErr
@@ -57,7 +57,7 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 	if err != nil {
 		return nil, err
 	}
-	nodeList, err := client.GetNodes().GetAllNodesInfo()
+	nodeList, err := client.GetNodeClient().GetAllNodesInfo()
 	if err != nil {
 		l.Logger.Errorf("获取节点信息失败: %v", err)
 		return nil, code.GetNodeInfoErr
@@ -85,7 +85,7 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 	// 更新集群
 	if err := l.svcCtx.ClusterModel.Update(l.ctx, cluster); err != nil {
 		l.Logger.Errorf("更新集群信息失败: %v", err)
-		return nil, err
+		return nil, code.UpdateClusterInfoErr
 	}
 	return &pb.SyncOnecClusterResp{}, nil
 }

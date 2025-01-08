@@ -140,7 +140,7 @@ service manager-api {
 
     // 同步集群
     @handler SyncOnecClusterHandler
-    post /:id/sync (DefaultIdRequest) returns (string)
+    post /sync/:id (DefaultIdRequest) returns (string)
 
     // 集群添加节点
     @handler AddOnecNodeHandler

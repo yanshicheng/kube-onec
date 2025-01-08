@@ -2,6 +2,8 @@ package node
 
 import (
 	"context"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecnodeservice"
+	"github.com/yanshicheng/kube-onec/utils"
 
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/types"
@@ -24,7 +26,15 @@ func NewDelOnecNodeAnnotationLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *DelOnecNodeAnnotationLogic) DelOnecNodeAnnotation(req *types.DelOnecNodeAnnotationRequest) (resp string, err error) {
-	// todo: add your logic here and delete this line
 
-	return
+	_, err = l.svcCtx.NodeRpc.DelOnecNodeAnnotation(l.ctx, &onecnodeservice.DelOnecNodeAnnotationReq{
+		UpdatedBy:    utils.GetAccount(l.ctx),
+		AnnotationId: req.Id,
+	})
+
+	if err != nil {
+		l.Logger.Errorf("删除节点注解失败: %v", err)
+		return
+	}
+	return "删除节点注解成功!", nil
 }

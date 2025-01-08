@@ -29,17 +29,15 @@ type AddOnecClusterRequest struct {
 }
 
 type AddOnecNodeAnnotationRequest struct {
-	Id          uint64 `json:"id" validate:"required"`          // 节点ID
-	ClusterUuid string `json:"clusterUuid" validate:"required"` // 集群UUID
-	Key         string `json:"key" validate:"required"`         // 注解键
-	Value       string `json:"value" validate:"required"`       // 注解值
+	Id    uint64 `json:"id" validate:"required"`    // 节点ID
+	Key   string `json:"key" validate:"required"`   // 注解键
+	Value string `json:"value" validate:"required"` // 注解值
 }
 
 type AddOnecNodeLabelRequest struct {
-	Id          uint64 `json:"id" validate:"required"`          // 节点ID
-	ClusterUuid string `json:"clusterUuid" validate:"required"` // 集群UUID
-	Key         string `json:"key" validate:"required"`         // 标签键
-	Value       string `json:"value" validate:"required"`       // 标签值
+	Id    uint64 `json:"id" validate:"required"`    // 节点ID
+	Key   string `json:"key" validate:"required"`   // 标签键
+	Value string `json:"value" validate:"required"` // 标签值
 }
 
 type AddOnecNodeRequest struct {
@@ -51,6 +49,10 @@ type AddOnecNodeRequest struct {
 }
 
 type AddOnecNodeTaintRequest struct {
+	Id     uint64 `json:"id" validate:"required"`
+	Key    string `json:"key" validate:"required"`
+	Value  string `json:"value" validate:"required"`
+	Effect string `json:"effect" validate:"required"`
 }
 
 type DefaultIdRequest struct {
@@ -58,23 +60,57 @@ type DefaultIdRequest struct {
 }
 
 type DelOnecNodeAnnotationRequest struct {
-	Id          uint64 `json:"id" validate:"required"`          // 节点ID
-	ClusterUuid string `json:"clusterUuid" validate:"required"` // 集群UUID
-	Key         string `json:"key" validate:"required"`         // 注解键
+	Id uint64 `path:"id" validate:"required"` // 节点ID
 }
 
 type DelOnecNodeLabelRequest struct {
-	Id          uint64 `json:"id" validate:"required"`          // 节点ID
-	ClusterUuid string `json:"clusterUuid" validate:"required"` // 集群UUID
-	Key         string `json:"key" validate:"required"`         // 标签键
+	Id uint64 `path:"id" validate:"required"` // 节点ID
 }
 
 type DelOnecNodeRequest struct {
-	Id          uint64 `json:"id" validate:"required"` // 节点ID
-	ClusterUuid string `json:"clusterUuid" validate:"required"`
+	Id uint64 `path:"id" validate:"required"` // 节点ID
 }
 
 type DelOnecNodeTaintRequest struct {
+	Id uint64 `json:"id" validate:"required"`
+}
+
+type EnableScheduledRequest struct {
+	Id uint64 `path:"id" validate:"required"`
+}
+
+type ForbidScheduledRequest struct {
+	Id uint64 `path:"id" validate:"required"`
+}
+
+type NodeAnnotation struct {
+	Id           uint64 `json:"id"`
+	ResourceId   uint64 `json:"resourceId"`
+	ResourceType string `json:"resourceType"`
+	Key          string `json:"key"`
+	Value        string `json:"value"`
+	CreatedAt    int64  `json:"createdAt"`
+	UpdatedAt    int64  `json:"updatedAt"`
+}
+
+type NodeLabel struct {
+	Id           uint64 `json:"id"`
+	ResourceId   uint64 `json:"resourceId"`
+	ResourceType string `json:"resourceType"`
+	Key          string `json:"key"`
+	Value        string `json:"value"`
+	CreatedAt    int64  `json:"createdAt"`
+	UpdatedAt    int64  `json:"updatedAt"`
+}
+
+type NodeTaint struct {
+	Id         uint64 `json:"id"`
+	NodeId     uint64 `json:"nodeId"`
+	Key        string `json:"key"`
+	Value      string `json:"value"`
+	EffectCode string `json:"effectCode"`
+	CreatedAt  int64  `json:"createdAt"`
+	UpdatedAt  int64  `json:"updatedAt"`
 }
 
 type OnecCluster struct {
@@ -128,19 +164,20 @@ type OnecClusterConnInfo struct {
 }
 
 type OnecNode struct {
-	Id               uint64  `json:"id"`               // 自增主键
-	ClusterUuid      string  `json:"clusterUuid"`      // 所属集群ID
-	NodeName         string  `json:"nodeName"`         // 节点名称
-	Cpu              int64   `json:"cpu"`              // CPU核数
-	Memory           float64 `json:"memory"`           // 内存大小 (Mi)
-	MaxPods          int64   `json:"maxPods"`          // 最大Pod数量
-	IsGpu            int64   `json:"isGpu"`            // 是否包含GPU
-	NodeUid          string  `json:"nodeUid"`          // 节点UID
-	Status           string  `json:"status"`           // 节点状态
-	Roles            string  `json:"roles"`            // 节点角色
-	JoinAt           int64   `json:"joinAt"`           // 加入集群时间
-	PodCidr          string  `json:"podCidr"`          // Pod CIDR
-	Unschedulable    int64   `json:"unschedulable"`    // 是否不可调度
+	Id               uint64  `json:"id"`            // 自增主键
+	ClusterUuid      string  `json:"clusterUuid"`   // 所属集群ID
+	NodeName         string  `json:"nodeName"`      // 节点名称
+	Cpu              int64   `json:"cpu"`           // CPU核数
+	Memory           float64 `json:"memory"`        // 内存大小 (Mi)
+	MaxPods          int64   `json:"maxPods"`       // 最大Pod数量
+	IsGpu            int64   `json:"isGpu"`         // 是否包含GPU
+	NodeUid          string  `json:"nodeUid"`       // 节点UID
+	Status           string  `json:"status"`        // 节点状态
+	Roles            string  `json:"roles"`         // 节点角色
+	JoinAt           int64   `json:"joinAt"`        // 加入集群时间
+	PodCidr          string  `json:"podCidr"`       // Pod CIDR
+	Unschedulable    int64   `json:"unschedulable"` // 是否不可调度
+	SyncStatus       int64   `json:"syncStatus"`
 	NodeIp           string  `json:"nodeIp"`           // 节点地址
 	Os               string  `json:"os"`               // 操作系统
 	KernelVersion    string  `json:"kernelVersion"`    // 内核版本
@@ -153,6 +190,48 @@ type OnecNode struct {
 	UpdatedBy        string  `json:"updatedBy"`        // 更新人
 	CreatedAt        int64   `json:"createdAt"`        // 创建时间
 	UpdatedAt        int64   `json:"updatedAt"`        // 更新时间
+}
+
+type SearchNodeAnnotationsRequest struct {
+	Page     uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页
+	PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数
+	OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`       // 排序字段
+	IsAsc    bool   `form:"isAsc,optional" default:"false"`
+	NodeId   uint64 `form:"nodeId,optional" validate:"required"`
+	Key      string `form:"key,optional" validate:"omitempty"`
+}
+
+type SearchNodeAnnotationsResponse struct {
+	Items []NodeAnnotation `json:"items"` // 注解数据列表
+	Total uint64           `json:"total"` // 总条数
+}
+
+type SearchNodeLabelsRequest struct {
+	Page     uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页
+	PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数
+	OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`       // 排序字段
+	IsAsc    bool   `form:"isAsc,optional" default:"false"`
+	NodeId   uint64 `form:"nodeId,optional" validate:"required"`
+	Key      string `form:"key,optional" validate:"omitempty"`
+}
+
+type SearchNodeLabelsResponse struct {
+	Items []NodeLabel `json:"items"` // 标签数据列表
+	Total uint64      `json:"total"` // 总条数
+}
+
+type SearchNodeTaintsRequest struct {
+	Page     uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页
+	PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数
+	OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`       // 排序字段
+	IsAsc    bool   `form:"isAsc,optional" default:"false"`
+	NodeId   uint64 `form:"nodeId,optional" validate:"required"`
+	Key      string `form:"key,optional" validate:"omitempty"`
+}
+
+type SearchNodeTaintsResponse struct {
+	Items []NodeTaint `json:"items"` // 污点数据列表
+	Total uint64      `json:"total"` // 总条数
 }
 
 type SearchOnecClusterConnInfoRequest struct {
@@ -202,6 +281,7 @@ type SearchOnecNodeRequest struct {
 	NodeName         string `form:"nodeName,optional" validate:"omitempty,max=50"`                    // 节点名称
 	NodeUid          string `form:"nodeUid,optional" validate:"omitempty,max=50"`                     // 节点UID
 	Status           string `form:"status,optional" validate:"omitempty"`
+	SyncStatus       int64  `form:"syncStatus,optional" validate:"omitempty"`
 	Roles            string `form:"roles,optional" validate:"omitempty"`
 	PodCidr          string `form:"podCidr,optional" validate:"omitempty"`
 	Unschedulable    int64  `form:"unschedulable,optional" validate:"omitempty"`
@@ -220,8 +300,7 @@ type SearchOnecNodeResponse struct {
 }
 
 type SyncOnecNodeRequest struct {
-	Id          uint64 `path:"id" validate:"required"`
-	ClusterUuid string `json:"clusterUuid" validate:"required"` // 集群UUID
+	Id uint64 `path:"id" validate:"required"`
 }
 
 type UpdateOnecClusterConnInfoRequest struct {

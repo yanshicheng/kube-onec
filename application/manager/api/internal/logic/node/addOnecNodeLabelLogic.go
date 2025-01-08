@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecnodeservice"
+	"github.com/yanshicheng/kube-onec/utils"
 
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/types"
@@ -25,11 +26,12 @@ func NewAddOnecNodeLabelLogic(ctx context.Context, svcCtx *svc.ServiceContext) *
 }
 
 func (l *AddOnecNodeLabelLogic) AddOnecNodeLabel(req *types.AddOnecNodeLabelRequest) (resp string, err error) {
+
 	_, err = l.svcCtx.NodeRpc.AddOnecNodeLabel(l.ctx, &onecnodeservice.AddOnecNodeLabelReq{
-		ClusterUuid: req.ClusterUuid,
-		Id:          req.Id,
-		Key:         req.Key,
-		Value:       req.Value,
+		NodeId:    req.Id,
+		Key:       req.Key,
+		Value:     req.Value,
+		UpdatedBy: utils.GetAccount(l.ctx),
 	})
 	if err != nil {
 		l.Logger.Errorf("添加节点标签失败: %v", err)

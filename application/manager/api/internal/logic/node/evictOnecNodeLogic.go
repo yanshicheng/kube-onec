@@ -2,6 +2,8 @@ package node
 
 import (
 	"context"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/utils"
 
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/types"
@@ -24,7 +26,13 @@ func NewEvictOnecNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Evi
 }
 
 func (l *EvictOnecNodeLogic) EvictOnecNode(req *types.DefaultIdRequest) (resp string, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	_, err = l.svcCtx.NodeRpc.EvictNodePod(l.ctx, &pb.EvictNodePodReq{
+		NodeId:    req.Id,
+		UpdatedBy: utils.GetAccount(l.ctx),
+	})
+	if err != nil {
+		l.Logger.Errorf("驱逐节点失败: %v", err)
+		return
+	}
+	return "节点 pod 驱逐成功!", nil
 }

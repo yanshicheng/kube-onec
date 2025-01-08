@@ -3,6 +3,7 @@ package sysroleservicelogic
 import (
 	"context"
 	"errors"
+	"github.com/yanshicheng/kube-onec/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
@@ -32,7 +33,7 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 
 	// 动态拼接条件
 	if in.RoleName != "" {
-		queryStr.WriteString("role_name LIKE ? AND ")
+		queryStr.WriteString("role_name LIKE ? AND")
 		params = append(params, "%"+in.RoleName+"%")
 	}
 	if in.Description != "" {
@@ -53,10 +54,7 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 
 	// 调用查询
 	roles, total, err := l.svcCtx.SysRole.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)

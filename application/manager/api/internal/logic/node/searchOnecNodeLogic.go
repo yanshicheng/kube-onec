@@ -26,14 +26,15 @@ func NewSearchOnecNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 func (l *SearchOnecNodeLogic) SearchOnecNode(req *types.SearchOnecNodeRequest) (resp *types.SearchOnecNodeResponse, err error) {
 	// 调用 RPC 方法，将请求参数映射到 RPC 请求结构
 	res, err := l.svcCtx.NodeRpc.SearchOnecNode(l.ctx, &onecnodeservice.SearchOnecNodeReq{
-		Page:             req.Page,             // 当前页码
-		PageSize:         req.PageSize,         // 每页条数
-		OrderStr:         req.OrderStr,         // 排序字段
-		IsAsc:            req.IsAsc,            // 是否升序
-		ClusterUuid:      req.ClusterUuid,      // 所属集群ID
-		NodeName:         req.NodeName,         // 节点名称
-		NodeUid:          req.NodeUid,          // 节点UID
-		Status:           req.Status,           // 节点状态
+		Page:             req.Page,        // 当前页码
+		PageSize:         req.PageSize,    // 每页条数
+		OrderStr:         req.OrderStr,    // 排序字段
+		IsAsc:            req.IsAsc,       // 是否升序
+		ClusterUuid:      req.ClusterUuid, // 所属集群ID
+		NodeName:         req.NodeName,    // 节点名称
+		NodeUid:          req.NodeUid,     // 节点UID
+		Status:           req.Status,      // 节点状态
+		SyncStatus:       req.SyncStatus,
 		Roles:            req.Roles,            // 节点角色列表
 		PodCidr:          req.PodCidr,          // Pod CIDR
 		Unschedulable:    req.Unschedulable,    // 是否不可调度

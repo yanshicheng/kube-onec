@@ -610,18 +610,22 @@ var OnecClusterConnInfoService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OnecNodeService_DelOnecNode_FullMethodName           = "/pb.OnecNodeService/DelOnecNode"
-	OnecNodeService_GetOnecNodeById_FullMethodName       = "/pb.OnecNodeService/GetOnecNodeById"
-	OnecNodeService_SearchOnecNode_FullMethodName        = "/pb.OnecNodeService/SearchOnecNode"
-	OnecNodeService_AddOnecNodeLabel_FullMethodName      = "/pb.OnecNodeService/AddOnecNodeLabel"
-	OnecNodeService_DelOnecNodeLabel_FullMethodName      = "/pb.OnecNodeService/DelOnecNodeLabel"
-	OnecNodeService_AddOnecNodeAnnotation_FullMethodName = "/pb.OnecNodeService/AddOnecNodeAnnotation"
-	OnecNodeService_DelOnecNodeAnnotation_FullMethodName = "/pb.OnecNodeService/DelOnecNodeAnnotation"
-	OnecNodeService_ForbidOnecNode_FullMethodName        = "/pb.OnecNodeService/ForbidOnecNode"
-	OnecNodeService_CancelForbidOnecNode_FullMethodName  = "/pb.OnecNodeService/CancelForbidOnecNode"
-	OnecNodeService_AddOnecNodeTaint_FullMethodName      = "/pb.OnecNodeService/AddOnecNodeTaint"
-	OnecNodeService_DelOnecNodeTaint_FullMethodName      = "/pb.OnecNodeService/DelOnecNodeTaint"
-	OnecNodeService_SyncOnecNode_FullMethodName          = "/pb.OnecNodeService/SyncOnecNode"
+	OnecNodeService_DelOnecNode_FullMethodName                  = "/pb.OnecNodeService/DelOnecNode"
+	OnecNodeService_GetOnecNodeById_FullMethodName              = "/pb.OnecNodeService/GetOnecNodeById"
+	OnecNodeService_SearchOnecNode_FullMethodName               = "/pb.OnecNodeService/SearchOnecNode"
+	OnecNodeService_AddOnecNodeLabel_FullMethodName             = "/pb.OnecNodeService/AddOnecNodeLabel"
+	OnecNodeService_DelOnecNodeLabel_FullMethodName             = "/pb.OnecNodeService/DelOnecNodeLabel"
+	OnecNodeService_AddOnecNodeAnnotation_FullMethodName        = "/pb.OnecNodeService/AddOnecNodeAnnotation"
+	OnecNodeService_DelOnecNodeAnnotation_FullMethodName        = "/pb.OnecNodeService/DelOnecNodeAnnotation"
+	OnecNodeService_ForbidScheduled_FullMethodName              = "/pb.OnecNodeService/ForbidScheduled"
+	OnecNodeService_EnableScheduledNode_FullMethodName          = "/pb.OnecNodeService/EnableScheduledNode"
+	OnecNodeService_AddOnecNodeTaint_FullMethodName             = "/pb.OnecNodeService/AddOnecNodeTaint"
+	OnecNodeService_DelOnecNodeTaint_FullMethodName             = "/pb.OnecNodeService/DelOnecNodeTaint"
+	OnecNodeService_SyncOnecNode_FullMethodName                 = "/pb.OnecNodeService/SyncOnecNode"
+	OnecNodeService_EvictNodePod_FullMethodName                 = "/pb.OnecNodeService/EvictNodePod"
+	OnecNodeService_SearchOnecNodeLabelList_FullMethodName      = "/pb.OnecNodeService/SearchOnecNodeLabelList"
+	OnecNodeService_SearchOnecNodeAnnotationList_FullMethodName = "/pb.OnecNodeService/SearchOnecNodeAnnotationList"
+	OnecNodeService_SearchOnecNodeTaintList_FullMethodName      = "/pb.OnecNodeService/SearchOnecNodeTaintList"
 )
 
 // OnecNodeServiceClient is the client API for OnecNodeService service.
@@ -641,15 +645,20 @@ type OnecNodeServiceClient interface {
 	// 节点删除注解
 	DelOnecNodeAnnotation(ctx context.Context, in *DelOnecNodeAnnotationReq, opts ...grpc.CallOption) (*DelOnecNodeAnnotationResp, error)
 	// 禁止调度
-	ForbidOnecNode(ctx context.Context, in *ForbidOnecNodeReq, opts ...grpc.CallOption) (*ForbidOnecNodeResp, error)
+	ForbidScheduled(ctx context.Context, in *ForbidScheduledReq, opts ...grpc.CallOption) (*ForbidScheduledResp, error)
 	// 取消禁止调度
-	CancelForbidOnecNode(ctx context.Context, in *CancelForbidOnecNodeReq, opts ...grpc.CallOption) (*CancelForbidOnecNodeResp, error)
+	EnableScheduledNode(ctx context.Context, in *EnableScheduledNodeReq, opts ...grpc.CallOption) (*EnableScheduledNodeResp, error)
 	// 添加污点
 	AddOnecNodeTaint(ctx context.Context, in *AddOnecNodeTaintReq, opts ...grpc.CallOption) (*AddOnecNodeTaintResp, error)
 	// 删除污点
 	DelOnecNodeTaint(ctx context.Context, in *DelOnecNodeTaintReq, opts ...grpc.CallOption) (*DelOnecNodeTaintResp, error)
 	// 同步节点信息
 	SyncOnecNode(ctx context.Context, in *SyncOnecNodeReq, opts ...grpc.CallOption) (*SyncOnecNodeResp, error)
+	// 驱逐节点pod
+	EvictNodePod(ctx context.Context, in *EvictNodePodReq, opts ...grpc.CallOption) (*EvictNodePodResp, error)
+	SearchOnecNodeLabelList(ctx context.Context, in *SearchOnecNodeLabelListReq, opts ...grpc.CallOption) (*SearchOnecNodeLabelListResp, error)
+	SearchOnecNodeAnnotationList(ctx context.Context, in *SearchOnecNodeAnnotationListReq, opts ...grpc.CallOption) (*SearchOnecNodeAnnotationListResp, error)
+	SearchOnecNodeTaintList(ctx context.Context, in *SearchOnecNodeTaintListReq, opts ...grpc.CallOption) (*SearchOnecNodeTaintListResp, error)
 }
 
 type onecNodeServiceClient struct {
@@ -730,20 +739,20 @@ func (c *onecNodeServiceClient) DelOnecNodeAnnotation(ctx context.Context, in *D
 	return out, nil
 }
 
-func (c *onecNodeServiceClient) ForbidOnecNode(ctx context.Context, in *ForbidOnecNodeReq, opts ...grpc.CallOption) (*ForbidOnecNodeResp, error) {
+func (c *onecNodeServiceClient) ForbidScheduled(ctx context.Context, in *ForbidScheduledReq, opts ...grpc.CallOption) (*ForbidScheduledResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ForbidOnecNodeResp)
-	err := c.cc.Invoke(ctx, OnecNodeService_ForbidOnecNode_FullMethodName, in, out, cOpts...)
+	out := new(ForbidScheduledResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_ForbidScheduled_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *onecNodeServiceClient) CancelForbidOnecNode(ctx context.Context, in *CancelForbidOnecNodeReq, opts ...grpc.CallOption) (*CancelForbidOnecNodeResp, error) {
+func (c *onecNodeServiceClient) EnableScheduledNode(ctx context.Context, in *EnableScheduledNodeReq, opts ...grpc.CallOption) (*EnableScheduledNodeResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CancelForbidOnecNodeResp)
-	err := c.cc.Invoke(ctx, OnecNodeService_CancelForbidOnecNode_FullMethodName, in, out, cOpts...)
+	out := new(EnableScheduledNodeResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_EnableScheduledNode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -780,6 +789,46 @@ func (c *onecNodeServiceClient) SyncOnecNode(ctx context.Context, in *SyncOnecNo
 	return out, nil
 }
 
+func (c *onecNodeServiceClient) EvictNodePod(ctx context.Context, in *EvictNodePodReq, opts ...grpc.CallOption) (*EvictNodePodResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(EvictNodePodResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_EvictNodePod_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecNodeServiceClient) SearchOnecNodeLabelList(ctx context.Context, in *SearchOnecNodeLabelListReq, opts ...grpc.CallOption) (*SearchOnecNodeLabelListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecNodeLabelListResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_SearchOnecNodeLabelList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecNodeServiceClient) SearchOnecNodeAnnotationList(ctx context.Context, in *SearchOnecNodeAnnotationListReq, opts ...grpc.CallOption) (*SearchOnecNodeAnnotationListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecNodeAnnotationListResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_SearchOnecNodeAnnotationList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *onecNodeServiceClient) SearchOnecNodeTaintList(ctx context.Context, in *SearchOnecNodeTaintListReq, opts ...grpc.CallOption) (*SearchOnecNodeTaintListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchOnecNodeTaintListResp)
+	err := c.cc.Invoke(ctx, OnecNodeService_SearchOnecNodeTaintList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OnecNodeServiceServer is the server API for OnecNodeService service.
 // All implementations must embed UnimplementedOnecNodeServiceServer
 // for forward compatibility.
@@ -797,15 +846,20 @@ type OnecNodeServiceServer interface {
 	// 节点删除注解
 	DelOnecNodeAnnotation(context.Context, *DelOnecNodeAnnotationReq) (*DelOnecNodeAnnotationResp, error)
 	// 禁止调度
-	ForbidOnecNode(context.Context, *ForbidOnecNodeReq) (*ForbidOnecNodeResp, error)
+	ForbidScheduled(context.Context, *ForbidScheduledReq) (*ForbidScheduledResp, error)
 	// 取消禁止调度
-	CancelForbidOnecNode(context.Context, *CancelForbidOnecNodeReq) (*CancelForbidOnecNodeResp, error)
+	EnableScheduledNode(context.Context, *EnableScheduledNodeReq) (*EnableScheduledNodeResp, error)
 	// 添加污点
 	AddOnecNodeTaint(context.Context, *AddOnecNodeTaintReq) (*AddOnecNodeTaintResp, error)
 	// 删除污点
 	DelOnecNodeTaint(context.Context, *DelOnecNodeTaintReq) (*DelOnecNodeTaintResp, error)
 	// 同步节点信息
 	SyncOnecNode(context.Context, *SyncOnecNodeReq) (*SyncOnecNodeResp, error)
+	// 驱逐节点pod
+	EvictNodePod(context.Context, *EvictNodePodReq) (*EvictNodePodResp, error)
+	SearchOnecNodeLabelList(context.Context, *SearchOnecNodeLabelListReq) (*SearchOnecNodeLabelListResp, error)
+	SearchOnecNodeAnnotationList(context.Context, *SearchOnecNodeAnnotationListReq) (*SearchOnecNodeAnnotationListResp, error)
+	SearchOnecNodeTaintList(context.Context, *SearchOnecNodeTaintListReq) (*SearchOnecNodeTaintListResp, error)
 	mustEmbedUnimplementedOnecNodeServiceServer()
 }
 
@@ -837,11 +891,11 @@ func (UnimplementedOnecNodeServiceServer) AddOnecNodeAnnotation(context.Context,
 func (UnimplementedOnecNodeServiceServer) DelOnecNodeAnnotation(context.Context, *DelOnecNodeAnnotationReq) (*DelOnecNodeAnnotationResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DelOnecNodeAnnotation not implemented")
 }
-func (UnimplementedOnecNodeServiceServer) ForbidOnecNode(context.Context, *ForbidOnecNodeReq) (*ForbidOnecNodeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ForbidOnecNode not implemented")
+func (UnimplementedOnecNodeServiceServer) ForbidScheduled(context.Context, *ForbidScheduledReq) (*ForbidScheduledResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ForbidScheduled not implemented")
 }
-func (UnimplementedOnecNodeServiceServer) CancelForbidOnecNode(context.Context, *CancelForbidOnecNodeReq) (*CancelForbidOnecNodeResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CancelForbidOnecNode not implemented")
+func (UnimplementedOnecNodeServiceServer) EnableScheduledNode(context.Context, *EnableScheduledNodeReq) (*EnableScheduledNodeResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EnableScheduledNode not implemented")
 }
 func (UnimplementedOnecNodeServiceServer) AddOnecNodeTaint(context.Context, *AddOnecNodeTaintReq) (*AddOnecNodeTaintResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddOnecNodeTaint not implemented")
@@ -851,6 +905,18 @@ func (UnimplementedOnecNodeServiceServer) DelOnecNodeTaint(context.Context, *Del
 }
 func (UnimplementedOnecNodeServiceServer) SyncOnecNode(context.Context, *SyncOnecNodeReq) (*SyncOnecNodeResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SyncOnecNode not implemented")
+}
+func (UnimplementedOnecNodeServiceServer) EvictNodePod(context.Context, *EvictNodePodReq) (*EvictNodePodResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EvictNodePod not implemented")
+}
+func (UnimplementedOnecNodeServiceServer) SearchOnecNodeLabelList(context.Context, *SearchOnecNodeLabelListReq) (*SearchOnecNodeLabelListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecNodeLabelList not implemented")
+}
+func (UnimplementedOnecNodeServiceServer) SearchOnecNodeAnnotationList(context.Context, *SearchOnecNodeAnnotationListReq) (*SearchOnecNodeAnnotationListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecNodeAnnotationList not implemented")
+}
+func (UnimplementedOnecNodeServiceServer) SearchOnecNodeTaintList(context.Context, *SearchOnecNodeTaintListReq) (*SearchOnecNodeTaintListResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecNodeTaintList not implemented")
 }
 func (UnimplementedOnecNodeServiceServer) mustEmbedUnimplementedOnecNodeServiceServer() {}
 func (UnimplementedOnecNodeServiceServer) testEmbeddedByValue()                         {}
@@ -999,38 +1065,38 @@ func _OnecNodeService_DelOnecNodeAnnotation_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OnecNodeService_ForbidOnecNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ForbidOnecNodeReq)
+func _OnecNodeService_ForbidScheduled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForbidScheduledReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OnecNodeServiceServer).ForbidOnecNode(ctx, in)
+		return srv.(OnecNodeServiceServer).ForbidScheduled(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OnecNodeService_ForbidOnecNode_FullMethodName,
+		FullMethod: OnecNodeService_ForbidScheduled_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OnecNodeServiceServer).ForbidOnecNode(ctx, req.(*ForbidOnecNodeReq))
+		return srv.(OnecNodeServiceServer).ForbidScheduled(ctx, req.(*ForbidScheduledReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OnecNodeService_CancelForbidOnecNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CancelForbidOnecNodeReq)
+func _OnecNodeService_EnableScheduledNode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EnableScheduledNodeReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OnecNodeServiceServer).CancelForbidOnecNode(ctx, in)
+		return srv.(OnecNodeServiceServer).EnableScheduledNode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OnecNodeService_CancelForbidOnecNode_FullMethodName,
+		FullMethod: OnecNodeService_EnableScheduledNode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OnecNodeServiceServer).CancelForbidOnecNode(ctx, req.(*CancelForbidOnecNodeReq))
+		return srv.(OnecNodeServiceServer).EnableScheduledNode(ctx, req.(*EnableScheduledNodeReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1089,6 +1155,78 @@ func _OnecNodeService_SyncOnecNode_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OnecNodeService_EvictNodePod_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EvictNodePodReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecNodeServiceServer).EvictNodePod(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecNodeService_EvictNodePod_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecNodeServiceServer).EvictNodePod(ctx, req.(*EvictNodePodReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecNodeService_SearchOnecNodeLabelList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecNodeLabelListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeLabelList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecNodeService_SearchOnecNodeLabelList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeLabelList(ctx, req.(*SearchOnecNodeLabelListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecNodeService_SearchOnecNodeAnnotationList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecNodeAnnotationListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeAnnotationList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecNodeService_SearchOnecNodeAnnotationList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeAnnotationList(ctx, req.(*SearchOnecNodeAnnotationListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OnecNodeService_SearchOnecNodeTaintList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchOnecNodeTaintListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeTaintList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecNodeService_SearchOnecNodeTaintList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecNodeServiceServer).SearchOnecNodeTaintList(ctx, req.(*SearchOnecNodeTaintListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OnecNodeService_ServiceDesc is the grpc.ServiceDesc for OnecNodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1125,12 +1263,12 @@ var OnecNodeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OnecNodeService_DelOnecNodeAnnotation_Handler,
 		},
 		{
-			MethodName: "ForbidOnecNode",
-			Handler:    _OnecNodeService_ForbidOnecNode_Handler,
+			MethodName: "ForbidScheduled",
+			Handler:    _OnecNodeService_ForbidScheduled_Handler,
 		},
 		{
-			MethodName: "CancelForbidOnecNode",
-			Handler:    _OnecNodeService_CancelForbidOnecNode_Handler,
+			MethodName: "EnableScheduledNode",
+			Handler:    _OnecNodeService_EnableScheduledNode_Handler,
 		},
 		{
 			MethodName: "AddOnecNodeTaint",
@@ -1143,6 +1281,22 @@ var OnecNodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SyncOnecNode",
 			Handler:    _OnecNodeService_SyncOnecNode_Handler,
+		},
+		{
+			MethodName: "EvictNodePod",
+			Handler:    _OnecNodeService_EvictNodePod_Handler,
+		},
+		{
+			MethodName: "SearchOnecNodeLabelList",
+			Handler:    _OnecNodeService_SearchOnecNodeLabelList_Handler,
+		},
+		{
+			MethodName: "SearchOnecNodeAnnotationList",
+			Handler:    _OnecNodeService_SearchOnecNodeAnnotationList_Handler,
+		},
+		{
+			MethodName: "SearchOnecNodeTaintList",
+			Handler:    _OnecNodeService_SearchOnecNodeTaintList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

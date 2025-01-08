@@ -3,6 +3,7 @@ package node
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecnodeservice"
+	"github.com/yanshicheng/kube-onec/utils"
 
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/types"
@@ -25,11 +26,12 @@ func NewAddOnecNodeAnnotationLogic(ctx context.Context, svcCtx *svc.ServiceConte
 }
 
 func (l *AddOnecNodeAnnotationLogic) AddOnecNodeAnnotation(req *types.AddOnecNodeAnnotationRequest) (resp string, err error) {
+
 	_, err = l.svcCtx.NodeRpc.AddOnecNodeAnnotation(l.ctx, &onecnodeservice.AddOnecNodeAnnotationReq{
-		ClusterUuid: req.ClusterUuid,
-		Id:          req.Id,
-		Key:         req.Key,
-		Value:       req.Value,
+		NodeId:    req.Id,
+		Key:       req.Key,
+		Value:     req.Value,
+		UpdatedBy: utils.GetAccount(l.ctx),
 	})
 	if err != nil {
 		l.Logger.Errorf("添加节点注解失败: %v", err)

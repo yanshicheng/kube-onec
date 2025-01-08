@@ -48,6 +48,7 @@ func (l *GetOnecNodeByIdLogic) GetOnecNodeById(req *types.DefaultIdRequest) (res
 		Roles:            res.Data.Roles,
 		JoinAt:           res.Data.JoinAt,
 		PodCidr:          res.Data.PodCidr,
+		SyncStatus:       res.Data.SyncStatus,
 		Unschedulable:    res.Data.Unschedulable,
 		NodeIp:           res.Data.NodeIp,
 		Os:               res.Data.Os,

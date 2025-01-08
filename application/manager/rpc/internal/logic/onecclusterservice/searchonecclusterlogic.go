@@ -3,6 +3,7 @@ package onecclusterservicelogic
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
@@ -29,45 +30,42 @@ func (l *SearchOnecClusterLogic) SearchOnecCluster(in *pb.SearchOnecClusterReq) 
 	var queryStr strings.Builder
 	var params []interface{}
 	if in.Name != "" {
-		queryStr.WriteString(" AND name = ? ")
+		queryStr.WriteString("  name = ? AND")
 		params = append(params, "%"+in.Name+"%")
 	}
 	if in.Host != "" {
-		queryStr.WriteString(" AND host = ? ")
+		queryStr.WriteString("  host = ? AND")
 		params = append(params, "%"+in.Host+"%")
 	}
 	if in.EnvCode != "" {
-		queryStr.WriteString(" AND env_tag = ? ")
+		queryStr.WriteString("  env_tag = ? AND")
 		params = append(params, in.EnvCode)
 	}
 	if in.Version != "" {
-		queryStr.WriteString(" AND version = ? ")
+		queryStr.WriteString("  version = ? AND")
 		params = append(params, "%"+in.Version+"%")
 	}
 	if in.Platform != "" {
-		queryStr.WriteString(" AND platform = ? ")
+		queryStr.WriteString("  platform = ? AND")
 		params = append(params, "%"+in.Platform+"%")
 	}
 	if in.Version != "" {
-		queryStr.WriteString(" AND version = ? ")
+		queryStr.WriteString("  version = ? AND")
 		params = append(params, in.Version)
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString(" AND update_by = ? ")
+		queryStr.WriteString("  update_by = ? AND")
 		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString(" AND create_by = ? ")
+		queryStr.WriteString("  create_by = ? AND")
 		params = append(params, "%"+in.CreatedBy+"%")
 	}
 	//if in.ConnType != 0 {
 	//	queryStr.WriteString(" AND conn_type = ? ")
 	//	params = append(params, pb.OnecClusterConnType_name[int32(in.ConnType)])
 	//}
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 	matchedClusters, total, err := l.svcCtx.ClusterModel.Search(
 		l.ctx,
 		in.OrderStr,

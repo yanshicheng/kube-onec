@@ -2,6 +2,7 @@ package onecnodeservicelogic
 
 import (
 	"context"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/shared"
 
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
@@ -29,7 +30,7 @@ func (l *GetOnecNodeByIdLogic) GetOnecNodeById(in *pb.GetOnecNodeByIdReq) (*pb.G
 		l.Logger.Errorf("获取节点信息失败: %v", err)
 		return nil, err
 	}
-	data := ConvertDbModelToPbModel(res)
+	data := shared.ConvertDbModelToPbModel(res)
 	return &pb.GetOnecNodeByIdResp{
 		Data: data,
 	}, nil

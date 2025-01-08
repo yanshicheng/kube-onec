@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
@@ -32,29 +33,26 @@ func (l *SearchSysDictLogic) SearchSysDict(in *pb.SearchSysDictReq) (*pb.SearchS
 	var queryStr strings.Builder
 	var params []interface{}
 	if in.DictCode != "" {
-		queryStr.WriteString(" AND dict_code = ? ")
+		queryStr.WriteString("dict_code = ? AND")
 		params = append(params, "%"+in.DictCode+"%")
 	}
 	if in.DictName != "" {
-		queryStr.WriteString(" AND dict_name = ? ")
+		queryStr.WriteString("dict_name = ? AND")
 		params = append(params, "%"+in.DictName+"%")
 	}
 	if in.Description != "" {
-		queryStr.WriteString(" AND description = ? ")
+		queryStr.WriteString("description = ? AND")
 		params = append(params, "%"+in.Description+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString(" AND create_by = ? ")
+		queryStr.WriteString("create_by = ? AND")
 		params = append(params, in.CreatedBy)
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString(" AND update_by = ? ")
+		queryStr.WriteString("update_by = ? AND")
 		params = append(params, in.UpdatedBy)
 	}
-	query := queryStr.String()
-	if len(query) > 0 {
-		query = query[:len(query)-5] // 去掉 " AND "
-	}
+	query := utils.RemoveQueryADN(queryStr)
 	res, total, err := l.svcCtx.SysDict.Search(
 		l.ctx,
 		in.OrderStr, // 使用请求中的 orderStr

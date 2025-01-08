@@ -1,10 +1,10 @@
-Name: portal-api
+Name: applet-api
 Host: 0.0.0.0
-Port: 8888
+Port: 8810
 Timeout: 30000
 
 Log:
-  ServiceName: portal-api  # ServiceName 表示服务名称，可选项。
+  ServiceName: applet-api  # ServiceName 表示服务名称，可选项。
   Mode: "console"                # Mode 表示日志记录模式，默认为 "console"。# "console"：日志输出到控制台。# "file"：日志输出到文件。# "volume"：用于K8s，在日志文件名中添加主机名前缀。
   Encoding: "plain"               # Encoding 表示编码类型，默认为 "json"。# "json"：使用 JSON 编码。# "plain"：使用纯文本编码，通常用于开发环境。
   TimeFormat: "2006-01-02 15:04:05"  # TimeFormat 表示时间格式，可选项。 # 默认为 "2006-01-02T15:04:05.000Z07:00"。
@@ -26,3 +26,18 @@ Cache:
   Tls: false # bool
   NonBlock: true # bool
   PingTimeout: 3s # default 1s
+
+Auth:
+  AccessSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  AccessExpire: 604800
+  RefreshSecret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  RefreshExpire: 2592000
+  RefreshAfter: 604800
+
+PortalRPC:
+  Etcd:
+    Hosts:
+      - 172.16.1.61:2379
+    Key: portal.rpc
+  NonBlock: true
+  Timeout: 30000

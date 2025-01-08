@@ -13,9 +13,9 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func EnableOnecNodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func SearchOnecNodeLabelHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.DefaultIdRequest
+		var req types.SearchNodeLabelsRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
@@ -28,8 +28,8 @@ func EnableOnecNodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, errorx.New(40020, strErr))
 			return
 		}
-		l := node.NewEnableOnecNodeLogic(r.Context(), svcCtx)
-		resp, err := l.EnableOnecNode(&req)
+		l := node.NewSearchOnecNodeLabelLogic(r.Context(), svcCtx)
+		resp, err := l.SearchOnecNodeLabel(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

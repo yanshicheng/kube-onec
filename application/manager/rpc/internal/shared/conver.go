@@ -1,4 +1,4 @@
-package onecnodeservicelogic
+package shared
 
 import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"

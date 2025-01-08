@@ -12,45 +12,47 @@ import "./base.api"
 
 type (
     OnecNode {
-        Id uint64 `json:"id"`                             // 自增主键
-        ClusterUuid string `json:"clusterUuid"`                // 所属集群ID
-        NodeName string `json:"nodeName"`                     // 节点名称
-        Cpu int64 `json:"cpu"`                               // CPU核数
-        Memory float64 `json:"memory"`                         // 内存大小 (Mi)
-        MaxPods int64 `json:"maxPods"`                        // 最大Pod数量
-        IsGpu int64 `json:"isGpu"`                           // 是否包含GPU
-        NodeUid string `json:"nodeUid"`                       // 节点UID
-        Status string `json:"status"`                         // 节点状态
-        Roles string `json:"roles"`                           // 节点角色
-        JoinAt int64 `json:"joinAt"`                      // 加入集群时间
-        PodCidr string `json:"podCidr"`                       // Pod CIDR
-        Unschedulable int64 `json:"unschedulable"`             // 是否不可调度
-        NodeIp string `json:"nodeIp"`                         // 节点地址
-        Os string `json:"os"`                               // 操作系统
-        KernelVersion string `json:"kernelVersion"`            // 内核版本
+        Id uint64 `json:"id"`                                   // 自增主键
+        ClusterUuid string `json:"clusterUuid"`                 // 所属集群ID
+        NodeName string `json:"nodeName"`                       // 节点名称
+        Cpu int64 `json:"cpu"`                                  // CPU核数
+        Memory float64 `json:"memory"`                          // 内存大小 (Mi)
+        MaxPods int64 `json:"maxPods"`                          // 最大Pod数量
+        IsGpu int64 `json:"isGpu"`                              // 是否包含GPU
+        NodeUid string `json:"nodeUid"`                         // 节点UID
+        Status string `json:"status"`                           // 节点状态
+        Roles string `json:"roles"`                             // 节点角色
+        JoinAt int64 `json:"joinAt"`                            // 加入集群时间
+        PodCidr string `json:"podCidr"`                         // Pod CIDR
+        Unschedulable int64 `json:"unschedulable"`              // 是否不可调度
+        SyncStatus int64 `json:"syncStatus"`
+        NodeIp string `json:"nodeIp"`                           // 节点地址
+        Os string `json:"os"`                                   // 操作系统
+        KernelVersion string `json:"kernelVersion"`             // 内核版本
         ContainerRuntime string `json:"containerRuntime"`       // 容器运行时
-        KubeletVersion string `json:"kubeletVersion"`          // Kubelet版本
-        KubeletPort int64 `json:"kubeletPort"`               // Kubelet端口
+        KubeletVersion string `json:"kubeletVersion"`           // Kubelet版本
+        KubeletPort int64 `json:"kubeletPort"`                  // Kubelet端口
         OperatingSystem string `json:"operatingSystem"`         // 操作系统类型
-        Architecture string `json:"architecture"`             // 架构类型
-        CreatedBy string `json:"createdBy"`                   // 创建人
-        UpdatedBy string `json:"updatedBy"`                   // 更新人
-        createdAt int64 `json:"createdAt"`                 // 创建时间
-        UpdatedAt int64 `json:"updatedAt"`                 // 更新时间
+        Architecture string `json:"architecture"`               // 架构类型
+        CreatedBy string `json:"createdBy"`                     // 创建人
+        UpdatedBy string `json:"updatedBy"`                     // 更新人
+        createdAt int64 `json:"createdAt"`                      // 创建时间
+        UpdatedAt int64 `json:"updatedAt"`                      // 更新时间
     }
 
         // 搜索节点请求
     SearchOnecNodeRequest {
-        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`           // 当前页
-        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数
-        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`     // 排序字段
-        IsAsc bool `form:"isAsc,optional" default:"false"`                                    // 是否升序
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                   // 当前页
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`  // 每页条数
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`        // 排序字段
+        IsAsc bool `form:"isAsc,optional" default:"false"`                                         // 是否升序
         ClusterUuid string `form:"clusterUuid,optional" validate:"required,max=50"`                // 集群ID
-        NodeName string `form:"nodeName,optional" validate:"omitempty,max=50"`                   // 节点名称
-        NodeUid string `form:"nodeUid,optional" validate:"omitempty,max=50"`                   // 节点UID
+        NodeName string `form:"nodeName,optional" validate:"omitempty,max=50"`                     // 节点名称
+        NodeUid string `form:"nodeUid,optional" validate:"omitempty,max=50"`                       // 节点UID
         Status string `form:"status,optional" validate:"omitempty"`
+        SyncStatus int64 `form:"syncStatus,optional" validate:"omitempty"`
         Roles string `form:"roles,optional" validate:"omitempty"`
-        PodCidr  string `form:"podCidr,optional" validate:"omitempty"`
+        PodCidr string `form:"podCidr,optional" validate:"omitempty"`
         Unschedulable int64 `form:"unschedulable,optional" validate:"omitempty"`
         NodeIp string `form:"nodeIp,optional" validate:"omitempty"`
         Os string `form:"os,optional" validate:"omitempty"`
@@ -65,51 +67,131 @@ type (
         // 搜索节点响应
     SearchOnecNodeResponse {
         Items []OnecNode `json:"items"`  // 节点数据列表
-        Total uint64 `json:"total"`     // 总条数
+        Total uint64 `json:"total"`      // 总条数
     }
 
         // 同步节点请求
     SyncOnecNodeRequest {
         Id uint64 `path:"id" validate:"required"`
-        ClusterUuid string `json:"clusterUuid" validate:"required"`    // 集群UUID
     }
 
         // 添加标签请求
     AddOnecNodeLabelRequest {
-        Id uint64 `json:"id" validate:"required"`                     // 节点ID
-        ClusterUuid string `json:"clusterUuid" validate:"required"`          // 集群UUID
-        Key string `json:"key" validate:"required"`                   // 标签键
-        Value string `json:"value" validate:"required"`                // 标签值
+        Id uint64 `json:"id" validate:"required"`                            // 节点ID
+        Key string `json:"key" validate:"required"`                          // 标签键
+        Value string `json:"value" validate:"required"`                      // 标签值
     }
 
         // 删除标签请求
     DelOnecNodeLabelRequest {
-        Id uint64 `json:"id" validate:"required"`                     // 节点ID
-        ClusterUuid string `json:"clusterUuid" validate:"required"`          // 集群UUID
-        Key string `json:"key" validate:"required"`                   // 标签键
+        Id uint64 `path:"id" validate:"required"`                            // 节点ID
     }
 
         // 添加注解请求
     AddOnecNodeAnnotationRequest {
-        Id uint64 `json:"id" validate:"required"`                      // 节点ID
-        ClusterUuid string `json:"clusterUuid" validate:"required"`           // 集群UUID
-        Key string `json:"key" validate:"required"`                    // 注解键
-        Value string `json:"value" validate:"required"`                 // 注解值
+        Id uint64 `json:"id" validate:"required"`                             // 节点ID
+        Key string `json:"key" validate:"required"`                           // 注解键
+        Value string `json:"value" validate:"required"`                       // 注解值
     }
 
         // 删除注解请求
     DelOnecNodeAnnotationRequest {
-        Id uint64 `json:"id" validate:"required"`                      // 节点ID
-        ClusterUuid string `json:"clusterUuid" validate:"required"`           // 集群UUID
-        Key string `json:"key" validate:"required"`                    // 注解键
+        Id uint64 `path:"id" validate:"required"`                             // 节点ID
     }
-     DelOnecNodeRequest {
-            Id uint64 `json:"id" validate:"required"`                      // 节点ID
-            ClusterUuid string `json:"clusterUuid" validate:"required"`
-        }
 
-    AddOnecNodeTaintRequest {}
-    DelOnecNodeTaintRequest {}
+    DelOnecNodeRequest {
+        Id uint64 `path:"id" validate:"required"`                      // 节点ID
+    }
+
+    AddOnecNodeTaintRequest {
+        Id uint64 `json:"id" validate:"required"`
+        Key string `json:"key" validate:"required"`
+        Value string `json:"value" validate:"required"`
+        Effect string `json:"effect" validate:"required"`
+    }
+    DelOnecNodeTaintRequest {
+        Id uint64 `json:"id" validate:"required"`
+    }
+
+        // 禁止调度 ForbidScheduled
+    ForbidScheduledRequest {
+        Id uint64 `path:"id" validate:"required"`
+    }
+        // 启用调度 EnableScheduled
+    EnableScheduledRequest {
+        Id uint64 `path:"id" validate:"required"`
+    }
+
+        // 查询标签
+    SearchNodeLabelsRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                   // 当前页
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`  // 每页条数
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`        // 排序字段
+        IsAsc bool `form:"isAsc,optional" default:"false"`
+        NodeId uint64 `form:"nodeId,optional" validate:"required"`
+        Key string `form:"key,optional" validate:"omitempty"`
+    }
+
+    NodeLabel {
+        Id uint64 `json:"id"`
+        ResourceId uint64 `json:"resourceId"`
+        ResourceType string `json:"resourceType"`
+        Key string `json:"key"`
+        Value string `json:"value"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+
+    SearchNodeLabelsResponse {
+        Items []NodeLabel `json:"items"`  // 标签数据列表
+        Total uint64 `json:"total"`       // 总条数
+    }
+
+        // 查询注解
+    SearchNodeAnnotationsRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                   // 当前页
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`  // 每页条数
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`        // 排序字段
+        IsAsc bool `form:"isAsc,optional" default:"false"`
+        NodeId uint64 `form:"nodeId,optional" validate:"required"`
+        Key string `form:"key,optional" validate:"omitempty"`
+    }
+    NodeAnnotation {
+        Id uint64 `json:"id"`
+        ResourceId uint64 `json:"resourceId"`
+        ResourceType string `json:"resourceType"`
+        Key string `json:"key"`
+        Value string `json:"value"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    SearchNodeAnnotationsResponse {
+        Items []NodeAnnotation `json:"items"`  // 注解数据列表
+        Total uint64 `json:"total"`            // 总条数
+    }
+
+        // 查询污点
+    SearchNodeTaintsRequest {
+        Page uint64 `form:"page,optional" default:"1" validate:"required,min=1"`                   // 当前页
+        PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"`  // 每页条数
+        OrderStr string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`        // 排序字段
+        IsAsc bool `form:"isAsc,optional" default:"false"`
+        NodeId uint64 `form:"nodeId,optional" validate:"required"`
+        Key string `form:"key,optional" validate:"omitempty"`
+    }
+    NodeTaint {
+        Id uint64 `json:"id"`
+        NodeId uint64 `json:"nodeId"`
+        Key string `json:"key"`
+        Value string `json:"value"`
+        EffectCode string `json:"effectCode"`
+        CreatedAt int64 `json:"createdAt"`
+        UpdatedAt int64 `json:"updatedAt"`
+    }
+    SearchNodeTaintsResponse {
+        Items []NodeTaint `json:"items"`  // 污点数据列表
+        Total uint64 `json:"total"`       // 总条数
+    }
 )
 
 @server(
@@ -134,40 +216,52 @@ service manager-api {
 
     // 同步节点
     @handler SyncOnecNodeHandler
-    post /:id/sync (SyncOnecNodeRequest) returns (string)
+    post /sync/:id (SyncOnecNodeRequest) returns (string)
 
     // 添加标签
     @handler AddOnecNodeLabelHandler
-    post /:id/labels (AddOnecNodeLabelRequest) returns (string)
+    post /labels (AddOnecNodeLabelRequest) returns (string)
 
     // 删除标签
     @handler DelOnecNodeLabelHandler
-    delete /:id/labels (DelOnecNodeLabelRequest) returns (string)
+    delete /labels/:id (DelOnecNodeLabelRequest) returns (string)
 
     // 添加注解
     @handler AddOnecNodeAnnotationHandler
-    post /:id/annotations (AddOnecNodeAnnotationRequest) returns (string)
+    post /annotations (AddOnecNodeAnnotationRequest) returns (string)
 
     // 删除注解
     @handler DelOnecNodeAnnotationHandler
-    delete /:id/annotations (DelOnecNodeAnnotationRequest) returns (string)
+    delete /annotations/:id (DelOnecNodeAnnotationRequest) returns (string)
 
     // 禁止调度
-    @handler DisableOnecNodeHandler
-    post /:id/disable (DefaultIdRequest) returns (string)
+    @handler ForbidScheduledNodeHandler
+    put /disable/:id (ForbidScheduledRequest) returns (string)
 
     // 启用调度
-    @handler EnableOnecNodeHandler
-    post /:id/enable (DefaultIdRequest) returns (string)
+    @handler EnableScheduledNodeHandler
+    put /enable/:id (EnableScheduledRequest) returns (string)
 
     // 驱逐
     @handler EvictOnecNodeHandler
-    post /:id/evict (DefaultIdRequest) returns (string)
+    post /evict/:id (DefaultIdRequest) returns (string)
 
     // 污点添加
     @handler AddOnecNodeTaintHandler
-    post /:id/taints (AddOnecNodeTaintRequest) returns (string)
+    post /taints (AddOnecNodeTaintRequest) returns (string)
     // 污点删除
     @handler DelOnecNodeTaintHandler
-    delete /:id/taints (DelOnecNodeTaintRequest) returns (string)
+    delete /taints/:id (DelOnecNodeTaintRequest) returns (string)
+
+    // 污点搜索
+    @handler SearchOnecNodeTaintHandler
+    get /taints (SearchNodeTaintsRequest) returns (SearchNodeTaintsResponse)
+
+    // 标签搜索
+    @handler SearchOnecNodeLabelHandler
+    get /labels (SearchNodeLabelsRequest) returns (SearchNodeLabelsResponse)
+
+    // 注解搜索
+    @handler SearchOnecNodeAnnotationHandler
+    get /annotations (SearchNodeAnnotationsRequest) returns (SearchNodeAnnotationsResponse)
 }

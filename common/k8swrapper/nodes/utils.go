@@ -13,10 +13,9 @@ func getNodeTaints(taint []corev1.Taint) []core.Taint {
 	taints := make([]core.Taint, len(taint))
 	for i, taint := range taint {
 		taints[i] = core.Taint{
-			Key:       taint.Key,
-			Value:     taint.Value,
-			Effect:    string(taint.Effect),
-			TimeAdded: taint.TimeAdded.Time, // Kubernetes API 没有提供 Taint 添加时间
+			Key:    taint.Key,
+			Value:  taint.Value,
+			Effect: string(taint.Effect),
 		}
 	}
 	return taints

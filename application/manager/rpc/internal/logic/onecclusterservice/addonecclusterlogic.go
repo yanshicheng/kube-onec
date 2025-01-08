@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/shared"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
 	"github.com/yanshicheng/kube-onec/utils"
@@ -14,11 +15,6 @@ import (
 	portalPb "github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 
 	"github.com/zeromicro/go-zero/core/logx"
-)
-
-const (
-	DictEnvCode         = "cluster_env"
-	DictTaintEffectCode = "cluster_taint_effect"
 )
 
 type AddOnecClusterLogic struct {
@@ -71,7 +67,7 @@ func (l *AddOnecClusterLogic) addTokenCluster(in *pb.AddOnecClusterReq) (*pb.Add
 	l.Logger.Infof("集群连接成功: %v", in.Host)
 
 	// 获取集群信息
-	clusterInfo, err := client.GetCluster().GetClusterInfo()
+	clusterInfo, err := client.GetClusterClient().GetClusterInfo()
 	if err != nil {
 		l.Logger.Errorf("获取集群信息失败: %v", err)
 		return nil, code.GetClusterInfoErr
@@ -79,7 +75,7 @@ func (l *AddOnecClusterLogic) addTokenCluster(in *pb.AddOnecClusterReq) (*pb.Add
 
 	// 检查 env Code 是否存在
 	if _, err := l.svcCtx.SysDictItemRpc.CheckDictItemCode(l.ctx, &portalPb.CheckDictItemCodeReq{
-		DictCode: DictEnvCode,
+		DictCode: shared.DictEnvCode,
 		ItemCode: in.EnvCode,
 	}); err != nil {
 		l.Logger.Errorf("字典项不存在: %v", err)
@@ -120,7 +116,7 @@ func (l *AddOnecClusterLogic) addTokenCluster(in *pb.AddOnecClusterReq) (*pb.Add
 	newCluster.Id = uint64(id)
 
 	// 增加集群节点信息
-	nodes, err := client.GetNodes().GetAllNodesInfo()
+	nodes, err := client.GetNodeClient().GetAllNodesInfo()
 	if err != nil {
 		l.Logger.Errorf("获取节点信息失败: %v", err)
 		newCluster.Status = 0

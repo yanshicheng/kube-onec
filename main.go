@@ -33,9 +33,9 @@ func main() {
 		return
 	}
 
-	client.GetNodes().AddLabel("ik8s-master-01", "test", "test")
-	fmt.Println(client.GetCluster().GetClusterInfo())
-	info, err := client.GetNodes().GetAllNodesInfo()
+	client.GetNodeClient().AddLabel("ik8s-master-01", "test", "test")
+	fmt.Println(client.GetClusterClient().GetClusterInfo())
+	info, err := client.GetNodeClient().GetAllNodesInfo()
 	if err != nil {
 		return
 	}
