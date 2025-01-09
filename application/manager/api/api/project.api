@@ -62,15 +62,30 @@ type (
         CpuOvercommit float64 `json:"cpuOvercommit"`       // CPU 超配比（如 1.5 表示允许超配 50%）
         CpuLimit float64 `json:"cpuLimit"`                 // CPU 上限值（单位：核）
         CpuUsed float64 `json:"cpuUsed"`                   // 已使用的 CPU 资源（单位：核）
+        CpuLimitRemain float64 `json:"cpuLimitRemain"`
         MemoryQuota float64 `json:"memoryQuota"`           // 内存分配配额（单位：GiB）
         MemoryOvercommit float64 `json:"memoryOvercommit"` // 内存超配比（如 1.2 表示允许超配 20%）
         MemoryLimit float64 `json:"memoryLimit"`           // 内存上限值（单位：GiB）
         MemoryUsed float64 `json:"memoryUsed"`             // 已使用的内存资源（单位：GiB）
+        MemoryLimitRemain float64 `json:"memoryLimitRemain"`
         StorageLimit int64 `json:"storageLimit"`           // 项目可使用的存储总量（单位：GiB）
+        StorageUsed int64 `json:"storageUsed"`
+        StorageLimitRemain int64 `json:"storageLimitRemain"`
         ConfigmapLimit int64 `json:"configmapLimit"`       // 项目允许创建的 ConfigMap 数量上限
+        ConfigMapUsed int64 `json:"configmapUsed"`
+        ConfigMapLimitRemain int64 `json:"configmapLimitRemain"`
+        SecretLimit int64 `json:"secretLimit"`
+        SecretUsed int64 `json:"secretUsed"`
+        SecretLimitRemain int64 `json:"secretLimitRemain"`
         PvcLimit int64 `json:"pvcLimit"`                   // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+        PvcUsed int64 `json:"pvcUsed"`
+        PvcLimitRemain int64 `json:"pvcLimitRemain"`
         PodLimit int64 `json:"podLimit"`                   // 项目允许创建的 Pod 数量上限
+        PodUsed int64 `json:"podUsed"`
+        PodLimitRemain int64 `json:"podLimitRemain"`
         NodeportLimit int64 `json:"nodeportLimit"`         // 项目允许使用的 NodePort 数量上限
+        NodeportUsed int64 `json:"nodeportUsed"`
+        NodeportLimitRemain int64 `json:"nodeportLimitRemain"`
         Status string `json:"status"`                      // 项目状态（如 Active、Disabled、Archived）
         CreatedBy string `json:"createdBy"`                // 创建人
         UpdatedBy string `json:"updatedBy"`                // 更新人
@@ -127,6 +142,11 @@ type (
         Items []OnecProjectQuota `json:"items"` // 资源配额数据列表
         Total uint64 `json:"total"`             // 总条数
     }
+
+    GetOnecProjectQuotaRequest {
+        ProjectId uint64 `path:"projectId" validate:"required,gt=0"`
+        ClusterUuid string `path:"clusterUuid" validate:"required,max=100"`
+    }
 )
 
 @server(
@@ -169,10 +189,7 @@ service manager-api {
     delete /quota/:id (DefaultIdRequest) returns (string)
 
     // 根据 ID 获取项目资源配额
-    @handler GetOnecProjectQuotaByIdHandler
-    get /quota/:id (DefaultIdRequest) returns (string)
+    @handler GetOnecProjectQuotaHandler
+    get /quota/:projectId/:clusterUuid (GetOnecProjectQuotaRequest) returns (OnecProjectQuota)
 
-    // 搜索项目资源配额
-    @handler SearchOnecProjectQuotaHandler
-    get /quota (SearchOnecProjectQuotaRequest) returns (SearchOnecProjectQuotaResponse)
 }

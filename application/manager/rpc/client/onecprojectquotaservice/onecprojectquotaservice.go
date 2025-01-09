@@ -72,8 +72,8 @@ type (
 	GetOnecProjectApplicationByIdResp = pb.GetOnecProjectApplicationByIdResp
 	GetOnecProjectByIdReq             = pb.GetOnecProjectByIdReq
 	GetOnecProjectByIdResp            = pb.GetOnecProjectByIdResp
-	GetOnecProjectQuotaByIdReq        = pb.GetOnecProjectQuotaByIdReq
-	GetOnecProjectQuotaByIdResp       = pb.GetOnecProjectQuotaByIdResp
+	GetOnecProjectQuotaReq            = pb.GetOnecProjectQuotaReq
+	GetOnecProjectQuotaResp           = pb.GetOnecProjectQuotaResp
 	NodeAnnotations                   = pb.NodeAnnotations
 	NodeLabels                        = pb.NodeLabels
 	NodeTaints                        = pb.NodeTaints
@@ -100,8 +100,6 @@ type (
 	SearchOnecProjectAdminResp        = pb.SearchOnecProjectAdminResp
 	SearchOnecProjectApplicationReq   = pb.SearchOnecProjectApplicationReq
 	SearchOnecProjectApplicationResp  = pb.SearchOnecProjectApplicationResp
-	SearchOnecProjectQuotaReq         = pb.SearchOnecProjectQuotaReq
-	SearchOnecProjectQuotaResp        = pb.SearchOnecProjectQuotaResp
 	SearchOnecProjectReq              = pb.SearchOnecProjectReq
 	SearchOnecProjectResp             = pb.SearchOnecProjectResp
 	SyncOnecClusterReq                = pb.SyncOnecClusterReq
@@ -126,8 +124,7 @@ type (
 		AddOnecProjectQuota(ctx context.Context, in *AddOnecProjectQuotaReq, opts ...grpc.CallOption) (*AddOnecProjectQuotaResp, error)
 		UpdateOnecProjectQuota(ctx context.Context, in *UpdateOnecProjectQuotaReq, opts ...grpc.CallOption) (*UpdateOnecProjectQuotaResp, error)
 		DelOnecProjectQuota(ctx context.Context, in *DelOnecProjectQuotaReq, opts ...grpc.CallOption) (*DelOnecProjectQuotaResp, error)
-		GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error)
-		SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error)
+		GetOnecProjectQuota(ctx context.Context, in *GetOnecProjectQuotaReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaResp, error)
 	}
 
 	defaultOnecProjectQuotaService struct {
@@ -157,12 +154,7 @@ func (m *defaultOnecProjectQuotaService) DelOnecProjectQuota(ctx context.Context
 	return client.DelOnecProjectQuota(ctx, in, opts...)
 }
 
-func (m *defaultOnecProjectQuotaService) GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error) {
+func (m *defaultOnecProjectQuotaService) GetOnecProjectQuota(ctx context.Context, in *GetOnecProjectQuotaReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaResp, error) {
 	client := pb.NewOnecProjectQuotaServiceClient(m.cli.Conn())
-	return client.GetOnecProjectQuotaById(ctx, in, opts...)
-}
-
-func (m *defaultOnecProjectQuotaService) SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error) {
-	client := pb.NewOnecProjectQuotaServiceClient(m.cli.Conn())
-	return client.SearchOnecProjectQuota(ctx, in, opts...)
+	return client.GetOnecProjectQuota(ctx, in, opts...)
 }

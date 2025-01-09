@@ -106,6 +106,11 @@ type ForbidScheduledRequest struct {
 	Id uint64 `path:"id" validate:"required"`
 }
 
+type GetOnecProjectQuotaRequest struct {
+	ProjectId   uint64 `path:"projectId" validate:"required,gt=0"`
+	ClusterUuid string `path:"clusterUuid" validate:"required,max=100"`
+}
+
 type NodeAnnotation struct {
 	Id           uint64 `json:"id"`
 	ResourceId   uint64 `json:"resourceId"`
@@ -228,27 +233,42 @@ type OnecProject struct {
 }
 
 type OnecProjectQuota struct {
-	Id               uint64  `json:"id"`               // 主键，自增 ID
-	ClusterUuid      string  `json:"clusterUuid"`      // 关联的集群 ID
-	ProjectId        uint64  `json:"projectId"`        // 关联的项目 ID
-	CpuQuota         int64   `json:"cpuQuota"`         // CPU 分配配额（单位：核）
-	CpuOvercommit    float64 `json:"cpuOvercommit"`    // CPU 超配比（如 1.5 表示允许超配 50%）
-	CpuLimit         float64 `json:"cpuLimit"`         // CPU 上限值（单位：核）
-	CpuUsed          float64 `json:"cpuUsed"`          // 已使用的 CPU 资源（单位：核）
-	MemoryQuota      float64 `json:"memoryQuota"`      // 内存分配配额（单位：GiB）
-	MemoryOvercommit float64 `json:"memoryOvercommit"` // 内存超配比（如 1.2 表示允许超配 20%）
-	MemoryLimit      float64 `json:"memoryLimit"`      // 内存上限值（单位：GiB）
-	MemoryUsed       float64 `json:"memoryUsed"`       // 已使用的内存资源（单位：GiB）
-	StorageLimit     int64   `json:"storageLimit"`     // 项目可使用的存储总量（单位：GiB）
-	ConfigmapLimit   int64   `json:"configmapLimit"`   // 项目允许创建的 ConfigMap 数量上限
-	PvcLimit         int64   `json:"pvcLimit"`         // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-	PodLimit         int64   `json:"podLimit"`         // 项目允许创建的 Pod 数量上限
-	NodeportLimit    int64   `json:"nodeportLimit"`    // 项目允许使用的 NodePort 数量上限
-	Status           string  `json:"status"`           // 项目状态（如 Active、Disabled、Archived）
-	CreatedBy        string  `json:"createdBy"`        // 创建人
-	UpdatedBy        string  `json:"updatedBy"`        // 更新人
-	CreatedAt        int64   `json:"createdAt"`        // 创建时间
-	UpdatedAt        int64   `json:"updatedAt"`        // 最后更新时间
+	Id                   uint64  `json:"id"`            // 主键，自增 ID
+	ClusterUuid          string  `json:"clusterUuid"`   // 关联的集群 ID
+	ProjectId            uint64  `json:"projectId"`     // 关联的项目 ID
+	CpuQuota             int64   `json:"cpuQuota"`      // CPU 分配配额（单位：核）
+	CpuOvercommit        float64 `json:"cpuOvercommit"` // CPU 超配比（如 1.5 表示允许超配 50%）
+	CpuLimit             float64 `json:"cpuLimit"`      // CPU 上限值（单位：核）
+	CpuUsed              float64 `json:"cpuUsed"`       // 已使用的 CPU 资源（单位：核）
+	CpuLimitRemain       float64 `json:"cpuLimitRemain"`
+	MemoryQuota          float64 `json:"memoryQuota"`      // 内存分配配额（单位：GiB）
+	MemoryOvercommit     float64 `json:"memoryOvercommit"` // 内存超配比（如 1.2 表示允许超配 20%）
+	MemoryLimit          float64 `json:"memoryLimit"`      // 内存上限值（单位：GiB）
+	MemoryUsed           float64 `json:"memoryUsed"`       // 已使用的内存资源（单位：GiB）
+	MemoryLimitRemain    float64 `json:"memoryLimitRemain"`
+	StorageLimit         int64   `json:"storageLimit"` // 项目可使用的存储总量（单位：GiB）
+	StorageUsed          int64   `json:"storageUsed"`
+	StorageLimitRemain   int64   `json:"storageLimitRemain"`
+	ConfigmapLimit       int64   `json:"configmapLimit"` // 项目允许创建的 ConfigMap 数量上限
+	ConfigMapUsed        int64   `json:"configmapUsed"`
+	ConfigMapLimitRemain int64   `json:"configmapLimitRemain"`
+	SecretLimit          int64   `json:"secretLimit"`
+	SecretUsed           int64   `json:"secretUsed"`
+	SecretLimitRemain    int64   `json:"secretLimitRemain"`
+	PvcLimit             int64   `json:"pvcLimit"` // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+	PvcUsed              int64   `json:"pvcUsed"`
+	PvcLimitRemain       int64   `json:"pvcLimitRemain"`
+	PodLimit             int64   `json:"podLimit"` // 项目允许创建的 Pod 数量上限
+	PodUsed              int64   `json:"podUsed"`
+	PodLimitRemain       int64   `json:"podLimitRemain"`
+	NodeportLimit        int64   `json:"nodeportLimit"` // 项目允许使用的 NodePort 数量上限
+	NodeportUsed         int64   `json:"nodeportUsed"`
+	NodeportLimitRemain  int64   `json:"nodeportLimitRemain"`
+	Status               string  `json:"status"`    // 项目状态（如 Active、Disabled、Archived）
+	CreatedBy            string  `json:"createdBy"` // 创建人
+	UpdatedBy            string  `json:"updatedBy"` // 更新人
+	CreatedAt            int64   `json:"createdAt"` // 创建时间
+	UpdatedAt            int64   `json:"updatedAt"` // 最后更新时间
 }
 
 type SearchNodeAnnotationsRequest struct {

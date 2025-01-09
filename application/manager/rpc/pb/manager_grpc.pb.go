@@ -1560,11 +1560,10 @@ var OnecProjectService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	OnecProjectQuotaService_AddOnecProjectQuota_FullMethodName     = "/pb.OnecProjectQuotaService/AddOnecProjectQuota"
-	OnecProjectQuotaService_UpdateOnecProjectQuota_FullMethodName  = "/pb.OnecProjectQuotaService/UpdateOnecProjectQuota"
-	OnecProjectQuotaService_DelOnecProjectQuota_FullMethodName     = "/pb.OnecProjectQuotaService/DelOnecProjectQuota"
-	OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName = "/pb.OnecProjectQuotaService/GetOnecProjectQuotaById"
-	OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName  = "/pb.OnecProjectQuotaService/SearchOnecProjectQuota"
+	OnecProjectQuotaService_AddOnecProjectQuota_FullMethodName    = "/pb.OnecProjectQuotaService/AddOnecProjectQuota"
+	OnecProjectQuotaService_UpdateOnecProjectQuota_FullMethodName = "/pb.OnecProjectQuotaService/UpdateOnecProjectQuota"
+	OnecProjectQuotaService_DelOnecProjectQuota_FullMethodName    = "/pb.OnecProjectQuotaService/DelOnecProjectQuota"
+	OnecProjectQuotaService_GetOnecProjectQuota_FullMethodName    = "/pb.OnecProjectQuotaService/GetOnecProjectQuota"
 )
 
 // OnecProjectQuotaServiceClient is the client API for OnecProjectQuotaService service.
@@ -1575,8 +1574,7 @@ type OnecProjectQuotaServiceClient interface {
 	AddOnecProjectQuota(ctx context.Context, in *AddOnecProjectQuotaReq, opts ...grpc.CallOption) (*AddOnecProjectQuotaResp, error)
 	UpdateOnecProjectQuota(ctx context.Context, in *UpdateOnecProjectQuotaReq, opts ...grpc.CallOption) (*UpdateOnecProjectQuotaResp, error)
 	DelOnecProjectQuota(ctx context.Context, in *DelOnecProjectQuotaReq, opts ...grpc.CallOption) (*DelOnecProjectQuotaResp, error)
-	GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error)
-	SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error)
+	GetOnecProjectQuota(ctx context.Context, in *GetOnecProjectQuotaReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaResp, error)
 }
 
 type onecProjectQuotaServiceClient struct {
@@ -1617,20 +1615,10 @@ func (c *onecProjectQuotaServiceClient) DelOnecProjectQuota(ctx context.Context,
 	return out, nil
 }
 
-func (c *onecProjectQuotaServiceClient) GetOnecProjectQuotaById(ctx context.Context, in *GetOnecProjectQuotaByIdReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaByIdResp, error) {
+func (c *onecProjectQuotaServiceClient) GetOnecProjectQuota(ctx context.Context, in *GetOnecProjectQuotaReq, opts ...grpc.CallOption) (*GetOnecProjectQuotaResp, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetOnecProjectQuotaByIdResp)
-	err := c.cc.Invoke(ctx, OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *onecProjectQuotaServiceClient) SearchOnecProjectQuota(ctx context.Context, in *SearchOnecProjectQuotaReq, opts ...grpc.CallOption) (*SearchOnecProjectQuotaResp, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SearchOnecProjectQuotaResp)
-	err := c.cc.Invoke(ctx, OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName, in, out, cOpts...)
+	out := new(GetOnecProjectQuotaResp)
+	err := c.cc.Invoke(ctx, OnecProjectQuotaService_GetOnecProjectQuota_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1645,8 +1633,7 @@ type OnecProjectQuotaServiceServer interface {
 	AddOnecProjectQuota(context.Context, *AddOnecProjectQuotaReq) (*AddOnecProjectQuotaResp, error)
 	UpdateOnecProjectQuota(context.Context, *UpdateOnecProjectQuotaReq) (*UpdateOnecProjectQuotaResp, error)
 	DelOnecProjectQuota(context.Context, *DelOnecProjectQuotaReq) (*DelOnecProjectQuotaResp, error)
-	GetOnecProjectQuotaById(context.Context, *GetOnecProjectQuotaByIdReq) (*GetOnecProjectQuotaByIdResp, error)
-	SearchOnecProjectQuota(context.Context, *SearchOnecProjectQuotaReq) (*SearchOnecProjectQuotaResp, error)
+	GetOnecProjectQuota(context.Context, *GetOnecProjectQuotaReq) (*GetOnecProjectQuotaResp, error)
 	mustEmbedUnimplementedOnecProjectQuotaServiceServer()
 }
 
@@ -1666,11 +1653,8 @@ func (UnimplementedOnecProjectQuotaServiceServer) UpdateOnecProjectQuota(context
 func (UnimplementedOnecProjectQuotaServiceServer) DelOnecProjectQuota(context.Context, *DelOnecProjectQuotaReq) (*DelOnecProjectQuotaResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DelOnecProjectQuota not implemented")
 }
-func (UnimplementedOnecProjectQuotaServiceServer) GetOnecProjectQuotaById(context.Context, *GetOnecProjectQuotaByIdReq) (*GetOnecProjectQuotaByIdResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectQuotaById not implemented")
-}
-func (UnimplementedOnecProjectQuotaServiceServer) SearchOnecProjectQuota(context.Context, *SearchOnecProjectQuotaReq) (*SearchOnecProjectQuotaResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProjectQuota not implemented")
+func (UnimplementedOnecProjectQuotaServiceServer) GetOnecProjectQuota(context.Context, *GetOnecProjectQuotaReq) (*GetOnecProjectQuotaResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOnecProjectQuota not implemented")
 }
 func (UnimplementedOnecProjectQuotaServiceServer) mustEmbedUnimplementedOnecProjectQuotaServiceServer() {
 }
@@ -1748,38 +1732,20 @@ func _OnecProjectQuotaService_DelOnecProjectQuota_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OnecProjectQuotaService_GetOnecProjectQuotaById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetOnecProjectQuotaByIdReq)
+func _OnecProjectQuotaService_GetOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOnecProjectQuotaReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuotaById(ctx, in)
+		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuota(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: OnecProjectQuotaService_GetOnecProjectQuotaById_FullMethodName,
+		FullMethod: OnecProjectQuotaService_GetOnecProjectQuota_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuotaById(ctx, req.(*GetOnecProjectQuotaByIdReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OnecProjectQuotaService_SearchOnecProjectQuota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchOnecProjectQuotaReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OnecProjectQuotaServiceServer).SearchOnecProjectQuota(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OnecProjectQuotaService_SearchOnecProjectQuota_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OnecProjectQuotaServiceServer).SearchOnecProjectQuota(ctx, req.(*SearchOnecProjectQuotaReq))
+		return srv.(OnecProjectQuotaServiceServer).GetOnecProjectQuota(ctx, req.(*GetOnecProjectQuotaReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1804,12 +1770,8 @@ var OnecProjectQuotaService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _OnecProjectQuotaService_DelOnecProjectQuota_Handler,
 		},
 		{
-			MethodName: "GetOnecProjectQuotaById",
-			Handler:    _OnecProjectQuotaService_GetOnecProjectQuotaById_Handler,
-		},
-		{
-			MethodName: "SearchOnecProjectQuota",
-			Handler:    _OnecProjectQuotaService_SearchOnecProjectQuota_Handler,
+			MethodName: "GetOnecProjectQuota",
+			Handler:    _OnecProjectQuotaService_GetOnecProjectQuota_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

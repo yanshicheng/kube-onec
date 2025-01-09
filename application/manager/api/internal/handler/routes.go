@@ -217,11 +217,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: onec_project.AddOnecProjectQuotaHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
-					Path:    "/quota",
-					Handler: onec_project.SearchOnecProjectQuotaHandler(serverCtx),
-				},
-				{
 					Method:  http.MethodPut,
 					Path:    "/quota/:id",
 					Handler: onec_project.UpdateOnecProjectQuotaHandler(serverCtx),
@@ -233,8 +228,8 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/quota/:id",
-					Handler: onec_project.GetOnecProjectQuotaByIdHandler(serverCtx),
+					Path:    "/quota/:projectId/:clusterUuid",
+					Handler: onec_project.GetOnecProjectQuotaHandler(serverCtx),
 				},
 			}...,
 		),

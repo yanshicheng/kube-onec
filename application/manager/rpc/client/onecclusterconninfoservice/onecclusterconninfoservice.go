@@ -72,8 +72,8 @@ type (
 	GetOnecProjectApplicationByIdResp = pb.GetOnecProjectApplicationByIdResp
 	GetOnecProjectByIdReq             = pb.GetOnecProjectByIdReq
 	GetOnecProjectByIdResp            = pb.GetOnecProjectByIdResp
-	GetOnecProjectQuotaByIdReq        = pb.GetOnecProjectQuotaByIdReq
-	GetOnecProjectQuotaByIdResp       = pb.GetOnecProjectQuotaByIdResp
+	GetOnecProjectQuotaReq            = pb.GetOnecProjectQuotaReq
+	GetOnecProjectQuotaResp           = pb.GetOnecProjectQuotaResp
 	NodeAnnotations                   = pb.NodeAnnotations
 	NodeLabels                        = pb.NodeLabels
 	NodeTaints                        = pb.NodeTaints
@@ -100,8 +100,6 @@ type (
 	SearchOnecProjectAdminResp        = pb.SearchOnecProjectAdminResp
 	SearchOnecProjectApplicationReq   = pb.SearchOnecProjectApplicationReq
 	SearchOnecProjectApplicationResp  = pb.SearchOnecProjectApplicationResp
-	SearchOnecProjectQuotaReq         = pb.SearchOnecProjectQuotaReq
-	SearchOnecProjectQuotaResp        = pb.SearchOnecProjectQuotaResp
 	SearchOnecProjectReq              = pb.SearchOnecProjectReq
 	SearchOnecProjectResp             = pb.SearchOnecProjectResp
 	SyncOnecClusterReq                = pb.SyncOnecClusterReq

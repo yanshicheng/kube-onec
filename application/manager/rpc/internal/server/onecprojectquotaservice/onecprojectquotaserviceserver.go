@@ -39,12 +39,7 @@ func (s *OnecProjectQuotaServiceServer) DelOnecProjectQuota(ctx context.Context,
 	return l.DelOnecProjectQuota(in)
 }
 
-func (s *OnecProjectQuotaServiceServer) GetOnecProjectQuotaById(ctx context.Context, in *pb.GetOnecProjectQuotaByIdReq) (*pb.GetOnecProjectQuotaByIdResp, error) {
-	l := onecprojectquotaservicelogic.NewGetOnecProjectQuotaByIdLogic(ctx, s.svcCtx)
-	return l.GetOnecProjectQuotaById(in)
-}
-
-func (s *OnecProjectQuotaServiceServer) SearchOnecProjectQuota(ctx context.Context, in *pb.SearchOnecProjectQuotaReq) (*pb.SearchOnecProjectQuotaResp, error) {
-	l := onecprojectquotaservicelogic.NewSearchOnecProjectQuotaLogic(ctx, s.svcCtx)
-	return l.SearchOnecProjectQuota(in)
+func (s *OnecProjectQuotaServiceServer) GetOnecProjectQuota(ctx context.Context, in *pb.GetOnecProjectQuotaReq) (*pb.GetOnecProjectQuotaResp, error) {
+	l := onecprojectquotaservicelogic.NewGetOnecProjectQuotaLogic(ctx, s.svcCtx)
+	return l.GetOnecProjectQuota(in)
 }

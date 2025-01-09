@@ -605,27 +605,35 @@ message OnecProjectQuota {
   double cpuOvercommit = 5; //CPU 超配比（如 1.5 表示允许超配 50%）
   double cpuLimit = 6; //CPU 上限值（单位：核）
   double cpuUsed = 7; //已使用的 CPU 资源（单位：核）
-  double memoryQuota = 8; //内存分配配额（单位：GiB）
-  double memoryOvercommit = 9; //内存超配比（如 1.2 表示允许超配 20%）
-  double memoryLimit = 10; //内存上限值（单位：GiB）
-  double memoryUsed = 11; //已使用的内存资源（单位：GiB）
-  int64 storageLimit = 12; //项目可使用的存储总量（单位：GiB）
-  int64 storageUsed = 13;
-  int64 configmapLimit = 14; //项目允许创建的 ConfigMap 数量上限
-  int64 configmapUsed = 15;
-  int64 secretLimit = 16;
-  int64 secretUsed = 17;
-  int64 pvcLimit = 18; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 pvcUsed = 19;
-  int64 podLimit = 20; //项目允许创建的 Pod 数量上限
-  int64 podUsed = 21;
-  int64 nodeportLimit = 22; //项目允许使用的 NodePort 数量上限
-  int64 nodeportUsed = 23;
-  string status = 24; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createdBy = 25; //记录创建人
-  string updatedBy = 26; //记录更新人
-  int64 createdAt = 27; //项目创建时间
-  int64 updatedAt = 28; //项目信息最后更新时间
+  double cpuLimitRemain = 8; // cpu 剩余资源
+  double memoryQuota = 9; //内存分配配额（单位：GiB）
+  double memoryOvercommit = 10; //内存超配比（如 1.2 表示允许超配 20%）
+  double memoryLimit = 11; //内存上限值（单位：GiB）
+  double memoryUsed = 12; //已使用的内存资源（单位：GiB）
+  double memoryLimitRemain = 13;
+  int64 storageLimit = 14; //项目可使用的存储总量（单位：GiB）
+  int64 storageUsed = 15;
+  int64 storageLimitRemain = 16;
+  int64 configmapLimit = 17; //项目允许创建的 ConfigMap 数量上限
+  int64 configmapUsed = 18;
+  int64 configmapLimitRemain = 19;
+  int64 secretLimit = 20;
+  int64 secretUsed = 21;
+  int64 secretLimitRemain = 22;
+  int64 pvcLimit = 23; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 pvcUsed = 24;
+  int64 pvcLimitRemain = 25;
+  int64 podLimit = 26; //项目允许创建的 Pod 数量上限
+  int64 podUsed = 27;
+  int64 podLimitRemain = 28;
+  int64 nodeportLimit = 29; //项目允许使用的 NodePort 数量上限
+  int64 nodeportUsed = 30;
+  int64 nodeportLimitRemain = 31;
+  string status = 32; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 33; //记录创建人
+  string updatedBy = 34; //记录更新人
+  int64 createdAt = 35; //项目创建时间
+  int64 updatedAt = 36; //项目信息最后更新时间
 }
 
 message AddOnecProjectQuotaReq {
@@ -679,38 +687,22 @@ message DelOnecProjectQuotaReq {
 message DelOnecProjectQuotaResp {
 }
 
-message GetOnecProjectQuotaByIdReq {
-  uint64 id = 1; //id
+message GetOnecProjectQuotaReq {
+  uint64 projectId = 1; //id
+  string clusterUuid = 2;
 }
 
-message GetOnecProjectQuotaByIdResp {
+message GetOnecProjectQuotaResp {
   OnecProjectQuota data = 1; //onecProjectQuota
 }
 
-message SearchOnecProjectQuotaReq {
-  uint64 page = 1; //page
-  uint64 pageSize = 2; //pageSize
-  string orderStr = 3; //orderStr
-  bool isAsc = 4; //isAsc
-  string clusterUuid = 5; //关联的集群 ID
-  uint64 projectId = 6; //关联的项目 ID
-  string status = 7; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createdBy = 8; //记录创建人
-  string updatedBy = 9; //记录更新人
-}
-
-message SearchOnecProjectQuotaResp {
-  repeated OnecProjectQuota data = 1; //onecProjectQuota
-  uint64 total = 2; //total
-}
 
 service OnecProjectQuotaService {
   //-----------------------项目与集群的对应关系表，记录资源配额和使用情况-----------------------
   rpc AddOnecProjectQuota(AddOnecProjectQuotaReq) returns (AddOnecProjectQuotaResp);
   rpc UpdateOnecProjectQuota(UpdateOnecProjectQuotaReq) returns (UpdateOnecProjectQuotaResp);
   rpc DelOnecProjectQuota(DelOnecProjectQuotaReq) returns (DelOnecProjectQuotaResp);
-  rpc GetOnecProjectQuotaById(GetOnecProjectQuotaByIdReq) returns (GetOnecProjectQuotaByIdResp);
-  rpc SearchOnecProjectQuota(SearchOnecProjectQuotaReq) returns (SearchOnecProjectQuotaResp);
+  rpc GetOnecProjectQuota(GetOnecProjectQuotaReq) returns (GetOnecProjectQuotaResp);
 }
 
 
