@@ -1,0 +1,265 @@
+为了满足你的需求，我将设计一个适合存储 Pod 配置信息的 MySQL 数据表结构，并提供查询该数据的方法，以及将数据转换为 `PodConfig` 类型的具体实现。
+
+---
+
+### **1. 数据表设计**
+
+我们设计一组表来存储 Pod 的所有配置信息，表的结构如下：
+
+#### **表 1: `pods`**
+存储 Pod 的基本信息和元数据。
+
+| 字段名                | 类型                | 描述                                |
+|-----------------------|---------------------|-------------------------------------|
+| `id`                 | INT AUTO_INCREMENT | 主键                                |
+| `name`               | VARCHAR(255)       | Pod 名称                            |
+| `namespace`          | VARCHAR(255)       | Pod 命名空间                        |
+| `image`              | VARCHAR(255)       | 容器镜像                            |
+| `image_pull_policy`  | ENUM('Always', 'IfNotPresent', 'Never') | 镜像拉取策略         |
+| `restart_policy`     | ENUM('Always', 'OnFailure', 'Never')    | Pod 的重启策略        |
+| `termination_grace`  | INT                | 强制终止 Pod 的时间（秒）            |
+| `host_network`       | TINYINT(1)         | 是否启用主机网络模式（0/1）          |
+| `host_pid`           | TINYINT(1)         | 是否启用主机 PID 模式（0/1）         |
+| `host_ipc`           | TINYINT(1)         | 是否启用主机 IPC 模式（0/1）         |
+| `service_account`    | VARCHAR(255)       | 服务账户名称                        |
+| `priority_class`     | VARCHAR(255)       | 优先级类名称                        |
+| `runtime_class`      | VARCHAR(255)       | 运行时类名称                        |
+
+---
+
+#### **表 2: `pod_metadata`**
+存储 Pod 的标签和注解。
+
+| 字段名        | 类型                | 描述              |
+|---------------|---------------------|-------------------|
+| `id`         | INT AUTO_INCREMENT | 主键              |
+| `pod_id`     | INT                | 关联到 `pods` 表  |
+| `type`       | ENUM('label', 'annotation') | 类型：标签或注解 |
+| `key`        | VARCHAR(255)       | 键                |
+| `value`      | TEXT               | 值                |
+
+---
+
+#### **表 3: `pod_volumes`**
+存储 Pod 的存储卷信息。
+
+| 字段名        | 类型                | 描述                                |
+|---------------|---------------------|-------------------------------------|
+| `id`         | INT AUTO_INCREMENT | 主键                                |
+| `pod_id`     | INT                | 关联到 `pods` 表                    |
+| `name`       | VARCHAR(255)       | 存储卷名称                          |
+| `type`       | ENUM('configmap', 'secret', 'pvc', 'nfs', 'emptydir', 'hostpath') | 存储卷类型 |
+| `source`     | TEXT               | 存储卷的来源（如 ConfigMap 名称等） |
+| `sub_path`   | VARCHAR(255)       | 子路径（可选）                      |
+
+---
+
+#### **表 4: `pod_env_vars`**
+存储 Pod 的环境变量。
+
+| 字段名        | 类型                | 描述              |
+|---------------|---------------------|-------------------|
+| `id`         | INT AUTO_INCREMENT | 主键              |
+| `pod_id`     | INT                | 关联到 `pods` 表  |
+| `name`       | VARCHAR(255)       | 环境变量名称      |
+| `value`      | TEXT               | 环境变量值        |
+
+---
+
+#### **表 5: `pod_ports`**
+存储容器的端口信息。
+
+| 字段名        | 类型                | 描述                                |
+|---------------|---------------------|-------------------------------------|
+| `id`         | INT AUTO_INCREMENT | 主键                                |
+| `pod_id`     | INT                | 关联到 `pods` 表                    |
+| `port_name`  | VARCHAR(255)       | 端口名称                            |
+| `port_number`| INT                | 容器端口号                          |
+| `protocol`   | ENUM('TCP', 'UDP') | 端口协议                            |
+
+---
+
+### **2. 查询数据并转换为 PodConfig 类型**
+
+下面是如何从数据库中查询 Pod 的完整配置信息并转换为 `PodConfig` 类型的实现：
+
+```go
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/go-sql-driver/mysql"
+	corev1 "k8s.io/api/core/v1"
+)
+
+type PodConfig struct {
+	Name              string
+	Namespace         string
+	Image             string
+	ImagePullPolicy   corev1.PullPolicy
+	Labels            map[string]string
+	Annotations       map[string]string
+	VolumeMounts      []VolumeMountConfig
+	Environment       []corev1.EnvVar
+	Ports             []corev1.ContainerPort
+	RestartPolicy     corev1.RestartPolicy
+	TerminationGrace  int64
+	HostNetwork       bool
+	HostPID           bool
+	HostIPC           bool
+	ServiceAccount    string
+	PriorityClassName string
+	RuntimeClassName  string
+}
+
+type VolumeMountConfig struct {
+	Name      string
+	MountPath string
+	SubPath   string
+	ReadOnly  bool
+}
+
+func fetchPodConfig(db *sql.DB, podName string, namespace string) (*PodConfig, error) {
+	var podConfig PodConfig
+
+	// 查询 Pod 的基本信息
+	err := db.QueryRow(`
+		SELECT name, namespace, image, image_pull_policy, restart_policy, termination_grace,
+		       host_network, host_pid, host_ipc, service_account, priority_class, runtime_class
+		FROM pods
+		WHERE name = ? AND namespace = ?`, podName, namespace).Scan(
+		&podConfig.Name,
+		&podConfig.Namespace,
+		&podConfig.Image,
+		&podConfig.ImagePullPolicy,
+		&podConfig.RestartPolicy,
+		&podConfig.TerminationGrace,
+		&podConfig.HostNetwork,
+		&podConfig.HostPID,
+		&podConfig.HostIPC,
+		&podConfig.ServiceAccount,
+		&podConfig.PriorityClassName,
+		&podConfig.RuntimeClassName,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch pod: %v", err)
+	}
+
+	// 查询标签和注解
+	podConfig.Labels = make(map[string]string)
+	podConfig.Annotations = make(map[string]string)
+	rows, err := db.Query(`SELECT type, key, value FROM pod_metadata WHERE pod_id = (SELECT id FROM pods WHERE name = ? AND namespace = ?)`, podName, namespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch metadata: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var metadataType, key, value string
+		if err := rows.Scan(&metadataType, &key, &value); err != nil {
+			return nil, fmt.Errorf("failed to scan metadata: %v", err)
+		}
+		if metadataType == "label" {
+			podConfig.Labels[key] = value
+		} else if metadataType == "annotation" {
+			podConfig.Annotations[key] = value
+		}
+	}
+
+	// 查询存储卷
+	rows, err = db.Query(`SELECT name, type, source, sub_path FROM pod_volumes WHERE pod_id = (SELECT id FROM pods WHERE name = ? AND namespace = ?)`, podName, namespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch volumes: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var volumeName, volumeType, source, subPath string
+		if err := rows.Scan(&volumeName, &volumeType, &source, &subPath); err != nil {
+			return nil, fmt.Errorf("failed to scan volume: %v", err)
+		}
+		volumeMount := VolumeMountConfig{
+			Name:      volumeName,
+			MountPath: source, // 假设 source 是挂载路径
+			SubPath:   subPath,
+			ReadOnly:  false, // 可根据需求扩展字段
+		}
+		podConfig.VolumeMounts = append(podConfig.VolumeMounts, volumeMount)
+	}
+
+	// 查询环境变量
+	rows, err = db.Query(`SELECT name, value FROM pod_env_vars WHERE pod_id = (SELECT id FROM pods WHERE name = ? AND namespace = ?)`, podName, namespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch environment variables: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var name, value string
+		if err := rows.Scan(&name, &value); err != nil {
+			return nil, fmt.Errorf("failed to scan environment variable: %v", err)
+		}
+		podConfig.Environment = append(podConfig.Environment, corev1.EnvVar{
+			Name:  name,
+			Value: value,
+		})
+	}
+
+	// 查询端口
+	rows, err = db.Query(`SELECT port_name, port_number, protocol FROM pod_ports WHERE pod_id = (SELECT id FROM pods WHERE name = ? AND namespace = ?)`, podName, namespace)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch ports: %v", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var portName string
+		var portNumber int
+		var protocol string
+		if err := rows.Scan(&portName, &portNumber, &protocol); err != nil {
+			return nil, fmt.Errorf("failed to scan port: %v", err)
+		}
+		podConfig.Ports = append(podConfig.Ports, corev1.ContainerPort{
+			Name:          portName,
+			ContainerPort: int32(portNumber),
+			Protocol:      corev1.Protocol(protocol),
+		})
+	}
+
+	return &podConfig, nil
+}
+
+func main() {
+	// 初始化数据库连接
+	db, err := sql.Open("mysql", "user:password@tcp(localhost:3306)/k8s")
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer db.Close()
+
+	// 查询 Pod 配置
+	podConfig, err := fetchPodConfig(db, "example-pod", "default")
+	if err != nil {
+		log.Fatalf("failed to fetch pod config: %v", err)
+	}
+
+	// 输出 Pod 配置信息
+	fmt.Printf("Pod Config: %+v\n", podConfig)
+}
+```
+
+---
+
+### 功能说明
+
+1. **数据表设计**：
+   - 数据分表存储，避免复杂结构。
+   - 提供扩展性，如添加新字段不影响其他表。
+
+2. **查询与转换**：
+   - 从各表查询数据，并动态组合为 `PodConfig` 对象。
+   - 支持标签、注解、存储卷、环境变量、端口等。
+
+3. **动态支持**：
+   - 如果某些字段未配置，则默认为空或默认值。
+
+如果有其他需求或需要进一步完善，请告诉我！
