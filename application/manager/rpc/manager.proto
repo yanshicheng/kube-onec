@@ -795,12 +795,13 @@ message OnecProjectApplication {
   int64 pvcLimit = 12; //应用允许创建的 PVC 数量上限
   int64 podLimit = 13; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 14; //应用允许使用的 NodePort 数量上限
-  string status = 15; //应用状态（如 `Success`、`Error`）
-  int64 appcreatedAt = 16; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string createdBy = 17; //记录创建人
-  string updatedBy = 18; //记录更新人
-  int64 createdAt = 19; //记录创建时间
-  int64 updatedAt = 20; //记录更新时间
+  int64 secretLimit = 15;
+  string status = 16; //应用状态（如 `Success`、`Error`）
+  int64 appCreatedAt = 17; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string createdBy = 18; //记录创建人
+  string updatedBy = 19; //记录更新人
+  int64 createdAt = 20; //记录创建时间
+  int64 updatedAt = 21; //记录更新时间
 }
 
 message AddOnecProjectApplicationReq {
@@ -816,8 +817,9 @@ message AddOnecProjectApplicationReq {
   int64 pvcLimit = 10; //应用允许创建的 PVC 数量上限
   int64 podLimit = 11; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 12; //应用允许使用的 NodePort 数量上限
-  string createdBy = 13; //记录创建人
-  string updatedBy = 14; //记录更新人
+  int64 secretLimit = 13;
+  string createdBy = 14; //记录创建人
+  string updatedBy = 15; //记录更新人
 }
 
 message AddOnecProjectApplicationResp {
@@ -836,7 +838,8 @@ message UpdateOnecProjectApplicationReq {
   int64 pvcLimit = 10; //应用允许创建的 PVC 数量上限
   int64 podLimit = 11; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 12; //应用允许使用的 NodePort 数量上限
-  string updatedBy = 13; //记录更新人
+  int64 secretLimit = 13;
+  string updatedBy = 14; //记录更新人
 }
 
 message UpdateOnecProjectApplicationResp {
