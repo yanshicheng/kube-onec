@@ -46,12 +46,25 @@ var (
 	NodeInfoNotExistErr = errorx.New(102035, "节点信息查询不到，请先同步信息!")
 	// 节点ID 不能 为空
 
-	NodeIdEmptyErr  = errorx.New(102036, "节点ID 不能 为空!")
-	EvictNodePodErr = errorx.New(102037, "驱逐节点Pod失败!")
+	NodeIdEmptyErr              = errorx.New(102036, "节点ID 不能 为空!")
+	EvictNodePodErr             = errorx.New(102037, "驱逐节点Pod失败!")
+	ClusterResourceNotEnoughErr = errorx.New(102038, "集群资源不足!")
 
 	// 项目相关 1021**
-	CreateProjectErr = errorx.New(102101, "项目创建失败!")
-	DeleteProjectErr = errorx.New(102102, "项目删除失败!")
-	UpdateProjectErr = errorx.New(102103, "项目更新失败!")
-	GetProjectErr    = errorx.New(102104, "项目查询失败!")
+	CreateProjectErr                       = errorx.New(102101, "项目创建失败!")
+	DeleteProjectErr                       = errorx.New(102102, "项目删除失败!")
+	UpdateProjectErr                       = errorx.New(102103, "项目更新失败!")
+	GetProjectErr                          = errorx.New(102104, "项目查询失败!")
+	DefaultProjectNotAllowCreateProjectErr = errorx.New(102105, "默认项目不允许创建项目资源!")
+	ProjectResourceNotAllowedErr           = errorx.New(102106, "项目资源不允许分配集群资源!")
+	AddProjectQuotaErr                     = errorx.New(102107, "项目资源添加失败!")
+	// 项目集群资源分配失败
+
+	ProjectQuotaAllocationErr = errorx.New(102108, "项目资源分配失败!")
+	ProjectQuotaExistErr      = errorx.New(102109, "项目资源已存在!")
+	GetProjectQuotaErr        = errorx.New(102110, "项目资源查询失败!")
+	//传入的资源小于已经分配的总资源
+	ProjectQuotaNotEnoughErr = errorx.New(102111, "传入的资源小于已经分配的总资源!")
+	UpdateProjectQuotaErr    = errorx.New(102112, "项目资源更新失败!")
+	UpdateClusterErr         = errorx.New(102113, "集群更新失败!")
 )

@@ -1,0 +1,141 @@
+syntax = "v1"
+
+info(
+    title: "OnecProjectQuota Service API"
+    desc: "API 服务用于管理项目与集群的资源配额和使用情况"
+    author: "Your Name"
+    email: "your.email@example.com"
+    version: "1.0"
+)
+
+import "./base.api"
+
+type (
+    OnecProjectQuota {
+        Id uint64 json:"id"                             // 主键，自增 ID
+        ClusterUuid string json:"clusterUuid"           // 关联的集群 ID
+        ProjectId uint64 json:"projectId"               // 关联的项目 ID
+        CpuQuota int64 json:"cpuQuota"                  // CPU 分配配额（单位：核）
+        CpuOvercommit double json:"cpuOvercommit"        // CPU 超配比（如 1.5 表示允许超配 50%）
+        CpuLimit double json:"cpuLimit"                  // CPU 上限值（单位：核）
+        CpuUsed double json:"cpuUsed"                    // 已使用的 CPU 资源（单位：核）
+        MemoryQuota double json:"memoryQuota"            // 内存分配配额（单位：GiB）
+        MemoryOvercommit double json:"memoryOvercommit"    // 内存超配比（如 1.2 表示允许超配 20%）
+        MemoryLimit double json:"memoryLimit"            // 内存上限值（单位：GiB）
+        MemoryUsed double json:"memoryUsed"              // 已使用的内存资源（单位：GiB）
+        StorageLimit int64 json:"storageLimit"            // 项目可使用的存储总量（单位：GiB）
+        ConfigmapLimit int64 json:"configmapLimit"        // 项目允许创建的 ConfigMap 数量上限
+        PvcLimit int64 json:"pvcLimit"                    // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+        PodLimit int64 json:"podLimit"                    // 项目允许创建的 Pod 数量上限
+        NodeportLimit int64 json:"nodeportLimit"          // 项目允许使用的 NodePort 数量上限
+        Status string json:"status"                        // 项目状态（如 Active、Disabled、Archived）
+        CreatedBy string json:"createdBy"                  // 记录创建人
+        UpdatedBy string json:"updatedBy"                  // 记录更新人
+        CreatedAt int64 json:"createdAt"                   // 项目创建时间
+        UpdatedAt int64 json:"updatedAt"                   // 项目信息最后更新时间
+    }
+
+    AddOnecProjectQuotaRequest {
+        ClusterUuid string json:"clusterUuid" validate:"required,max=100"           // 关联的集群 ID，必填，最长 100 字符
+        ProjectId uint64 json:"projectId" validate:"required,gt=0"                  // 关联的项目 ID，必填
+        CpuQuota int64 json:"cpuQuota" validate:"required,min=0"                    // CPU 分配配额（单位：核），必填
+        CpuOvercommit double json:"cpuOvercommit" validate:"required,gt=0"           // CPU 超配比，必填，必须大于 0
+        CpuLimit double json:"cpuLimit" validate:"required,min=0"                    // CPU 上限值（单位：核），必填
+        MemoryQuota double json:"memoryQuota" validate:"required,min=0"               // 内存分配配额（单位：GiB），必填
+        MemoryOvercommit double json:"memoryOvercommit" validate:"required,gt=0"       // 内存超配比，必填，必须大于 0
+        MemoryLimit double json:"memoryLimit" validate:"required,min=0"               // 内存上限值（单位：GiB），必填
+        StorageLimit int64 json:"storageLimit" validate:"required,min=0"              // 项目可使用的存储总量（单位：GiB），必填
+        ConfigmapLimit int64 json:"configmapLimit" validate:"required,min=0"          // ConfigMap 数量上限，必填
+        PvcLimit int64 json:"pvcLimit" validate:"required,min=0"                      // PVC 数量上限，必填
+        PodLimit int64 json:"podLimit" validate:"required,min=0"                      // Pod 数量上限，必填
+        NodeportLimit int64 json:"nodeportLimit" validate:"required,min=0"            // NodePort 数量上限，必填
+        CreatedBy string json:"createdBy" validate:"required,max=50"                  // 记录创建人，必填，最长 50 字符
+        UpdatedBy string json:"updatedBy" validate:"required,max=50"                  // 记录更新人，必填，最长 50 字符
+    }
+
+    AddOnecProjectQuotaResponse {
+        Message string json:"message" // 操作结果消息
+    }
+
+    UpdateOnecProjectQuotaRequest {
+        Id uint64 json:"id" validate:"required,gt=0"                             // 主键，自增 ID，必填
+        ClusterUuid string json:"clusterUuid" validate:"required,max=100"         // 关联的集群 ID，必填，最长 100 字符
+        ProjectId uint64 json:"projectId" validate:"required,gt=0"                // 关联的项目 ID，必填
+        CpuQuota int64 json:"cpuQuota" validate:"required,min=0"                  // CPU 分配配额（单位：核），必填
+        CpuOvercommit double json:"cpuOvercommit" validate:"required,gt=0"         // CPU 超配比，必填，必须大于 0
+        CpuLimit double json:"cpuLimit" validate:"required,min=0"                  // CPU 上限值（单位：核），必填
+        MemoryQuota double json:"memoryQuota" validate:"required,min=0"             // 内存分配配额（单位：GiB），必填
+        MemoryOvercommit double json:"memoryOvercommit" validate:"required,gt=0"     // 内存超配比，必填，必须大于 0
+        MemoryLimit double json:"memoryLimit" validate:"required,min=0"             // 内存上限值（单位：GiB），必填
+        StorageLimit int64 json:"storageLimit" validate:"required,min=0"            // 项目可使用的存储总量（单位：GiB），必填
+        ConfigmapLimit int64 json:"configmapLimit" validate:"required,min=0"        // ConfigMap 数量上限，必填
+        PvcLimit int64 json:"pvcLimit" validate:"required,min=0"                    // PVC 数量上限，必填
+        PodLimit int64 json:"podLimit" validate:"required,min=0"                    // Pod 数量上限，必填
+        NodeportLimit int64 json:"nodeportLimit" validate:"required,min=0"          // NodePort 数量上限，必填
+        UpdatedBy string json:"updatedBy" validate:"required,max=50"                // 记录更新人，必填，最长 50 字符
+    }
+
+    UpdateOnecProjectQuotaResponse {
+        Message string json:"message" // 操作结果消息
+    }
+
+    DelOnecProjectQuotaRequest {
+        Id uint64 json:"id" validate:"required,gt=0" // 资源配额 ID，必填
+    }
+
+    DelOnecProjectQuotaResponse {
+        Message string json:"message" // 操作结果消息
+    }
+
+    GetOnecProjectQuotaByIdRequest {
+        Id uint64 json:"id" validate:"required,gt=0" // 资源配额 ID，必填
+    }
+
+    GetOnecProjectQuotaByIdResponse {
+        Data OnecProjectQuota json:"data" // OnecProjectQuota 数据
+    }
+
+    SearchOnecProjectQuotaRequest {
+        Page uint64 json:"page" default:"1" validate:"min=1"                           // 当前页码，默认 1
+        PageSize uint64 json:"pageSize" default:"10" validate:"min=1,max=200"          // 每页条数，默认 10
+        OrderStr string json:"orderStr" default:"id" validate:"omitempty,max=50"       // 排序字段，默认 id
+        IsAsc bool json:"isAsc" default:"false"                                         // 是否升序，默认 false
+        ClusterUuid string json:"clusterUuid,optional" validate:"omitempty,max=100"    // 关联的集群 ID，可选，最长 100 字符
+        ProjectId uint64 json:"projectId,optional" validate:"omitempty,gt=0"           // 关联的项目 ID，可选
+        Status string json:"status,optional" validate:"omitempty,max=50"                // 项目状态，可选，最长 50 字符
+        CreatedBy string json:"createdBy,optional" validate:"omitempty,max=50"          // 记录创建人，可选，最长 50 字符
+        UpdatedBy string json:"updatedBy,optional" validate:"omitempty,max=50"          // 记录更新人，可选，最长 50 字符
+    }
+
+    SearchOnecProjectQuotaResponse {
+        Items []OnecProjectQuota json:"items" // 资源配额数据列表
+        Total uint64 json:"total"               // 总条数
+    }
+)
+
+@server(
+    group: onec_project_quota
+    middleware: JWTAuthMiddleware
+    prefix: /v1/portal/onec/project/quota
+)
+service onec-project-quota-api {
+    // 添加项目资源配额
+    @handler AddOnecProjectQuotaHandler
+    post / (AddOnecProjectQuotaRequest) returns (AddOnecProjectQuotaResponse)
+
+    // 更新项目资源配额
+    @handler UpdateOnecProjectQuotaHandler
+    put /:id (UpdateOnecProjectQuotaRequest) returns (UpdateOnecProjectQuotaResponse)
+
+    // 删除项目资源配额
+    @handler DelOnecProjectQuotaHandler
+    delete /:id (DelOnecProjectQuotaRequest) returns (DelOnecProjectQuotaResponse)
+
+    // 根据 ID 获取项目资源配额
+    @handler GetOnecProjectQuotaByIdHandler
+    get /:id (GetOnecProjectQuotaByIdRequest) returns (GetOnecProjectQuotaByIdResponse)
+
+    // 搜索项目资源配额
+    @handler SearchOnecProjectQuotaHandler
+    get / (SearchOnecProjectQuotaRequest) returns (SearchOnecProjectQuotaResponse)
+}

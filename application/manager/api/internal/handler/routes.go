@@ -8,6 +8,7 @@ import (
 
 	cluster "github.com/yanshicheng/kube-onec/application/manager/api/internal/handler/cluster"
 	node "github.com/yanshicheng/kube-onec/application/manager/api/internal/handler/node"
+	onec_project "github.com/yanshicheng/kube-onec/application/manager/api/internal/handler/onec_project"
 	"github.com/yanshicheng/kube-onec/application/manager/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -179,5 +180,64 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/v1/onec/manager/node"),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.JWTAuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/",
+					Handler: onec_project.AddOnecProjectHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/",
+					Handler: onec_project.SearchOnecProjectHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/:id",
+					Handler: onec_project.UpdateOnecProjectHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/:id",
+					Handler: onec_project.DelOnecProjectHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/:id",
+					Handler: onec_project.GetOnecProjectByIdHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/quota",
+					Handler: onec_project.AddOnecProjectQuotaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/quota",
+					Handler: onec_project.SearchOnecProjectQuotaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPut,
+					Path:    "/quota/:id",
+					Handler: onec_project.UpdateOnecProjectQuotaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodDelete,
+					Path:    "/quota/:id",
+					Handler: onec_project.DelOnecProjectQuotaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/quota/:id",
+					Handler: onec_project.GetOnecProjectQuotaByIdHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/v1/onec/manager/project"),
 	)
 }

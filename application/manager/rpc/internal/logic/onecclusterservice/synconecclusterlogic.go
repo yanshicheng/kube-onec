@@ -77,6 +77,13 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 		l.Logger.Errorf("获取集群节点信息失败: %v", err)
 		return nil, errorx.DatabaseFindErr
 	}
+	// 获取已经分配的资源
+	clusterUsed, err := l.svcCtx.ProjectQuotaModel.FindClusterQuotasByUuid(l.ctx, cluster.Uuid)
+	if err == nil {
+		cluster.CpuUsed = clusterUsed.CPUQuota
+		cluster.MemoryUsed = clusterUsed.MemoryQuota
+		cluster.PodUsed = clusterUsed.PodLimit
+	}
 	cluster.NodeCount = totalInfo.TotalNode
 	cluster.CpuTotal = totalInfo.TotalCpu
 	cluster.MemoryTotal = totalInfo.TotalMemory
@@ -87,6 +94,7 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 		l.Logger.Errorf("更新集群信息失败: %v", err)
 		return nil, code.UpdateClusterInfoErr
 	}
+
 	return &pb.SyncOnecClusterResp{}, nil
 }
 

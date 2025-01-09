@@ -25,6 +25,7 @@ type ServiceContext struct {
 	ProjectModel             model.OnecProjectModel
 	ProjectAdminModel        model.OnecProjectAdminModel
 	ProjectApplicationModel  model.OnecProjectApplicationModel
+	ProjectQuotaModel        model.OnecProjectQuotaModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -53,6 +54,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ProjectModel:             model.NewOnecProjectModel(sqlConn, c.DBCache),
 		ProjectAdminModel:        model.NewOnecProjectAdminModel(sqlConn, c.DBCache),
 		ProjectApplicationModel:  model.NewOnecProjectApplicationModel(sqlConn, c.DBCache),
+		ProjectQuotaModel:        model.NewOnecProjectQuotaModel(sqlConn, c.DBCache),
 		// BookModel: models.NewBooksModel(sqlx.NewMysql(c.Mysql.DataSource), c.DBCache),
 	}
 }

@@ -55,6 +55,29 @@ type AddOnecNodeTaintRequest struct {
 	Effect string `json:"effect" validate:"required"`
 }
 
+type AddOnecProjectQuotaRequest struct {
+	ClusterUuid      string  `json:"clusterUuid" validate:"required,max=100"`   // 关联的集群 ID，必填，最长 100 字符
+	ProjectId        uint64  `json:"projectId" validate:"required,gt=0"`        // 关联的项目 ID，必填
+	CpuQuota         int64   `json:"cpuQuota" validate:"required,min=0"`        // CPU 分配配额（单位：核），必填
+	CpuOvercommit    float64 `json:"cpuOvercommit" validate:"required,gt=0"`    // CPU 超配比，必填，必须大于 0
+	CpuLimit         float64 `json:"cpuLimit" validate:"required,min=0"`        // CPU 上限值（单位：核），必填
+	MemoryQuota      float64 `json:"memoryQuota" validate:"required,min=0"`     // 内存分配配额（单位：GiB），必填
+	MemoryOvercommit float64 `json:"memoryOvercommit" validate:"required,gt=0"` // 内存超配比，必填，必须大于 0
+	MemoryLimit      float64 `json:"memoryLimit" validate:"required,min=0"`     // 内存上限值（单位：GiB），必填
+	StorageLimit     int64   `json:"storageLimit" validate:"required,min=0"`    // 项目可使用的存储总量（单位：GiB），必填
+	ConfigmapLimit   int64   `json:"configmapLimit" validate:"required,min=0"`  // ConfigMap 数量上限，必填
+	SecretLimit      int64   `json:"secretLimit" validate:"required,min=0"`
+	PvcLimit         int64   `json:"pvcLimit" validate:"required,min=0"`      // PVC 数量上限，必填
+	PodLimit         int64   `json:"podLimit" validate:"required,min=0"`      // Pod 数量上限，必填
+	NodeportLimit    int64   `json:"nodeportLimit" validate:"required,min=0"` // NodePort 数量上限，必填
+}
+
+type AddOnecProjectRequest struct {
+	Name        string `json:"name,optional" validate:"required,max=255"`          // 项目的中文名称，必填，最长 255 字符
+	Identifier  string `json:"identifier,optional" validate:"required,max=100"`    // 项目的唯一标识符（英文），必填，最长 100 字符
+	Description string `json:"description,optional" validate:"omitempty,max=1000"` // 项目描述信息，可选，最长 1000 字符
+}
+
 type DefaultIdRequest struct {
 	Id uint64 `path:"id"  validate:"required,gt=0"` // 用户 ID
 }
@@ -192,6 +215,42 @@ type OnecNode struct {
 	UpdatedAt        int64   `json:"updatedAt"`        // 更新时间
 }
 
+type OnecProject struct {
+	Id          uint64 `json:"id"`          // 主键，自增 ID
+	Name        string `json:"name"`        // 项目的中文名称
+	Identifier  string `json:"identifier"`  // 项目的唯一标识符（英文）
+	Description string `json:"description"` // 项目描述信息
+	IsDefault   int64  `json:"isDefault"`   // 是否为默认项目
+	CreatedBy   string `json:"createdBy"`   // 创建人
+	UpdatedBy   string `json:"updatedBy"`   // 更新人
+	CreatedAt   int64  `json:"createdAt"`   // 创建时间
+	UpdatedAt   int64  `json:"updatedAt"`   // 最后更新时间
+}
+
+type OnecProjectQuota struct {
+	Id               uint64  `json:"id"`               // 主键，自增 ID
+	ClusterUuid      string  `json:"clusterUuid"`      // 关联的集群 ID
+	ProjectId        uint64  `json:"projectId"`        // 关联的项目 ID
+	CpuQuota         int64   `json:"cpuQuota"`         // CPU 分配配额（单位：核）
+	CpuOvercommit    float64 `json:"cpuOvercommit"`    // CPU 超配比（如 1.5 表示允许超配 50%）
+	CpuLimit         float64 `json:"cpuLimit"`         // CPU 上限值（单位：核）
+	CpuUsed          float64 `json:"cpuUsed"`          // 已使用的 CPU 资源（单位：核）
+	MemoryQuota      float64 `json:"memoryQuota"`      // 内存分配配额（单位：GiB）
+	MemoryOvercommit float64 `json:"memoryOvercommit"` // 内存超配比（如 1.2 表示允许超配 20%）
+	MemoryLimit      float64 `json:"memoryLimit"`      // 内存上限值（单位：GiB）
+	MemoryUsed       float64 `json:"memoryUsed"`       // 已使用的内存资源（单位：GiB）
+	StorageLimit     int64   `json:"storageLimit"`     // 项目可使用的存储总量（单位：GiB）
+	ConfigmapLimit   int64   `json:"configmapLimit"`   // 项目允许创建的 ConfigMap 数量上限
+	PvcLimit         int64   `json:"pvcLimit"`         // 项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+	PodLimit         int64   `json:"podLimit"`         // 项目允许创建的 Pod 数量上限
+	NodeportLimit    int64   `json:"nodeportLimit"`    // 项目允许使用的 NodePort 数量上限
+	Status           string  `json:"status"`           // 项目状态（如 Active、Disabled、Archived）
+	CreatedBy        string  `json:"createdBy"`        // 创建人
+	UpdatedBy        string  `json:"updatedBy"`        // 更新人
+	CreatedAt        int64   `json:"createdAt"`        // 创建时间
+	UpdatedAt        int64   `json:"updatedAt"`        // 最后更新时间
+}
+
 type SearchNodeAnnotationsRequest struct {
 	Page     uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页
 	PageSize uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数
@@ -299,6 +358,39 @@ type SearchOnecNodeResponse struct {
 	Total uint64     `json:"total"` // 总条数
 }
 
+type SearchOnecProjectQuotaRequest struct {
+	Page        uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页码，默认 1
+	PageSize    uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数，默认 10
+	OrderStr    string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`       // 排序字段，默认 id
+	IsAsc       bool   `form:"isAsc,optional" default:"false"`                                   // 是否升序，默认 false
+	ClusterUuid string `form:"clusterUuid,optional" validate:"omitempty,max=100"`                // 关联的集群 ID，可选，最长 100 字符
+	ProjectId   uint64 `form:"projectId,optional" validate:"omitempty,gt=0"`                     // 关联的项目 ID，可选
+	Status      string `form:"status,optional" validate:"omitempty,max=50"`                      // 项目状态，可选，最长 50 字符
+	CreatedBy   string `form:"createdBy,optional" validate:"omitempty,max=50"`                   // 创建人，可选，最长 50 字符
+	UpdatedBy   string `form:"updatedBy,optional" validate:"omitempty,max=50"`                   // 更新人，可选，最长 50 字符
+}
+
+type SearchOnecProjectQuotaResponse struct {
+	Items []OnecProjectQuota `json:"items"` // 资源配额数据列表
+	Total uint64             `json:"total"` // 总条数
+}
+
+type SearchOnecProjectRequest struct {
+	Page       uint64 `form:"page,optional" default:"1" validate:"required,min=1"`              // 当前页码，默认 1
+	PageSize   uint64 `form:"pageSize,optional" default:"10" validate:"required,min=1,max=200"` // 每页条数，默认 10
+	OrderStr   string `form:"orderStr,optional" default:"id" validate:"omitempty,max=50"`       // 排序字段，默认 id
+	IsAsc      bool   `form:"isAsc,optional" default:"false"`                                   // 是否升序，默认 false
+	Name       string `form:"name,optional" validate:"omitempty,max=255"`                       // 项目的中文名称，可选，最长 255 字符
+	Identifier string `form:"identifier,optional" validate:"omitempty,max=100"`                 // 项目的唯一标识符（英文），可选，最长 100 字符
+	CreatedBy  string `form:"createdBy,optional" validate:"omitempty,max=50"`                   // 创建人，可选，最长 50 字符
+	UpdatedBy  string `form:"updatedBy,optional" validate:"omitempty,max=50"`                   // 更新人，可选，最长 50 字符
+}
+
+type SearchOnecProjectResponse struct {
+	Items []OnecProject `json:"items"` // 项目数据列表
+	Total uint64        `json:"total"` // 总条数
+}
+
 type SyncOnecNodeRequest struct {
 	Id uint64 `path:"id" validate:"required"`
 }
@@ -328,4 +420,28 @@ type UpdateOnecClusterRequest struct {
 	Location     string `json:"location,optional" validate:"omitempty,max=255"`                  // 集群所在地址，可选，最长 255 字符
 	NodeLbIp     string `json:"nodeLbIp,optional" validate:"omitempty,max=100"`                  // Node 负载均衡 IP，可选，最长 100 字符
 	Description  string `json:"description,optional" validate:"omitempty,max=255"`               // 描述信息，可选，最长 255 字符
+}
+
+type UpdateOnecProjectQuotaRequest struct {
+	Id               uint64  `path:"id" validate:"required,gt=0"`               // 主键，自增 ID，必填
+	ClusterUuid      string  `json:"clusterUuid" validate:"required,max=100"`   // 关联的集群 ID，必填，最长 100 字符
+	ProjectId        uint64  `json:"projectId" validate:"required,gt=0"`        // 关联的项目 ID，必填
+	CpuQuota         int64   `json:"cpuQuota" validate:"required,min=0"`        // CPU 分配配额（单位：核），必填
+	CpuOvercommit    float64 `json:"cpuOvercommit" validate:"required,gt=0"`    // CPU 超配比，必填，必须大于 0
+	CpuLimit         float64 `json:"cpuLimit" validate:"required,min=0"`        // CPU 上限值（单位：核），必填
+	MemoryQuota      float64 `json:"memoryQuota" validate:"required,min=0"`     // 内存分配配额（单位：GiB），必填
+	MemoryOvercommit float64 `json:"memoryOvercommit" validate:"required,gt=0"` // 内存超配比，必填，必须大于 0
+	MemoryLimit      float64 `json:"memoryLimit" validate:"required,min=0"`     // 内存上限值（单位：GiB），必填
+	StorageLimit     int64   `json:"storageLimit" validate:"required,min=0"`    // 项目可使用的存储总量（单位：GiB），必填
+	SecretLimit      int64   `json:"secretLimit" validate:"required,min=0"`
+	ConfigmapLimit   int64   `json:"configmapLimit" validate:"required,min=0"` // ConfigMap 数量上限，必填
+	PvcLimit         int64   `json:"pvcLimit" validate:"required,min=0"`       // PVC 数量上限，必填
+	PodLimit         int64   `json:"podLimit" validate:"required,min=0"`       // Pod 数量上限，必填
+	NodeportLimit    int64   `json:"nodeportLimit" validate:"required,min=0"`  // NodePort 数量上限，必填
+}
+
+type UpdateOnecProjectRequest struct {
+	Id          uint64 `path:"id" validate:"required,gt=0"`                        // 主键，自增 ID，必填
+	Name        string `json:"name,optional" validate:"omitempty,max=255"`         // 项目的中文名称，可选，最长 255 字符
+	Description string `json:"description,optional" validate:"omitempty,max=1000"` // 项目描述信息，可选，最长 1000 字符
 }

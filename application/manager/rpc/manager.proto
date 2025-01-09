@@ -527,10 +527,11 @@ message OnecProject {
   string name = 2; //项目的中文名称
   string identifier = 3; //项目的唯一标识符（英文），便于程序中唯一标识
   string description = 4; //项目描述信息
-  string createdBy = 5; //记录创建人
-  string updatedBy = 6; //记录更新人
-  int64 createdAt = 7; //项目创建时间
-  int64 updatedAt = 8; //项目信息最后更新时间
+  int64 isDefault = 5;
+  string createdBy = 6; //记录创建人
+  string updatedBy = 7; //记录更新人
+  int64 createdAt = 8; //项目创建时间
+  int64 updatedAt = 9; //项目信息最后更新时间
 }
 
 message AddOnecProjectReq {
@@ -609,15 +610,22 @@ message OnecProjectQuota {
   double memoryLimit = 10; //内存上限值（单位：GiB）
   double memoryUsed = 11; //已使用的内存资源（单位：GiB）
   int64 storageLimit = 12; //项目可使用的存储总量（单位：GiB）
-  int64 configmapLimit = 13; //项目允许创建的 ConfigMap 数量上限
-  int64 pvcLimit = 14; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
-  int64 podLimit = 15; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 16; //项目允许使用的 NodePort 数量上限
-  string status = 17; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createdBy = 18; //记录创建人
-  string updatedBy = 19; //记录更新人
-  int64 createdAt = 20; //项目创建时间
-  int64 updatedAt = 21; //项目信息最后更新时间
+  int64 storageUsed = 13;
+  int64 configmapLimit = 14; //项目允许创建的 ConfigMap 数量上限
+  int64 configmapUsed = 15;
+  int64 secretLimit = 16;
+  int64 secretUsed = 17;
+  int64 pvcLimit = 18; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
+  int64 pvcUsed = 19;
+  int64 podLimit = 20; //项目允许创建的 Pod 数量上限
+  int64 podUsed = 21;
+  int64 nodeportLimit = 22; //项目允许使用的 NodePort 数量上限
+  int64 nodeportUsed = 23;
+  string status = 24; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 25; //记录创建人
+  string updatedBy = 26; //记录更新人
+  int64 createdAt = 27; //项目创建时间
+  int64 updatedAt = 28; //项目信息最后更新时间
 }
 
 message AddOnecProjectQuotaReq {
@@ -626,16 +634,15 @@ message AddOnecProjectQuotaReq {
   int64 cpuQuota = 3; //CPU 分配配额（单位：核）
   double cpuOvercommit = 4; //CPU 超配比（如 1.5 表示允许超配 50%）
   double cpuLimit = 5; //CPU 上限值（单位：核）
-  double cpuUsed = 6; //已使用的 CPU 资源（单位：核）
   double memoryQuota = 7; //内存分配配额（单位：GiB）
   double memoryOvercommit = 8; //内存超配比（如 1.2 表示允许超配 20%）
   double memoryLimit = 9; //内存上限值（单位：GiB）
-  double memoryUsed = 10; //已使用的内存资源（单位：GiB）
   int64 storageLimit = 11; //项目可使用的存储总量（单位：GiB）
   int64 configmapLimit = 12; //项目允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 13; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
   int64 podLimit = 14; //项目允许创建的 Pod 数量上限
   int64 nodeportLimit = 15; //项目允许使用的 NodePort 数量上限
+  int64 secretLimit = 16;
   string createdBy = 17; //记录创建人
   string updatedBy = 18; //记录更新人
 }
@@ -650,17 +657,16 @@ message UpdateOnecProjectQuotaReq {
   int64 cpuQuota = 4; //CPU 分配配额（单位：核）
   double cpuOvercommit = 5; //CPU 超配比（如 1.5 表示允许超配 50%）
   double cpuLimit = 6; //CPU 上限值（单位：核）
-  double cpuUsed = 7; //已使用的 CPU 资源（单位：核）
   double memoryQuota = 8; //内存分配配额（单位：GiB）
   double memoryOvercommit = 9; //内存超配比（如 1.2 表示允许超配 20%）
   double memoryLimit = 10; //内存上限值（单位：GiB）
-  double memoryUsed = 11; //已使用的内存资源（单位：GiB）
   int64 storageLimit = 12; //项目可使用的存储总量（单位：GiB）
   int64 configmapLimit = 13; //项目允许创建的 ConfigMap 数量上限
   int64 pvcLimit = 14; //项目允许创建的 PVC（PersistentVolumeClaim）数量上限
   int64 podLimit = 15; //项目允许创建的 Pod 数量上限
-  int64 nodeportLimit = 16; //项目允许使用的 NodePort 数量上限
-  string updatedBy = 17; //记录更新人
+  int64 secretLimit = 16;
+  int64 nodeportLimit = 17; //项目允许使用的 NodePort 数量上限
+  string updatedBy = 18; //记录更新人
 }
 
 message UpdateOnecProjectQuotaResp {

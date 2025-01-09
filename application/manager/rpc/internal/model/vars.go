@@ -10,7 +10,7 @@ func isZeroValue(value any) bool {
 	case string:
 		return v == ""
 	case int, int32, int64, uint, uint32, uint64:
-		return v == 0
+		return v != 0
 	default:
 		return value == nil
 	}

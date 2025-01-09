@@ -6,6 +6,8 @@ import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecclusterconninfoservice"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecclusterservice"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecnodeservice"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecprojectquotaservice"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/client/onecprojectservice"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/client/sysauthservice"
 	"github.com/yanshicheng/kube-onec/common/interceptors"
 	"github.com/yanshicheng/kube-onec/common/verify"
@@ -22,6 +24,8 @@ type ServiceContext struct {
 	ClusterRpc         onecclusterservice.OnecClusterService
 	ClusterConnInfoRpc onecclusterconninfoservice.OnecClusterConnInfoService
 	NodeRpc            onecnodeservice.OnecNodeService
+	ProjectRpc         onecprojectservice.OnecProjectService
+	ProjectQuotaRpc    onecprojectquotaservice.OnecProjectQuotaService
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,5 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		ClusterRpc:         onecclusterservice.NewOnecClusterService(managerRpc),
 		ClusterConnInfoRpc: onecclusterconninfoservice.NewOnecClusterConnInfoService(managerRpc),
 		NodeRpc:            onecnodeservice.NewOnecNodeService(managerRpc),
+		ProjectRpc:         onecprojectservice.NewOnecProjectService(managerRpc),
+		ProjectQuotaRpc:    onecprojectquotaservice.NewOnecProjectQuotaService(managerRpc),
 	}
 }

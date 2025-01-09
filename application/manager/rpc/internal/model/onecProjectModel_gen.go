@@ -58,8 +58,8 @@ type (
 		UpdatedBy   string    `db:"updated_by"`  // 记录更新人
 		CreatedAt   time.Time `db:"created_at"`  // 记录创建时间
 		UpdatedAt   time.Time `db:"updated_at"`  // 记录更新时间
+		IsDefault   int64     `db:"is_default"`  // 是否为默认分区，默认为 FALSE，默认分区不可修改或删除
 		IsDeleted   int64     `db:"is_deleted"`  // 是否删除
-		IsDefault   int64     `db:"is_default"`
 	}
 )
 
@@ -294,8 +294,8 @@ func (m *defaultOnecProjectModel) Insert(ctx context.Context, data *OnecProject)
 	kubeOnecOnecProjectIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdPrefix, data.Id)
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, data.Identifier)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, onecProjectRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.Name, data.Identifier, data.Description, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.Name, data.Identifier, data.Description, data.CreatedBy, data.UpdatedBy, data.IsDefault, data.IsDeleted)
 	}, kubeOnecOnecProjectIdKey, kubeOnecOnecProjectIdentifierKey)
 	return ret, err
 }
@@ -310,7 +310,7 @@ func (m *defaultOnecProjectModel) Update(ctx context.Context, newData *OnecProje
 	kubeOnecOnecProjectIdentifierKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectIdentifierPrefix, data.Identifier)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.Name, newData.Identifier, newData.Description, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.Name, newData.Identifier, newData.Description, newData.CreatedBy, newData.UpdatedBy, newData.IsDefault, newData.IsDeleted, newData.Id)
 	}, kubeOnecOnecProjectIdKey, kubeOnecOnecProjectIdentifierKey)
 	return err
 }

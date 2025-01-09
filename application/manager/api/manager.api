@@ -11,3 +11,4 @@ info (
 import "api/cluster.api"
 import "api/conn_info.api"
 import "api/node.api"
+import "api/project.api"

@@ -70,6 +70,7 @@ type (
 		UpdatedBy      string    `db:"updated_by"`      // 记录更新人
 		CreatedAt      time.Time `db:"created_at"`      // 记录创建时间
 		UpdatedAt      time.Time `db:"updated_at"`      // 记录更新时间
+		IsDefault      int64     `db:"is_default"`      // 是否为默认分区，默认为 FALSE，默认分区不可修改或删除
 		IsDeleted      int64     `db:"is_deleted"`      // 是否删除
 	}
 )
@@ -305,8 +306,8 @@ func (m *defaultOnecProjectApplicationModel) Insert(ctx context.Context, data *O
 	kubeOnecOnecProjectApplicationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectApplicationIdPrefix, data.Id)
 	kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey := fmt.Sprintf("%s%v:%v:%v", cacheKubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierPrefix, data.ProjectId, data.ClusterUuid, data.Identifier)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectApplicationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ProjectId, data.ClusterUuid, data.Name, data.Identifier, data.Uuid, data.Description, data.CpuLimit, data.MemoryLimit, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.NodeportLimit, data.Status, data.AppCreateTime, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectApplicationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ProjectId, data.ClusterUuid, data.Name, data.Identifier, data.Uuid, data.Description, data.CpuLimit, data.MemoryLimit, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.NodeportLimit, data.Status, data.AppCreateTime, data.CreatedBy, data.UpdatedBy, data.IsDefault, data.IsDeleted)
 	}, kubeOnecOnecProjectApplicationIdKey, kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey)
 	return ret, err
 }
@@ -321,7 +322,7 @@ func (m *defaultOnecProjectApplicationModel) Update(ctx context.Context, newData
 	kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey := fmt.Sprintf("%s%v:%v:%v", cacheKubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierPrefix, data.ProjectId, data.ClusterUuid, data.Identifier)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectApplicationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ProjectId, newData.ClusterUuid, newData.Name, newData.Identifier, newData.Uuid, newData.Description, newData.CpuLimit, newData.MemoryLimit, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.NodeportLimit, newData.Status, newData.AppCreateTime, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ProjectId, newData.ClusterUuid, newData.Name, newData.Identifier, newData.Uuid, newData.Description, newData.CpuLimit, newData.MemoryLimit, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.NodeportLimit, newData.Status, newData.AppCreateTime, newData.CreatedBy, newData.UpdatedBy, newData.IsDefault, newData.IsDeleted, newData.Id)
 	}, kubeOnecOnecProjectApplicationIdKey, kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey)
 	return err
 }

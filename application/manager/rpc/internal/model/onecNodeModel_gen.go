@@ -216,8 +216,6 @@ func (m *defaultOnecNodeModel) Search(ctx context.Context, orderStr string, isAs
 	// 初始化 WHERE 子句
 	where := "WHERE `is_deleted` = 0"
 	if queryStr != "" {
-		fmt.Println(queryStr)
-		fmt.Println(args...)
 		where = fmt.Sprintf("WHERE %s AND `is_deleted` = 0", queryStr)
 	}
 
