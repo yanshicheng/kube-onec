@@ -3,7 +3,7 @@ package sysdictitemservicelogic
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
-	"github.com/yanshicheng/kube-onec/utils"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"

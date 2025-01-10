@@ -3,7 +3,7 @@ package sysroleservicelogic
 import (
 	"context"
 	"errors"
-	"github.com/yanshicheng/kube-onec/utils"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"

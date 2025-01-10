@@ -67,4 +67,21 @@ var (
 	ProjectQuotaNotEnoughErr = errorx.New(102111, "传入的资源小于已经分配的总资源!")
 	UpdateProjectQuotaErr    = errorx.New(102112, "项目资源更新失败!")
 	UpdateClusterErr         = errorx.New(102113, "集群更新失败!")
+	IdentifierErr            = errorx.New(102114, "标识符不合法，只允许小写英文和‘-’ 并且只能英文字母开头!")
+	// 项目资源不足，无法创建应用
+	ProjectQuotaNotEnoughCreateAppErr = errorx.New(102115, "项目资源不足，无法创建应用!")
+	NamespaceExistErr                 = errorx.New(102116, "命名空间已存在或查询异常!")
+	CreateNamespaceErr                = errorx.New(102117, "命名空间创建失败!")
+
+	AddProjectApplicationErr = errorx.New(102118, "项目应用添加失败!")
+	// 应用创建成功，但是项目资源修改失败，请稍后手动同步项目资源
+	ProjectQuotaUpdateErr   = errorx.New(102119, "应用创建成功，但是项目资源修改失败，请稍后手动同步项目资源!")
+	GetApplicationErr       = errorx.New(102120, "应用查询失败!")
+	UpdateNamespaceQuotaErr = errorx.New(102121, "命名空间资源更新失败!")
+	UpdateApplicationErr    = errorx.New(102122, "应用更新失败!")
+	DeleteNamespaceQuotaErr = errorx.New(102123, "命名空间资源删除失败!")
+	DeleteNamespaceErr      = errorx.New(102124, "命名空间删除失败!")
+	DeleteApplicationErr    = errorx.New(102125, "应用删除失败!")
+	ProjectIdEmptyErr       = errorx.New(102126, "项目ID 不能为空!")
+	ProjectNotExistErr      = errorx.New(102127, "项目不存在!")
 )

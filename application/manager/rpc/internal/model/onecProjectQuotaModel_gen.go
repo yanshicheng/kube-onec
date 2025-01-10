@@ -79,6 +79,8 @@ type (
 		CreatedAt        time.Time `db:"created_at"`        // 记录创建时间
 		UpdatedAt        time.Time `db:"updated_at"`        // 记录更新时间
 		IsDeleted        int64     `db:"is_deleted"`        // 是否删除
+		ServiceLimit     int64     `db:"service_limit"`     // 项目允许创建的 Service 数量上限
+		ServiceUsed      int64     `db:"service_used"`      // 已使用的 Service 资源数量
 	}
 )
 
@@ -313,8 +315,8 @@ func (m *defaultOnecProjectQuotaModel) Insert(ctx context.Context, data *OnecPro
 	kubeOnecOnecProjectQuotaClusterUuidProjectIdKey := fmt.Sprintf("%s%v:%v", cacheKubeOnecOnecProjectQuotaClusterUuidProjectIdPrefix, data.ClusterUuid, data.ProjectId)
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, data.Id)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectQuotaRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.ProjectId, data.CpuQuota, data.CpuOvercommit, data.CpuLimit, data.CpuUsed, data.MemoryQuota, data.MemoryOvercommit, data.MemoryLimit, data.MemoryUsed, data.StorageLimit, data.StorageUsed, data.ConfigmapLimit, data.ConfigmapUsed, data.SecretUsed, data.SecretLimit, data.PvcLimit, data.PvcUsed, data.PodLimit, data.PodUsed, data.NodeportLimit, data.NodeportUsed, data.Status, data.CreatedBy, data.UpdatedBy, data.IsDeleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectQuotaRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ClusterUuid, data.ProjectId, data.CpuQuota, data.CpuOvercommit, data.CpuLimit, data.CpuUsed, data.MemoryQuota, data.MemoryOvercommit, data.MemoryLimit, data.MemoryUsed, data.StorageLimit, data.StorageUsed, data.ConfigmapLimit, data.ConfigmapUsed, data.SecretUsed, data.SecretLimit, data.PvcLimit, data.PvcUsed, data.PodLimit, data.PodUsed, data.NodeportLimit, data.NodeportUsed, data.Status, data.CreatedBy, data.UpdatedBy, data.IsDeleted, data.ServiceLimit, data.ServiceUsed)
 	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return ret, err
 }
@@ -329,7 +331,7 @@ func (m *defaultOnecProjectQuotaModel) Update(ctx context.Context, newData *Onec
 	kubeOnecOnecProjectQuotaIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectQuotaIdPrefix, data.Id)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectQuotaRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.ProjectId, newData.CpuQuota, newData.CpuOvercommit, newData.CpuLimit, newData.CpuUsed, newData.MemoryQuota, newData.MemoryOvercommit, newData.MemoryLimit, newData.MemoryUsed, newData.StorageLimit, newData.StorageUsed, newData.ConfigmapLimit, newData.ConfigmapUsed, newData.SecretUsed, newData.SecretLimit, newData.PvcLimit, newData.PvcUsed, newData.PodLimit, newData.PodUsed, newData.NodeportLimit, newData.NodeportUsed, newData.Status, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ClusterUuid, newData.ProjectId, newData.CpuQuota, newData.CpuOvercommit, newData.CpuLimit, newData.CpuUsed, newData.MemoryQuota, newData.MemoryOvercommit, newData.MemoryLimit, newData.MemoryUsed, newData.StorageLimit, newData.StorageUsed, newData.ConfigmapLimit, newData.ConfigmapUsed, newData.SecretUsed, newData.SecretLimit, newData.PvcLimit, newData.PvcUsed, newData.PodLimit, newData.PodUsed, newData.NodeportLimit, newData.NodeportUsed, newData.Status, newData.CreatedBy, newData.UpdatedBy, newData.IsDeleted, newData.ServiceLimit, newData.ServiceUsed, newData.Id)
 	}, kubeOnecOnecProjectQuotaClusterUuidProjectIdKey, kubeOnecOnecProjectQuotaIdKey)
 	return err
 }

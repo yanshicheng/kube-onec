@@ -9,7 +9,7 @@ import (
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/pkg/jwt"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -102,7 +102,7 @@ func (l *GetTokenLogic) GetToken(in *pb.GetTokenRequest) (*pb.GetTokenResponse, 
 		rolesIds = append(rolesIds, role.Id)
 	}
 	l.Logger.Infof("账号登录成功, 账号: %s", in.Account)
-	uuid, err := utils.GenerateRandomID()
+	uuid, err := utils2.GenerateRandomID()
 	if err != nil {
 		l.Logger.Errorf("生成UUID失败, 错误: %v", err)
 		return nil, code.GenerateUUIDErr
@@ -167,14 +167,14 @@ func (l *GetTokenLogic) GetToken(in *pb.GetTokenRequest) (*pb.GetTokenResponse, 
 // 验证密码是否正确
 func (l *GetTokenLogic) verifyPassword(inputPassword, hashedPassword string) error {
 	// 解码密码
-	password, err := utils.DecodeBase64Password(inputPassword)
+	password, err := utils2.DecodeBase64Password(inputPassword)
 	if err != nil {
 		l.Logger.Errorf("密码解码失败: %v", err)
 		return code.DecodeBase64PasswordErr
 	}
 
 	// 校验密码
-	if !utils.CheckPasswordHash(password, hashedPassword) {
+	if !utils2.CheckPasswordHash(password, hashedPassword) {
 		l.Logger.Infof("密码验证失败")
 		return code.LoginErr
 	}

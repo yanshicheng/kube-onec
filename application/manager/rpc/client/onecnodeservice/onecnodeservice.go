@@ -106,6 +106,8 @@ type (
 	SyncOnecClusterResp               = pb.SyncOnecClusterResp
 	SyncOnecNodeReq                   = pb.SyncOnecNodeReq
 	SyncOnecNodeResp                  = pb.SyncOnecNodeResp
+	SyncOnecProjectReq                = pb.SyncOnecProjectReq
+	SyncOnecProjectResp               = pb.SyncOnecProjectResp
 	UpdateOnecClusterConnInfoReq      = pb.UpdateOnecClusterConnInfoReq
 	UpdateOnecClusterConnInfoResp     = pb.UpdateOnecClusterConnInfoResp
 	UpdateOnecClusterReq              = pb.UpdateOnecClusterReq

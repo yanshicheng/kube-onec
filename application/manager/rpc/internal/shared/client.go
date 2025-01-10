@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/common/k8swrapper/manager"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -14,7 +14,7 @@ func GetK8sClient(ctx context.Context, svc *svc.ServiceContext, clusterUuid stri
 	if err != nil {
 		// 如果不存在 则查询 cluster 进行创建 并返回 client
 		cluster, err := svc.ClusterModel.FindOneByUuid(ctx, clusterUuid)
-		config := utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure))
+		config := utils2.NewRestConfig(cluster.Host, cluster.Token, utils2.IntToBool(cluster.SkipInsecure))
 		if err != nil {
 			logx.WithContext(ctx).Errorf("获取集群信息失败: %v", err)
 			return nil, err

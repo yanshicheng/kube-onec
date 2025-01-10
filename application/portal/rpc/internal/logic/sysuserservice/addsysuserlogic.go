@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"time"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
@@ -77,7 +77,7 @@ func (l *AddSysUserLogic) AddSysUser(in *pb.AddSysUserReq) (*pb.AddSysUserResp, 
 		}
 	}
 	icon := "/users/20241223/20241223175322.jpg"
-	encryptPassword, err := utils.EncryptPassword(utils.GeneratePassword())
+	encryptPassword, err := utils2.EncryptPassword(utils2.GeneratePassword())
 	if err != nil {
 		l.Logger.Errorf("密码加密失败: %v", err)
 		return nil, code.EncryptPasswordErr
@@ -85,7 +85,7 @@ func (l *AddSysUserLogic) AddSysUser(in *pb.AddSysUserReq) (*pb.AddSysUserResp, 
 	_, err = l.svcCtx.SysUser.Insert(l.ctx, &model.SysUser{
 		Account:         in.Account,
 		Email:           in.Email,
-		HireDate:        utils.FormattedDate(in.HireDate),
+		HireDate:        utils2.FormattedDate(in.HireDate),
 		Icon:            icon,
 		Mobile:          in.Mobile,
 		UserName:        in.UserName,

@@ -106,6 +106,8 @@ type (
 	SyncOnecClusterResp               = pb.SyncOnecClusterResp
 	SyncOnecNodeReq                   = pb.SyncOnecNodeReq
 	SyncOnecNodeResp                  = pb.SyncOnecNodeResp
+	SyncOnecProjectReq                = pb.SyncOnecProjectReq
+	SyncOnecProjectResp               = pb.SyncOnecProjectResp
 	UpdateOnecClusterConnInfoReq      = pb.UpdateOnecClusterConnInfoReq
 	UpdateOnecClusterConnInfoResp     = pb.UpdateOnecClusterConnInfoResp
 	UpdateOnecClusterReq              = pb.UpdateOnecClusterReq
@@ -126,6 +128,7 @@ type (
 		DelOnecProject(ctx context.Context, in *DelOnecProjectReq, opts ...grpc.CallOption) (*DelOnecProjectResp, error)
 		GetOnecProjectById(ctx context.Context, in *GetOnecProjectByIdReq, opts ...grpc.CallOption) (*GetOnecProjectByIdResp, error)
 		SearchOnecProject(ctx context.Context, in *SearchOnecProjectReq, opts ...grpc.CallOption) (*SearchOnecProjectResp, error)
+		SyncOnecProject(ctx context.Context, in *SyncOnecProjectReq, opts ...grpc.CallOption) (*SyncOnecProjectResp, error)
 	}
 
 	defaultOnecProjectService struct {
@@ -163,4 +166,9 @@ func (m *defaultOnecProjectService) GetOnecProjectById(ctx context.Context, in *
 func (m *defaultOnecProjectService) SearchOnecProject(ctx context.Context, in *SearchOnecProjectReq, opts ...grpc.CallOption) (*SearchOnecProjectResp, error) {
 	client := pb.NewOnecProjectServiceClient(m.cli.Conn())
 	return client.SearchOnecProject(ctx, in, opts...)
+}
+
+func (m *defaultOnecProjectService) SyncOnecProject(ctx context.Context, in *SyncOnecProjectReq, opts ...grpc.CallOption) (*SyncOnecProjectResp, error) {
+	client := pb.NewOnecProjectServiceClient(m.cli.Conn())
+	return client.SyncOnecProject(ctx, in, opts...)
 }

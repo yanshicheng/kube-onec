@@ -48,3 +48,8 @@ func (s *OnecProjectServiceServer) SearchOnecProject(ctx context.Context, in *pb
 	l := onecprojectservicelogic.NewSearchOnecProjectLogic(ctx, s.svcCtx)
 	return l.SearchOnecProject(in)
 }
+
+func (s *OnecProjectServiceServer) SyncOnecProject(ctx context.Context, in *pb.SyncOnecProjectReq) (*pb.SyncOnecProjectResp, error) {
+	l := onecprojectservicelogic.NewSyncOnecProjectLogic(ctx, s.svcCtx)
+	return l.SyncOnecProject(in)
+}

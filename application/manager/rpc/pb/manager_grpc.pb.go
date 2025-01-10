@@ -1309,6 +1309,7 @@ const (
 	OnecProjectService_DelOnecProject_FullMethodName     = "/pb.OnecProjectService/DelOnecProject"
 	OnecProjectService_GetOnecProjectById_FullMethodName = "/pb.OnecProjectService/GetOnecProjectById"
 	OnecProjectService_SearchOnecProject_FullMethodName  = "/pb.OnecProjectService/SearchOnecProject"
+	OnecProjectService_SyncOnecProject_FullMethodName    = "/pb.OnecProjectService/SyncOnecProject"
 )
 
 // OnecProjectServiceClient is the client API for OnecProjectService service.
@@ -1321,6 +1322,7 @@ type OnecProjectServiceClient interface {
 	DelOnecProject(ctx context.Context, in *DelOnecProjectReq, opts ...grpc.CallOption) (*DelOnecProjectResp, error)
 	GetOnecProjectById(ctx context.Context, in *GetOnecProjectByIdReq, opts ...grpc.CallOption) (*GetOnecProjectByIdResp, error)
 	SearchOnecProject(ctx context.Context, in *SearchOnecProjectReq, opts ...grpc.CallOption) (*SearchOnecProjectResp, error)
+	SyncOnecProject(ctx context.Context, in *SyncOnecProjectReq, opts ...grpc.CallOption) (*SyncOnecProjectResp, error)
 }
 
 type onecProjectServiceClient struct {
@@ -1381,6 +1383,16 @@ func (c *onecProjectServiceClient) SearchOnecProject(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *onecProjectServiceClient) SyncOnecProject(ctx context.Context, in *SyncOnecProjectReq, opts ...grpc.CallOption) (*SyncOnecProjectResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SyncOnecProjectResp)
+	err := c.cc.Invoke(ctx, OnecProjectService_SyncOnecProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OnecProjectServiceServer is the server API for OnecProjectService service.
 // All implementations must embed UnimplementedOnecProjectServiceServer
 // for forward compatibility.
@@ -1391,6 +1403,7 @@ type OnecProjectServiceServer interface {
 	DelOnecProject(context.Context, *DelOnecProjectReq) (*DelOnecProjectResp, error)
 	GetOnecProjectById(context.Context, *GetOnecProjectByIdReq) (*GetOnecProjectByIdResp, error)
 	SearchOnecProject(context.Context, *SearchOnecProjectReq) (*SearchOnecProjectResp, error)
+	SyncOnecProject(context.Context, *SyncOnecProjectReq) (*SyncOnecProjectResp, error)
 	mustEmbedUnimplementedOnecProjectServiceServer()
 }
 
@@ -1415,6 +1428,9 @@ func (UnimplementedOnecProjectServiceServer) GetOnecProjectById(context.Context,
 }
 func (UnimplementedOnecProjectServiceServer) SearchOnecProject(context.Context, *SearchOnecProjectReq) (*SearchOnecProjectResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchOnecProject not implemented")
+}
+func (UnimplementedOnecProjectServiceServer) SyncOnecProject(context.Context, *SyncOnecProjectReq) (*SyncOnecProjectResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncOnecProject not implemented")
 }
 func (UnimplementedOnecProjectServiceServer) mustEmbedUnimplementedOnecProjectServiceServer() {}
 func (UnimplementedOnecProjectServiceServer) testEmbeddedByValue()                            {}
@@ -1527,6 +1543,24 @@ func _OnecProjectService_SearchOnecProject_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OnecProjectService_SyncOnecProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncOnecProjectReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OnecProjectServiceServer).SyncOnecProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OnecProjectService_SyncOnecProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OnecProjectServiceServer).SyncOnecProject(ctx, req.(*SyncOnecProjectReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OnecProjectService_ServiceDesc is the grpc.ServiceDesc for OnecProjectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1553,6 +1587,10 @@ var OnecProjectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchOnecProject",
 			Handler:    _OnecProjectService_SearchOnecProject_Handler,
+		},
+		{
+			MethodName: "SyncOnecProject",
+			Handler:    _OnecProjectService_SyncOnecProject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

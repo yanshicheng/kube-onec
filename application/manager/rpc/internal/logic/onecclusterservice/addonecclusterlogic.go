@@ -7,7 +7,7 @@ import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/shared"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"sync"
 
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
@@ -48,12 +48,12 @@ func (l *AddOnecClusterLogic) AddOnecCluster(in *pb.AddOnecClusterReq) (*pb.AddO
 }
 
 func (l *AddOnecClusterLogic) addTokenCluster(in *pb.AddOnecClusterReq) (*pb.AddOnecClusterResp, error) {
-	clusterUuid, err := utils.GenerateRandomID()
+	clusterUuid, err := utils2.GenerateRandomID()
 	if err != nil {
 		l.Logger.Errorf("生成UUID失败: %v", err)
 		return nil, errorx.UUIDGenerateErr
 	}
-	config := utils.NewRestConfig(in.Host, in.Token, utils.IntToBool(in.SkipInsecure))
+	config := utils2.NewRestConfig(in.Host, in.Token, utils2.IntToBool(in.SkipInsecure))
 	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, clusterUuid, config)
 	if err != nil {
 		l.Logger.Errorf("获取集群客户端失败: %v", err)
@@ -84,7 +84,7 @@ func (l *AddOnecClusterLogic) addTokenCluster(in *pb.AddOnecClusterReq) (*pb.Add
 
 	newCluster := &model.OnecCluster{
 		Name:             in.Name,
-		SkipInsecure:     utils.BoolToInt(utils.IntToBool(in.SkipInsecure)),
+		SkipInsecure:     utils2.BoolToInt(utils2.IntToBool(in.SkipInsecure)),
 		Uuid:             clusterUuid,
 		Host:             in.Host,
 		Token:            in.Token,
@@ -275,7 +275,7 @@ func GenerateNewNode(node *core.NodeInfo) (*model.OnecNode, error) {
 		Roles:            node.Roles,
 		JoinAt:           node.JoinTime,
 		PodCidr:          node.PodCIDR,
-		Unschedulable:    utils.BoolToInt(node.Unschedulable),
+		Unschedulable:    utils2.BoolToInt(node.Unschedulable),
 		NodeIp:           node.NodeIp,
 		Os:               node.Os,
 		MaxPods:          node.MaxPods,

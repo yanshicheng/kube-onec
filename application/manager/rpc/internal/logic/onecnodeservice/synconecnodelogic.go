@@ -3,16 +3,15 @@ package onecnodeservicelogic
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"sync"
 
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	onecclusterservicelogic "github.com/yanshicheng/kube-onec/application/manager/rpc/internal/logic/onecclusterservice"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
-	"github.com/yanshicheng/kube-onec/utils"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -49,7 +48,7 @@ func (l *SyncOnecNodeLogic) SyncOnecNode(in *pb.SyncOnecNodeReq) (*pb.SyncOnecNo
 			l.Logger.Errorf("获取集群信息失败: %v", err)
 			return nil, code.GetClusterInfoErr
 		}
-		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, node.ClusterUuid, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
+		client, err = l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, node.ClusterUuid, utils2.NewRestConfig(cluster.Host, cluster.Token, utils2.IntToBool(cluster.SkipInsecure)))
 		if err != nil {
 			l.Logger.Infof("获取集群客户端失败: %v", err)
 			return nil, code.GetClusterClientErr

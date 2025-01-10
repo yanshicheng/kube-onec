@@ -3,7 +3,7 @@ package cluster
 import (
 	"context"
 	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
-	"github.com/yanshicheng/kube-onec/utils"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"log"

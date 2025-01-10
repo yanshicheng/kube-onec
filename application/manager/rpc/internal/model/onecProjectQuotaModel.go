@@ -41,6 +41,7 @@ type ProjectQuota struct {
 	PvcLimit       int64   `json:"pvcLimit"`
 	ConfigmapLimit int64   `json:"configmapLimit"`
 	SecretLimit    int64   `json:"secretLimit"`
+	ServiceLimit   int64   `json:"serviceLimit"`
 }
 
 func (m *defaultOnecProjectQuotaModel) FindAllByProjectQuotaTotal(ctx context.Context, projectId uint64, clusterUuid string) (*ProjectQuota, error) {
@@ -57,7 +58,8 @@ SELECT
     COALESCE(SUM(nodeport_limit), 0) AS nodeportLimit,
     COALESCE(SUM(pvc_limit), 0) AS pvcLimit,
     COALESCE(SUM(configmap_limit), 0) AS configmapLimit,
-    COALESCE(SUM(secret_limit), 0) AS secretLimit
+    COALESCE(SUM(secret_limit), 0) AS secretLimit,
+    COALESCE(SUM(service_limit), 0) AS serviceLimit
 FROM %s
 WHERE project_id = ? AND cluster_uuid = ? AND is_deleted = 0
 	`, table)

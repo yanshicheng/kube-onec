@@ -59,11 +59,13 @@ type (
 		Description    string    `db:"description"`     // 应用描述信息
 		CpuLimit       float64   `db:"cpu_limit"`       // 应用可使用的 CPU 总量（单位：核）
 		MemoryLimit    float64   `db:"memory_limit"`    // 应用可使用的内存总量（单位：GiB）
-		StorageLimit   uint64    `db:"storage_limit"`   // 应用可使用的存储总量（单位：GiB）
-		ConfigmapLimit uint64    `db:"configmap_limit"` // 应用允许创建的 ConfigMap 数量上限
-		PvcLimit       uint64    `db:"pvc_limit"`       // 应用允许创建的 PVC 数量上限
-		PodLimit       uint64    `db:"pod_limit"`       // 应用允许创建的 Pod 数量上限
-		NodeportLimit  uint64    `db:"nodeport_limit"`  // 应用允许使用的 NodePort 数量上限
+		StorageLimit   int64     `db:"storage_limit"`   // 应用可使用的存储总量（单位：GiB）
+		ConfigmapLimit int64     `db:"configmap_limit"` // 应用允许创建的 ConfigMap 数量上限
+		PvcLimit       int64     `db:"pvc_limit"`       // 应用允许创建的 PVC 数量上限
+		PodLimit       int64     `db:"pod_limit"`       // 应用允许创建的 Pod 数量上限
+		SecretLimit    int64     `db:"secret_limit"`    // 应用允许创建的 Secret 数量上限
+		NodeportLimit  int64     `db:"nodeport_limit"`  // 应用允许使用的 NodePort 数量上限
+		ServiceLimit   int64     `db:"service_limit"`   // 应用允许创建的 Service 数量上限
 		Status         string    `db:"status"`          // 应用状态（如 `Success`、`Error`）
 		AppCreateTime  time.Time `db:"app_create_time"` // 应用创建时间，标识该应用在业务系统中首次创建的时间
 		CreatedBy      string    `db:"created_by"`      // 记录创建人
@@ -306,8 +308,8 @@ func (m *defaultOnecProjectApplicationModel) Insert(ctx context.Context, data *O
 	kubeOnecOnecProjectApplicationIdKey := fmt.Sprintf("%s%v", cacheKubeOnecOnecProjectApplicationIdPrefix, data.Id)
 	kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey := fmt.Sprintf("%s%v:%v:%v", cacheKubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierPrefix, data.ProjectId, data.ClusterUuid, data.Identifier)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectApplicationRowsExpectAutoSet)
-		return conn.ExecCtx(ctx, query, data.ProjectId, data.ClusterUuid, data.Name, data.Identifier, data.Uuid, data.Description, data.CpuLimit, data.MemoryLimit, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.NodeportLimit, data.Status, data.AppCreateTime, data.CreatedBy, data.UpdatedBy, data.IsDefault, data.IsDeleted)
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, onecProjectApplicationRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.ProjectId, data.ClusterUuid, data.Name, data.Identifier, data.Uuid, data.Description, data.CpuLimit, data.MemoryLimit, data.StorageLimit, data.ConfigmapLimit, data.PvcLimit, data.PodLimit, data.SecretLimit, data.NodeportLimit, data.ServiceLimit, data.Status, data.AppCreateTime, data.CreatedBy, data.UpdatedBy, data.IsDefault, data.IsDeleted)
 	}, kubeOnecOnecProjectApplicationIdKey, kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey)
 	return ret, err
 }
@@ -322,7 +324,7 @@ func (m *defaultOnecProjectApplicationModel) Update(ctx context.Context, newData
 	kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey := fmt.Sprintf("%s%v:%v:%v", cacheKubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierPrefix, data.ProjectId, data.ClusterUuid, data.Identifier)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, onecProjectApplicationRowsWithPlaceHolder)
-		return conn.ExecCtx(ctx, query, newData.ProjectId, newData.ClusterUuid, newData.Name, newData.Identifier, newData.Uuid, newData.Description, newData.CpuLimit, newData.MemoryLimit, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.NodeportLimit, newData.Status, newData.AppCreateTime, newData.CreatedBy, newData.UpdatedBy, newData.IsDefault, newData.IsDeleted, newData.Id)
+		return conn.ExecCtx(ctx, query, newData.ProjectId, newData.ClusterUuid, newData.Name, newData.Identifier, newData.Uuid, newData.Description, newData.CpuLimit, newData.MemoryLimit, newData.StorageLimit, newData.ConfigmapLimit, newData.PvcLimit, newData.PodLimit, newData.SecretLimit, newData.NodeportLimit, newData.ServiceLimit, newData.Status, newData.AppCreateTime, newData.CreatedBy, newData.UpdatedBy, newData.IsDefault, newData.IsDeleted, newData.Id)
 	}, kubeOnecOnecProjectApplicationIdKey, kubeOnecOnecProjectApplicationProjectIdClusterUuidIdentifierKey)
 	return err
 }

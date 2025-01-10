@@ -262,3 +262,18 @@ func isTemporaryError(err error) bool {
 	// 这里简单示例，您可以根据实际情况添加更多条件
 	return errors.IsServerTimeout(err) || errors.IsTooManyRequests(err)
 }
+
+// NamespaceExist 查询名称空间是否存在
+func (n *Namespace) NamespaceExist(namespaceName string) bool {
+	_, err := n.client.GetClientset().CoreV1().Namespaces().Get(n.ctx, namespaceName, metav1.GetOptions{})
+	if err != nil {
+		if errors.IsNotFound(err) {
+			n.Logger.Infof("命名空间 %s 不存在", namespaceName)
+			return false
+		}
+		n.Logger.Errorf("查询命名空间 %s 是否存在时发生错误: %v", namespaceName, err)
+		return true
+	}
+	n.Logger.Infof("命名空间 %s 存在", namespaceName)
+	return true
+}

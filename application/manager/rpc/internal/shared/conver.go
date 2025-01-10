@@ -35,3 +35,30 @@ func ConvertDbModelToPbModel(dbNode *model.OnecNode) *pb.OnecNode {
 		UpdatedAt:        dbNode.UpdatedAt.Unix(), // 转换为 Unix 时间戳
 	}
 }
+
+func ConvertModelToPbApplication(modelApp *model.OnecProjectApplication) *pb.OnecProjectApplication {
+	return &pb.OnecProjectApplication{
+		Id:             modelApp.Id,
+		ProjectId:      modelApp.ProjectId,
+		ClusterUuid:    modelApp.ClusterUuid,
+		Name:           modelApp.Name,
+		Identifier:     modelApp.Identifier,
+		Uuid:           modelApp.Uuid,
+		Description:    modelApp.Description,
+		CpuLimit:       modelApp.CpuLimit,
+		MemoryLimit:    modelApp.MemoryLimit,
+		StorageLimit:   modelApp.StorageLimit,
+		ConfigmapLimit: modelApp.ConfigmapLimit,
+		PvcLimit:       modelApp.PvcLimit,
+		PodLimit:       modelApp.PodLimit,
+		NodeportLimit:  modelApp.NodeportLimit,
+		SecretLimit:    modelApp.SecretLimit,
+		ServiceLimit:   modelApp.ServiceLimit,
+		Status:         modelApp.Status,
+		AppCreatedAt:   modelApp.AppCreateTime.Unix(), // 转换为 Unix 时间戳
+		CreatedBy:      modelApp.CreatedBy,
+		UpdatedBy:      modelApp.UpdatedBy,
+		CreatedAt:      modelApp.CreatedAt.Unix(), // 转换为 Unix 时间戳
+		UpdatedAt:      modelApp.UpdatedAt.Unix(), // 转换为 Unix 时间戳
+	}
+}

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/utils"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"

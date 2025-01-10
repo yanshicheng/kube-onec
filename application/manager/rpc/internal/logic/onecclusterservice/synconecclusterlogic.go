@@ -9,7 +9,7 @@ import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/common/k8swrapper/core"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 	"sync"
 )
@@ -36,7 +36,7 @@ func (l *SyncOnecClusterLogic) SyncOnecCluster(in *pb.SyncOnecClusterReq) (*pb.S
 		l.Logger.Errorf("获取集群信息失败: %v", err)
 		return nil, code.GetClusterInfoErr
 	}
-	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, cluster.Uuid, utils.NewRestConfig(cluster.Host, cluster.Token, utils.IntToBool(cluster.SkipInsecure)))
+	client, err := l.svcCtx.OnecClient.GetOrCreateOnecK8sClient(l.ctx, cluster.Uuid, utils2.NewRestConfig(cluster.Host, cluster.Token, utils2.IntToBool(cluster.SkipInsecure)))
 	if err != nil {
 		l.Logger.Infof("获取集群客户端失败: %v", err)
 		return nil, code.GetClusterClientErr
@@ -676,7 +676,7 @@ func CompareNodes(existingNode *model.OnecNode, node *core.NodeInfo) (*model.One
 	}
 
 	// 比较并更新 Unschedulable
-	nodeUnschedulableInt := utils.BoolToInt(node.Unschedulable)
+	nodeUnschedulableInt := utils2.BoolToInt(node.Unschedulable)
 	if existingNode.Unschedulable != nodeUnschedulableInt {
 		existingNode.Unschedulable = nodeUnschedulableInt
 		flag = true

@@ -11,7 +11,8 @@ type NamespacesInterface interface {
 
 	// 删除命名空间
 	DeleteNamespace(namespaceName string) error
-
+	// 查询名称空间是否存在
+	NamespaceExist(namespaceName string) bool
 	// 获取所有命名空间信息
 	GetAllNamespaces() ([]*corev1.Namespace, error)
 

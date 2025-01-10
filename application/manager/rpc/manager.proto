@@ -587,6 +587,15 @@ message SearchOnecProjectResp {
   uint64 total = 2; //total
 }
 
+// 同步项目资源使用量
+message SyncOnecProjectReq {
+  uint64 projectId = 1; //项目ID
+  uint64 clusterId = 2; //集群ID
+  string updatedBy = 3; //记录更新人
+}
+
+message SyncOnecProjectResp {
+}
 service OnecProjectService {
   //-----------------------项目表，记录项目信息-----------------------
   rpc AddOnecProject(AddOnecProjectReq) returns (AddOnecProjectResp);
@@ -594,6 +603,7 @@ service OnecProjectService {
   rpc DelOnecProject(DelOnecProjectReq) returns (DelOnecProjectResp);
   rpc GetOnecProjectById(GetOnecProjectByIdReq) returns (GetOnecProjectByIdResp);
   rpc SearchOnecProject(SearchOnecProjectReq) returns (SearchOnecProjectResp);
+  rpc SyncOnecProject(SyncOnecProjectReq) returns (SyncOnecProjectResp);
 }
 
 //--------------------------------项目与集群的对应关系表，记录资源配额和使用情况--------------------------------
@@ -629,11 +639,14 @@ message OnecProjectQuota {
   int64 nodeportLimit = 29; //项目允许使用的 NodePort 数量上限
   int64 nodeportUsed = 30;
   int64 nodeportLimitRemain = 31;
-  string status = 32; //项目状态（如 `Active`、`Disabled`、`Archived`）
-  string createdBy = 33; //记录创建人
-  string updatedBy = 34; //记录更新人
-  int64 createdAt = 35; //项目创建时间
-  int64 updatedAt = 36; //项目信息最后更新时间
+  int64 serviceLimit = 32;
+  int64 serviceUsed = 33;
+  int64 serviceLimitRemain = 34;
+  string status = 42; //项目状态（如 `Active`、`Disabled`、`Archived`）
+  string createdBy = 43; //记录创建人
+  string updatedBy = 44; //记录更新人
+  int64 createdAt = 45; //项目创建时间
+  int64 updatedAt = 46; //项目信息最后更新时间
 }
 
 message AddOnecProjectQuotaReq {
@@ -651,8 +664,9 @@ message AddOnecProjectQuotaReq {
   int64 podLimit = 14; //项目允许创建的 Pod 数量上限
   int64 nodeportLimit = 15; //项目允许使用的 NodePort 数量上限
   int64 secretLimit = 16;
-  string createdBy = 17; //记录创建人
-  string updatedBy = 18; //记录更新人
+  int64 serviceLimit = 17;
+  string createdBy = 27; //记录创建人
+  string updatedBy = 28; //记录更新人
 }
 
 message AddOnecProjectQuotaResp {
@@ -674,7 +688,8 @@ message UpdateOnecProjectQuotaReq {
   int64 podLimit = 15; //项目允许创建的 Pod 数量上限
   int64 secretLimit = 16;
   int64 nodeportLimit = 17; //项目允许使用的 NodePort 数量上限
-  string updatedBy = 18; //记录更新人
+  int64 serviceLimit = 18;
+  string updatedBy = 28; //记录更新人
 }
 
 message UpdateOnecProjectQuotaResp {
@@ -796,12 +811,13 @@ message OnecProjectApplication {
   int64 podLimit = 13; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 14; //应用允许使用的 NodePort 数量上限
   int64 secretLimit = 15;
-  string status = 16; //应用状态（如 `Success`、`Error`）
-  int64 appCreatedAt = 17; //应用创建时间，标识该应用在业务系统中首次创建的时间
-  string createdBy = 18; //记录创建人
-  string updatedBy = 19; //记录更新人
-  int64 createdAt = 20; //记录创建时间
-  int64 updatedAt = 21; //记录更新时间
+  int64 ServiceLimit = 16;
+  string status = 37; //应用状态（如 `Success`、`Error`）
+  int64 appCreatedAt = 38; //应用创建时间，标识该应用在业务系统中首次创建的时间
+  string createdBy = 39; //记录创建人
+  string updatedBy = 40; //记录更新人
+  int64 createdAt = 41; //记录创建时间
+  int64 updatedAt = 42; //记录更新时间
 }
 
 message AddOnecProjectApplicationReq {
@@ -818,8 +834,9 @@ message AddOnecProjectApplicationReq {
   int64 podLimit = 11; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 12; //应用允许使用的 NodePort 数量上限
   int64 secretLimit = 13;
-  string createdBy = 14; //记录创建人
-  string updatedBy = 15; //记录更新人
+  int64 serviceLimit = 14;
+  string createdBy = 25; //记录创建人
+  string updatedBy = 26; //记录更新人
 }
 
 message AddOnecProjectApplicationResp {
@@ -839,7 +856,8 @@ message UpdateOnecProjectApplicationReq {
   int64 podLimit = 11; //应用允许创建的 Pod 数量上限
   int64 nodeportLimit = 12; //应用允许使用的 NodePort 数量上限
   int64 secretLimit = 13;
-  string updatedBy = 14; //记录更新人
+  int64 serviceLimit = 14;
+  string updatedBy = 25; //记录更新人
 }
 
 message UpdateOnecProjectApplicationResp {

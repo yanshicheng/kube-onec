@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/code"
-	"github.com/yanshicheng/kube-onec/utils"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
 
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
@@ -67,7 +67,7 @@ func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchS
 	if in.HireDate != 0 {
 
 		queryStr.WriteString("hire_date = ? AND ")
-		params = append(params, utils.ConvertTimestampToFormattedTime(in.HireDate, "2006-01-02"))
+		params = append(params, utils2.ConvertTimestampToFormattedTime(in.HireDate, "2006-01-02"))
 	}
 	queryStr.WriteString("is_disabled = ? AND ")
 	params = append(params, in.IsDisabled)
@@ -76,12 +76,12 @@ func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchS
 
 	if in.StartLastLoginTime != 0 && in.EndLastLoginTime != 0 {
 		queryStr.WriteString("last_login_time >= ? AND last_login_time <= ? ")
-		params = append(params, utils.ConvertTimestampToFormattedTime(in.StartLastLoginTime),
-			utils.ConvertTimestampToFormattedTime(in.EndLastLoginTime))
+		params = append(params, utils2.ConvertTimestampToFormattedTime(in.StartLastLoginTime),
+			utils2.ConvertTimestampToFormattedTime(in.EndLastLoginTime))
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils2.RemoveQueryADN(queryStr)
 
 	matchedUsers, total, err := l.svcCtx.SysUser.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
