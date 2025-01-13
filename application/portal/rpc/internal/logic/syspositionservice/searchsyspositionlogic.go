@@ -29,7 +29,11 @@ func (l *SearchSysPositionLogic) SearchSysPosition(in *pb.SearchSysPositionReq) 
 	resp, total, err := l.svcCtx.SysPosition.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, queryStr, "%"+in.Name+"%")
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, errorx.DatabaseNotFound
+			l.Logger.Infof("查询岗位为空:%v ,sql: %v", err, queryStr)
+			return &pb.SearchSysPositionResp{
+				Data:  make([]*pb.SysPosition, 0),
+				Total: 0,
+			}, nil
 		}
 		l.Logger.Errorf("查询岗位失败: %v", err)
 		return nil, errorx.DatabaseQueryErr

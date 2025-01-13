@@ -66,6 +66,7 @@ func (l *SearchOnecProjectApplicationLogic) SearchOnecProjectApplication(in *pb.
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询项目应用为空:%v ,sql: %v", err, query)
 			return &pb.SearchOnecProjectApplicationResp{
 				Data:  make([]*pb.OnecProjectApplication, 0),
 				Total: 0,

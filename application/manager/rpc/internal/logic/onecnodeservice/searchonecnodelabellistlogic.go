@@ -49,6 +49,7 @@ func (l *SearchOnecNodeLabelListLogic) SearchOnecNodeLabelList(in *pb.SearchOnec
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询节点标签为空:%v ,sql: %v", err, query)
 			return &pb.SearchOnecNodeLabelListResp{
 				Data:  make([]*pb.NodeLabels, 0),
 				Total: 0,

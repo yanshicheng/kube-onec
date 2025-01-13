@@ -31,7 +31,10 @@ func (l *GetOnecProjectQuotaLogic) GetOnecProjectQuota(in *pb.GetOnecProjectQuot
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			l.Logger.Errorf("项目资源不存在: %v", in.ProjectId)
-			return &pb.GetOnecProjectQuotaResp{}, nil
+			// TODO: 待定是否返回错误
+			return &pb.GetOnecProjectQuotaResp{
+				Data: &pb.OnecProjectQuota{},
+			}, nil
 		}
 		l.Logger.Errorf("获取项目资源失败: %v", err)
 		return nil, err

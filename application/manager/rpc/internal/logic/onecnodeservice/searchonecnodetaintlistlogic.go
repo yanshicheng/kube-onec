@@ -50,6 +50,7 @@ func (l *SearchOnecNodeTaintListLogic) SearchOnecNodeTaintList(in *pb.SearchOnec
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询节点污点为空:%v ,sql: %v", err, query)
 			return &pb.SearchOnecNodeTaintListResp{
 				Data:  make([]*pb.NodeTaints, 0),
 				Total: 0,

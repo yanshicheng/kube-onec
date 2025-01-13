@@ -111,8 +111,11 @@ func (l *SearchOnecNodeLogic) SearchOnecNode(in *pb.SearchOnecNodeReq) (*pb.Sear
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			l.Logger.Errorf("未找到节点信息: %v", err)
-			return &pb.SearchOnecNodeResp{}, nil
+			l.Logger.Infof("未找到匹配的节点, sql: %v", query)
+			return &pb.SearchOnecNodeResp{
+				Data:  make([]*pb.OnecNode, 0),
+				Total: 0,
+			}, nil
 		}
 		l.Logger.Errorf("查询节点失败: %v", err)
 		return nil, code.QueryNodeErr

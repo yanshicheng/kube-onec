@@ -2,8 +2,10 @@ package sysuserservicelogic
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/code"
+	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
 	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
 
@@ -85,6 +87,13 @@ func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchS
 
 	matchedUsers, total, err := l.svcCtx.SysUser.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询用户为空:%v ,sql: %v", err, query)
+			return &pb.SearchSysUserResp{
+				Data:  make([]*pb.SysUser, 0),
+				Total: 0,
+			}, nil
+		}
 		l.Logger.Errorf("查询用户列表出错: %v", err)
 		return nil, code.FindSysUserListErr
 	}

@@ -61,8 +61,11 @@ func (l *SearchSysDictLogic) SearchSysDict(in *pb.SearchSysDictReq) (*pb.SearchS
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			l.Logger.Errorf("查询字典失败: %v", err)
-			return &pb.SearchSysDictResp{}, errorx.DatabaseNotFound
+			l.Logger.Infof("查询字典为空: %v sql: %v", err, query)
+			return &pb.SearchSysDictResp{
+				Data:  make([]*pb.SysDict, 0),
+				Total: 0,
+			}, nil
 		}
 		l.Logger.Errorf("查询字典失败: %v", err)
 		return nil, errorx.DatabaseQueryErr

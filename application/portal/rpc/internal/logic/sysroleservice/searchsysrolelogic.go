@@ -60,8 +60,12 @@ func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchS
 	roles, total, err := l.svcCtx.SysRole.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			l.Logger.Errorf("查询角色失败: %v", err)
-			return nil, errorx.DatabaseNotFound
+			l.Logger.Infof("查询角色为空:%v ,sql: %v", err, query)
+			return &pb.SearchSysRoleResp{
+				Data:  make([]*pb.SysRole, 0),
+				Total: 0,
+			}, nil
+
 		}
 		l.Logger.Errorf("查询角色失败: %v", err)
 		return nil, errorx.DatabaseQueryErr

@@ -42,8 +42,11 @@ func (l *SearchRolePermissionLogic) SearchRolePermission(in *pb.SearchRolePermis
 	rolePermissions, err := l.svcCtx.SysRolePermission.SearchNoPage(l.ctx, "id", false, "`role_id`=?", role.Id)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			l.Logger.Errorf("角色权限关系不存在: %v", err)
-			return &pb.SearchRolePermissionResp{}, nil
+			l.Logger.Infof("角色权限关系不存在: %v, sql: %v", err)
+			return &pb.SearchRolePermissionResp{
+				Data: make([]uint64, 0),
+			}, nil
+
 		}
 		l.Logger.Errorf("批量查询角色权限关系失败: %v", err)
 		return nil, code.FindRolePermissionListErr

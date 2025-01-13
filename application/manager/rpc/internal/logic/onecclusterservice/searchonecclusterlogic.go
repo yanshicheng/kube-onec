@@ -2,6 +2,8 @@ package onecclusterservicelogic
 
 import (
 	"context"
+	"errors"
+	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
@@ -73,6 +75,13 @@ func (l *SearchOnecClusterLogic) SearchOnecCluster(in *pb.SearchOnecClusterReq) 
 		in.Page, in.PageSize,
 		query, params...)
 	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询集群为空:%v ,sql: %v", err, query)
+			return &pb.SearchOnecClusterResp{
+				Data:  make([]*pb.OnecCluster, 0),
+				Total: 0,
+			}, nil
+		}
 		l.Logger.Errorf("查询集群失败: %v", err)
 		return nil, errorx.DatabaseQueryErr
 	}

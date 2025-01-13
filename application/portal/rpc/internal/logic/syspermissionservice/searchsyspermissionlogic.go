@@ -53,7 +53,11 @@ func (l *SearchSysPermissionLogic) SearchSysPermission(in *pb.SearchSysPermissio
 	permissions, total, err := l.svcCtx.SysPermission.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, errorx.DatabaseNotFound
+			l.Logger.Infof("查询权限为空:%v ,sql: %v", err, query)
+			return &pb.SearchSysPermissionResp{
+				Data:  make([]*pb.SysPermission, 0),
+				Total: 0,
+			}, nil
 		}
 		l.Logger.Errorf("查询权限失败: %v", err)
 		return nil, errorx.DatabaseQueryErr

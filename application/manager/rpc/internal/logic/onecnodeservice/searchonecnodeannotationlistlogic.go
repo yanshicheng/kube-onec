@@ -50,6 +50,7 @@ func (l *SearchOnecNodeAnnotationListLogic) SearchOnecNodeAnnotationList(in *pb.
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询节点注解为空:%v ,sql: %v", err, query)
 			return &pb.SearchOnecNodeAnnotationListResp{
 				Data:  make([]*pb.NodeAnnotations, 0),
 				Total: 0,

@@ -2,6 +2,8 @@ package sysdictitemservicelogic
 
 import (
 	"context"
+	"errors"
+	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"strings"
@@ -65,6 +67,13 @@ func (l *SearchSysDictItemLogic) SearchSysDictItem(in *pb.SearchSysDictItemReq) 
 		in.Page, in.PageSize,
 		query, params...)
 	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			l.Logger.Infof("查询字典项为空: %v, sql: %v", err, query)
+			return &pb.SearchSysDictItemResp{
+				Data:  make([]*pb.SysDictItem, 0),
+				Total: 0,
+			}, nil
+		}
 		l.Logger.Errorf("查询字典项失败: %v", err)
 		return nil, errorx.DatabaseQueryErr
 	}

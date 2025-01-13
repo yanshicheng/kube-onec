@@ -56,7 +56,11 @@ func (l *SearchOnecProjectLogic) SearchOnecProject(in *pb.SearchOnecProjectReq) 
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return &pb.SearchOnecProjectResp{}, nil
+			l.Logger.Infof("查询项目为空:%v ,sql: %v", err, query)
+			return &pb.SearchOnecProjectResp{
+				Data:  []*pb.OnecProject{},
+				Total: 0,
+			}, nil
 		}
 		l.Logger.Errorf("查询项目失败: %v", err)
 		return nil, code.GetProjectErr

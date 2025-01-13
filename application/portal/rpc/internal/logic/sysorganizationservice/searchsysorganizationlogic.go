@@ -61,7 +61,10 @@ func (l *SearchSysOrganizationLogic) SearchSysOrganization(in *pb.SearchSysOrgan
 		query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return nil, errorx.DatabaseNotFound
+			l.Logger.Infof("查询组织为空: %v, sql: %v", err, query)
+			return &pb.SearchSysOrganizationResp{
+				Data: make([]*pb.SysOrganizationSearch, 0),
+			}, nil
 		}
 		l.Logger.Errorf("查询组织失败: %v", err)
 		return nil, errorx.DatabaseQueryErr
