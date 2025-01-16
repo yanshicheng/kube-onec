@@ -5,11 +5,9 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,25 +27,25 @@ func NewSearchOnecProjectLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SearchOnecProjectLogic) SearchOnecProject(in *pb.SearchOnecProjectReq) (*pb.SearchOnecProjectResp, error) {
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.Name != "" {
-		queryStr.WriteString(" and name like ?")
+		queryParts = append(queryParts, "name LIKE ? AND")
 		params = append(params, "%"+in.Name+"%")
 	}
 	if in.Identifier != "" {
-		queryStr.WriteString(" and identifier like ?")
+		queryParts = append(queryParts, "identifier LIKE ? AND")
 		params = append(params, "%"+in.Identifier+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString(" and created_by like ?")
+		queryParts = append(queryParts, "created_by like ? AND")
 		params = append(params, "%"+in.CreatedBy+"%")
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString(" and updated_by like ?")
+		queryParts = append(queryParts, "updated_by like ? AND")
 		params = append(params, "%"+in.UpdatedBy+"%")
 	}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 
 	res, total, err := l.svcCtx.ProjectModel.Search(l.ctx,
 		in.OrderStr,

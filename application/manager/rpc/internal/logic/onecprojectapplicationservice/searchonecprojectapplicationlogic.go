@@ -6,11 +6,9 @@ import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/shared"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,35 +28,35 @@ func NewSearchOnecProjectApplicationLogic(ctx context.Context, svcCtx *svc.Servi
 }
 
 func (l *SearchOnecProjectApplicationLogic) SearchOnecProjectApplication(in *pb.SearchOnecProjectApplicationReq) (*pb.SearchOnecProjectApplicationResp, error) {
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.ProjectId == 0 {
 		l.Logger.Errorf("`projectId` is empty")
 		return nil, code.ProjectIdEmptyErr
 	}
-	queryStr.WriteString("`project_id` = ? AND")
+	queryParts = append(queryParts, "`project_id` = ? AND")
 	params = append(params, in.ProjectId)
 	if in.ClusterUuid != "" {
-		queryStr.WriteString("`cluster_uuid` = ? AND")
+		queryParts = append(queryParts, "`cluster_uuid` = ? AND")
 		params = append(params, in.ClusterUuid)
 	}
 	if in.Status != "" {
-		queryStr.WriteString("`status` = ? AND")
+		queryParts = append(queryParts, "`status` = ? AND")
 		params = append(params, in.Status)
 	}
 	if in.Uuid != "" {
-		queryStr.WriteString("`uuid` = ? AND")
+		queryParts = append(queryParts, "`uuid` = ? AND")
 		params = append(params, in.Uuid)
 	}
 	if in.Name != "" {
-		queryStr.WriteString("`name` LIKE ? AND")
+		queryParts = append(queryParts, "`name` LIKE ? AND")
 		params = append(params, "%"+in.Name+"%")
 	}
 	if in.Identifier != "" {
-		queryStr.WriteString("`identifier` LIKE ? AND")
+		queryParts = append(queryParts, "`identifier` LIKE ? AND")
 		params = append(params, "%"+in.Identifier+"%")
 	}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 	res, total, err := l.svcCtx.ProjectApplicationModel.Search(l.ctx,
 		in.OrderStr,
 		in.IsAsc,

@@ -30,6 +30,7 @@ func (l *SearchSysRoleLogic) SearchSysRole(req *types.SearchSysRoleRequest) (res
 		Page:        req.Page,
 		PageSize:    req.PageSize,
 		RoleName:    req.RoleName,
+		RoleCode:    req.RoleCode,
 		OrderStr:    req.OrderStr,
 		IsAsc:       req.IsAsc,
 		Description: req.Description,
@@ -53,6 +54,7 @@ func (l *SearchSysRoleLogic) SearchSysRole(req *types.SearchSysRoleRequest) (res
 		temp := types.GetSysRoleByIdResponse{
 			Id:          v.Id,
 			RoleName:    v.RoleName,
+			RoleCode:    v.RoleCode,
 			CreatedAt:   v.CreatedAt,
 			UpdatedAt:   v.UpdatedAt,
 			Description: v.Description,

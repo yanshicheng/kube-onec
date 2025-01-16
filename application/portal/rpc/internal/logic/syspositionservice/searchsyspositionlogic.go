@@ -25,7 +25,7 @@ func NewSearchSysPositionLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SearchSysPositionLogic) SearchSysPosition(in *pb.SearchSysPositionReq) (*pb.SearchSysPositionResp, error) {
-	queryStr := "name like ?"
+	queryStr := "`name` like ?"
 	resp, total, err := l.svcCtx.SysPosition.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, queryStr, "%"+in.Name+"%")
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {

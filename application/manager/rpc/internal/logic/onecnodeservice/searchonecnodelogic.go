@@ -6,11 +6,9 @@ import (
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/shared"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -32,12 +30,12 @@ func NewSearchOnecNodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Se
 // 搜索节点
 func (l *SearchOnecNodeLogic) SearchOnecNode(in *pb.SearchOnecNodeReq) (*pb.SearchOnecNodeResp, error) {
 	// 构建查询条件
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.ClusterUuid == "" {
 		return nil, code.ClusterUuidEmptyErr
 	}
-	queryStr.WriteString("`cluster_uuid` = ? AND")
+	queryParts = append(queryParts, "`cluster_uuid` = ? AND")
 	params = append(params, in.ClusterUuid)
 	//queryStr.WriteString(" AND unschedulable = ? ")
 	//params = append(params, in.Unschedulable)
@@ -45,62 +43,58 @@ func (l *SearchOnecNodeLogic) SearchOnecNode(in *pb.SearchOnecNodeReq) (*pb.Sear
 	//params = append(params, in.SyncStatus)
 	// 添加查询条件
 	if in.NodeName != "" {
-		queryStr.WriteString("`node_name` LIKE ? AND")
+		queryParts = append(queryParts, "`node_name` LIKE ? AND")
 		params = append(params, "%"+in.NodeName+"%")
 	}
 	if in.NodeUid != "" {
-		queryStr.WriteString("`node_uid` = ? AND")
+		queryParts = append(queryParts, "`node_uid` = ? AND")
 		params = append(params, in.NodeUid)
 	}
 	if in.Status != "" {
-		queryStr.WriteString("`status` = ? AND")
+		queryParts = append(queryParts, "`status` = ? AND")
 		params = append(params, in.Status)
 	}
 
 	if in.Roles != "" {
-		queryStr.WriteString("`roles` LIKE ? AND")
+		queryParts = append(queryParts, "`roles` LIKE ? AND")
 		params = append(params, "%"+in.Roles+"%")
 	}
 	if in.PodCidr != "" {
-		queryStr.WriteString("`pod_cidr` LIKE ? AND")
+		queryParts = append(queryParts, "`pod_cidr` LIKE ? AND")
 		params = append(params, "%"+in.PodCidr+"%")
 	}
 
 	if in.NodeIp != "" {
-		queryStr.WriteString("`node_ip` LIKE ? AND")
+		queryParts = append(queryParts, "`node_ip` LIKE ? AND")
 		params = append(params, "%"+in.NodeIp+"%")
 	}
 	if in.Os != "" {
-		queryStr.WriteString("`os` LIKE ? AND")
+		queryParts = append(queryParts, "`os` LIKE ? AND")
 		params = append(params, "%"+in.Os+"%")
 	}
 	if in.ContainerRuntime != "" {
-		queryStr.WriteString("`container_runtime` LIKE ? AND")
+		queryParts = append(queryParts, "`container_runtime` LIKE ? AND")
 		params = append(params, "%"+in.ContainerRuntime+"%")
 	}
 	if in.OperatingSystem != "" {
-		queryStr.WriteString("`operating_system` LIKE ? AND")
+		queryParts = append(queryParts, "`operating_system` LIKE ? AND")
 		params = append(params, "%"+in.OperatingSystem+"%")
 	}
 	if in.Architecture != "" {
-		queryStr.WriteString("`architecture` LIKE ? AND")
+		queryParts = append(queryParts, "`architecture` LIKE ? AND")
 		params = append(params, "%"+in.Architecture+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString("`created_by` = ? AND")
+		queryParts = append(queryParts, "`created_by` = ? AND")
 		params = append(params, in.CreatedBy)
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString("`updated_by` = ? AND")
-		params = append(params, in.UpdatedBy)
-	}
-
-	if in.UpdatedBy != "" {
+		queryParts = append(queryParts, "`updated_by` = ? AND")
 		params = append(params, in.UpdatedBy)
 	}
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
 	// 使用正则表达式去掉结尾的 "AND" 或 "AND "
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 
 	// 调用 NodeModel 的搜索方法
 	res, total, err := l.svcCtx.NodeModel.Search(

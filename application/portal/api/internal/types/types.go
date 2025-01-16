@@ -351,7 +351,7 @@ type SysPermissionTreeNode struct {
 type SysPosition struct {
 	Id        uint64 `json:"id"`        // 自增主键
 	Name      string `json:"name"`      // 职位名称
-	CreatedAt int64  `json:"CreatedAt"` // 创建时间
+	CreatedAt int64  `json:"createdAt"` // 创建时间
 	UpdatedAt int64  `json:"updatedAt"` // 最后修改时间
 }
 

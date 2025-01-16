@@ -5,11 +5,9 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,19 +27,19 @@ func NewSearchOnecNodeTaintListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *SearchOnecNodeTaintListLogic) SearchOnecNodeTaintList(in *pb.SearchOnecNodeTaintListReq) (*pb.SearchOnecNodeTaintListResp, error) {
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.NodeId == 0 {
 		l.Logger.Errorf("`nodeId` is empty")
 		return nil, code.NodeIdEmptyErr
 	}
-	queryStr.WriteString("`node_id` = ? AND ")
+	queryParts = append(queryParts, "`node_id` = ? AND ")
 	params = append(params, in.NodeId)
 	if in.Key != "" {
-		queryStr.WriteString("`key` LIKE ? AND ")
+		queryParts = append(queryParts, "`key` LIKE ? AND ")
 		params = append(params, "%"+in.Key+"%")
 	}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 
 	res, total, err := l.svcCtx.TaintsResourceModel.Search(l.ctx,
 		in.OrderStr,

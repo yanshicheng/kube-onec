@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/common/handler/errorx"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
+	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,29 +28,29 @@ func NewSearchSysDictLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sea
 
 func (l *SearchSysDictLogic) SearchSysDict(in *pb.SearchSysDictReq) (*pb.SearchSysDictResp, error) {
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.DictCode != "" {
-		queryStr.WriteString("dict_code = ? AND")
+		queryParts = append(queryParts, "`dict_code` = ? AND")
 		params = append(params, "%"+in.DictCode+"%")
 	}
 	if in.DictName != "" {
-		queryStr.WriteString("dict_name = ? AND")
+		queryParts = append(queryParts, "`dict_name` = ? AND")
 		params = append(params, "%"+in.DictName+"%")
 	}
 	if in.Description != "" {
-		queryStr.WriteString("description = ? AND")
+		queryParts = append(queryParts, "`description` = ? AND")
 		params = append(params, "%"+in.Description+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString("create_by = ? AND")
+		queryParts = append(queryParts, "`create_by` = ? AND")
 		params = append(params, in.CreatedBy)
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString("update_by = ? AND")
+		queryParts = append(queryParts, "`update_by` = ? AND")
 		params = append(params, in.UpdatedBy)
 	}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 	res, total, err := l.svcCtx.SysDict.Search(
 		l.ctx,
 		in.OrderStr, // 使用请求中的 orderStr

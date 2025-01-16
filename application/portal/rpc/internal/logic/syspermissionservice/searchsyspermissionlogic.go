@@ -8,8 +8,6 @@ import (
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
 	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -31,25 +29,25 @@ func (l *SearchSysPermissionLogic) SearchSysPermission(in *pb.SearchSysPermissio
 	// 搜索
 	// 构建 SQL 查询条件
 	// 构建动态 SQL 查询条件
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 
 	// 动态拼接条件
 	if in.Name != "" {
-		queryStr.WriteString("name LIKE ? AND ")
+		queryParts = append(queryParts, "`name` LIKE ? AND ")
 		params = append(params, "%"+in.Name+"%")
 	}
 	if in.Uri != "" {
-		queryStr.WriteString("uri LIKE ? AND ")
+		queryParts = append(queryParts, "`uri` LIKE ? AND ")
 		params = append(params, "%"+in.Uri+"%")
 	}
 	if in.Action != "" {
-		queryStr.WriteString("action LIKE ? AND ")
+		queryParts = append(queryParts, "`action` LIKE ? AND ")
 		params = append(params, "%"+in.Action+"%")
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 	permissions, total, err := l.svcCtx.SysPermission.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {

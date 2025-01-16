@@ -3,13 +3,11 @@ package sysroleservicelogic
 import (
 	"context"
 	"errors"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
 	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
@@ -28,33 +26,33 @@ func NewSearchSysRoleLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sea
 }
 func (l *SearchSysRoleLogic) SearchSysRole(in *pb.SearchSysRoleReq) (*pb.SearchSysRoleResp, error) {
 	// 构建动态 SQL 查询条件
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 
 	// 动态拼接条件
 	if in.RoleName != "" {
-		queryStr.WriteString("role_name LIKE ? AND")
+		queryParts = append(queryParts, "`role_name` LIKE ? AND")
 		params = append(params, "%"+in.RoleName+"%")
 	}
 	if in.Description != "" {
-		queryStr.WriteString("description LIKE ? AND ")
+		queryParts = append(queryParts, "`description` LIKE ? AND")
 		params = append(params, "%"+in.Description+"%")
 	}
 	if in.RoleCode != "" {
-		queryStr.WriteString("role_code LIKE ? AND ")
+		queryParts = append(queryParts, "`role_code` LIKE ? AND")
 		params = append(params, "%"+in.RoleCode+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString("create_by LIKE ? AND ")
+		queryParts = append(queryParts, "`create_by` LIKE ? AND")
 		params = append(params, "%"+in.CreatedBy+"%")
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString("update_by LIKE ? AND ")
+		queryParts = append(queryParts, "`update_by` LIKE ? AND")
 		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 
 	// 调用查询
 	roles, total, err := l.svcCtx.SysRole.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)

@@ -5,11 +5,9 @@ import (
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,19 +27,19 @@ func NewSearchOnecNodeLabelListLogic(ctx context.Context, svcCtx *svc.ServiceCon
 }
 
 func (l *SearchOnecNodeLabelListLogic) SearchOnecNodeLabelList(in *pb.SearchOnecNodeLabelListReq) (*pb.SearchOnecNodeLabelListResp, error) {
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.NodeId == 0 {
 		l.Logger.Errorf("`nodeId` is empty")
 		return nil, code.NodeIdEmptyErr
 	}
-	queryStr.WriteString("`resource_id` = ? AND ")
+	queryParts = append(queryParts, "`resource_id` = ? AND ")
 	params = append(params, in.NodeId)
 	if in.Key != "" {
-		queryStr.WriteString("`key` LIKE ? AND ")
+		queryParts = append(queryParts, "`key` LIKE ? AND ")
 		params = append(params, "%"+in.Key+"%")
 	}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 	res, total, err := l.svcCtx.LabelsResourceModel.Search(l.ctx,
 		in.OrderStr,
 		in.IsAsc,

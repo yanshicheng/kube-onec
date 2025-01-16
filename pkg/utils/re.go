@@ -7,9 +7,14 @@ import (
 )
 
 // 去掉结尾 ADN
-func RemoveQueryADN(queryStr strings.Builder) string {
-	re := regexp.MustCompile(`(?i)\bAND\b\s*$`)
-	return re.ReplaceAllString(queryStr.String(), " ")
+
+func RemoveQueryADN(queryParts []string) string {
+	// 将条件拼接成一个字符串
+	query := strings.Join(queryParts, " ")
+
+	// 使用正则表达式去除末尾的 AND
+	re := regexp.MustCompile(`(?i)\s+AND\s*$`)
+	return re.ReplaceAllString(query, "")
 }
 
 // ValidateNamespaceName 验证字符串是否符合规则

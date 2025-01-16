@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/model"
-	"github.com/yanshicheng/kube-onec/common/handler/errorx"
-	"github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/manager/rpc/pb"
+	"github.com/yanshicheng/kube-onec/common/handler/errorx"
+	"github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,45 +27,45 @@ func NewSearchOnecClusterLogic(ctx context.Context, svcCtx *svc.ServiceContext) 
 }
 
 func (l *SearchOnecClusterLogic) SearchOnecCluster(in *pb.SearchOnecClusterReq) (*pb.SearchOnecClusterResp, error) {
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 	if in.Name != "" {
-		queryStr.WriteString("  name = ? AND")
+		queryParts = append(queryParts, "name = ? AND")
 		params = append(params, "%"+in.Name+"%")
 	}
 	if in.Host != "" {
-		queryStr.WriteString("  host = ? AND")
+		queryParts = append(queryParts, "host = ? AND")
 		params = append(params, "%"+in.Host+"%")
 	}
 	if in.EnvCode != "" {
-		queryStr.WriteString("  env_tag = ? AND")
+		queryParts = append(queryParts, "env_tag = ? AND")
 		params = append(params, in.EnvCode)
 	}
 	if in.Version != "" {
-		queryStr.WriteString("  version = ? AND")
+		queryParts = append(queryParts, "version = ? AND")
 		params = append(params, "%"+in.Version+"%")
 	}
 	if in.Platform != "" {
-		queryStr.WriteString("  platform = ? AND")
+		queryParts = append(queryParts, "platform = ? AND")
 		params = append(params, "%"+in.Platform+"%")
 	}
 	if in.Version != "" {
-		queryStr.WriteString("  version = ? AND")
+		queryParts = append(queryParts, "version = ? AND")
 		params = append(params, in.Version)
 	}
 	if in.UpdatedBy != "" {
-		queryStr.WriteString("  update_by = ? AND")
+		queryParts = append(queryParts, "update_by = ? AND")
 		params = append(params, "%"+in.UpdatedBy+"%")
 	}
 	if in.CreatedBy != "" {
-		queryStr.WriteString("  create_by = ? AND")
+		queryParts = append(queryParts, "create_by = ? AND")
 		params = append(params, "%"+in.CreatedBy+"%")
 	}
 	//if in.ConnType != 0 {
 	//	queryStr.WriteString(" AND conn_type = ? ")
 	//	params = append(params, pb.OnecClusterConnType_name[int32(in.ConnType)])
 	//}
-	query := utils.RemoveQueryADN(queryStr)
+	query := utils.RemoveQueryADN(queryParts)
 	matchedClusters, total, err := l.svcCtx.ClusterModel.Search(
 		l.ctx,
 		in.OrderStr,

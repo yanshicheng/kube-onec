@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/code"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/model"
-	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
-	"strings"
-
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/internal/svc"
 	"github.com/yanshicheng/kube-onec/application/portal/rpc/pb"
+	utils2 "github.com/yanshicheng/kube-onec/pkg/utils"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -31,59 +29,58 @@ func NewSearchSysUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sea
 
 func (l *SearchSysUserLogic) SearchSysUser(in *pb.SearchSysUserReq) (*pb.SearchSysUserResp, error) {
 	// 构建动态 SQL 查询条件
-	var queryStr strings.Builder
+	var queryParts []string
 	var params []interface{}
 
 	// 动态拼接条件
 	if in.Account != "" {
-		queryStr.WriteString("account LIKE ? AND ")
+		queryParts = append(queryParts, "`account` LIKE ? AND ")
 		params = append(params, "%"+in.Account+"%")
 	}
 	if in.Email != "" {
-		queryStr.WriteString("email LIKE ? AND ")
+		queryParts = append(queryParts, "`email` LIKE ? AND ")
 		params = append(params, "%"+in.Email+"%")
 	}
 	if in.Mobile != "" {
-		queryStr.WriteString("mobile LIKE ? AND ")
+		queryParts = append(queryParts, "`mobile` LIKE ? AND ")
 		params = append(params, "%"+in.Mobile+"%")
 	}
 	if in.WorkNumber != "" {
-		queryStr.WriteString("work_number LIKE ? AND ")
+		queryParts = append(queryParts, "`work_number` LIKE ? AND ")
 		params = append(params, "%"+in.WorkNumber+"%")
 	}
 	if in.UserName != "" {
-		queryStr.WriteString("user_name LIKE ? AND ")
+		queryParts = append(queryParts, "`user_name` LIKE ? AND ")
 		params = append(params, "%"+in.UserName+"%")
 	}
 
 	if in.OrganizationId != 0 {
-		queryStr.WriteString("organization_id = ? AND ")
+		queryParts = append(queryParts, "`organization_id` = ? AND ")
 		params = append(params, in.OrganizationId)
 	}
 
 	if in.PositionId != 0 {
-		queryStr.WriteString("position_id = ? AND ")
+		queryParts = append(queryParts, "`position_id` = ? AND ")
 		params = append(params, in.PositionId)
 	}
 
 	if in.HireDate != 0 {
-
-		queryStr.WriteString("hire_date = ? AND ")
+		queryParts = append(queryParts, "`hire_date` = ? AND ")
 		params = append(params, utils2.ConvertTimestampToFormattedTime(in.HireDate, "2006-01-02"))
 	}
-	queryStr.WriteString("is_disabled = ? AND ")
+	queryParts = append(queryParts, "`is_disabled` = ? AND ")
 	params = append(params, in.IsDisabled)
-	queryStr.WriteString("is_leave = ? AND ")
+	queryParts = append(queryParts, "`is_leave` = ? AND ")
 	params = append(params, in.IsLeave)
 
 	if in.StartLastLoginTime != 0 && in.EndLastLoginTime != 0 {
-		queryStr.WriteString("last_login_time >= ? AND last_login_time <= ? ")
+		queryParts = append(queryParts, "`last_login_time` >= ? AND `last_login_time` <= ? ")
 		params = append(params, utils2.ConvertTimestampToFormattedTime(in.StartLastLoginTime),
 			utils2.ConvertTimestampToFormattedTime(in.EndLastLoginTime))
 	}
 
 	// 去掉最后一个 " AND "，避免 SQL 语法错误
-	query := utils2.RemoveQueryADN(queryStr)
+	query := utils2.RemoveQueryADN(queryParts)
 
 	matchedUsers, total, err := l.svcCtx.SysUser.Search(l.ctx, in.OrderStr, in.IsAsc, in.Page, in.PageSize, query, params...)
 	if err != nil {

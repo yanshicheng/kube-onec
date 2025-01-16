@@ -24,5 +24,7 @@ func NewGetCodesLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetCodes
 }
 
 func (l *GetCodesLogic) GetCodes() (resp *types.GetCodesResponse, err error) {
-	return
+	return &types.GetCodesResponse{
+		Codes: []string{"admin", "code2", "code3"},
+	}, nil
 }
